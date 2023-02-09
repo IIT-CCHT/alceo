@@ -22,6 +22,7 @@ folium = "^0.14.0"
 mapclassify = "^2.5.0"
 ipyleaflet = "^0.17.2"
 shapely = "^2.0.1"
+dvc = "^2.43.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
