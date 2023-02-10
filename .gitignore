@@ -193,4 +193,4 @@ poetry.toml
 
 # CUSTOM FOR PROJECT
 *_logs
-data
+linked_data

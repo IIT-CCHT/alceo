@@ -1,0 +1,17 @@
+schema: '2.0'
+stages:
+  DURA_changes:
+    cmd: python scripts/processing/change_from_annotations.py -i data/annotations/DURA/pits.geojson
+      -o data/change/DURA -f 26/5/2013 -s 19/09/2014
+    deps:
+    - path: data/annotations/DURA/pits.geojson
+      md5: 0a6adb41e885688ff236df0524ad611b
+      size: 2727276
+    - path: scripts/processing/change_from_annotations.py
+      md5: c5507f3e127dd3bf336d9f361690bfab
+      size: 4968
+    outs:
+    - path: data/change/DURA
+      md5: 12153c8eea2a3edcb98907080521658e.dir
+      size: 3295400
+      nfiles: 3

@@ -3,12 +3,16 @@ from pathlib import Path
 import geopandas
 from alceo.utils import in_notebook
 from argparse import ArgumentParser
+from IPython.display import display
+import os
 
 if not in_notebook():
-    parser = ArgumentParser("change_from_annotations.py", description="""
+    parser = ArgumentParser(
+        "change_from_annotations.py",
+        description="""
 Given a GeoJSON containing geometrical features describing pits location for various dates (in a field called Day_Month_Year with dd/mm/YYYY format).
 Compute the pits that appeared, disappeared and persisted between two dates.
-"""
+""",
     )
     parser.add_argument(
         "-i",
@@ -18,22 +22,30 @@ Compute the pits that appeared, disappeared and persisted between two dates.
         required=True,
     )
     parser.add_argument(
-        "-f", "--first_image_date", type=str, help="Date (in dd/mm/YYYY format) of the first image.", required=True,
+        "-f",
+        "--first_image_date",
+        type=str,
+        help="Date (in dd/mm/YYYY format) of the first image.",
+        required=True,
     )
     parser.add_argument(
-        "-s", "--second_image_date", type=str, help="Date (in dd/mm/YYYY format) of the second image.", required=True,
+        "-s",
+        "--second_image_date",
+        type=str,
+        help="Date (in dd/mm/YYYY format) of the second image.",
+        required=True,
     )
     parser.add_argument(
         "-o",
         "--output_directory_path",
         type=Path,
         help="The output directory where the `.appeared`, `.disappeared` and `.persisted` features will be saved. Defaults to current directory.",
-        default='.',
+        default=".",
     )
     parser.add_argument(
         "--crs",
         type=str,
-        help="The output GeoJSON crs. Defaults to \"EPSG:32637\"",
+        help='The output GeoJSON crs. Defaults to "EPSG:32637"',
         default="EPSG:32637",
     )
 
@@ -44,17 +56,23 @@ Compute the pits that appeared, disappeared and persisted between two dates.
     output_directory_path = args.output_directory_path
     crs = args.crs
 else:
-    input_geojson_path = Path("/home/gsech/Source/alceo/data/annotation/DURA/complete/DURA.geojson")
+    input_geojson_path = Path(
+        "/home/gsech/Source/alceo/data/annotations/DURA/pits.geojson"
+    )
     first_image_date = "26/5/2013"
     second_image_date = "19/09/2014"
-    output_directory_path = Path("/home/gsech/Source/alceo/data/annotation/DURA/complete")
+    output_directory_path = Path("/home/gsech/Source/alceo/data/trash")
     crs = "EPSG:32637"
 
 # %%
 _gdf = geopandas.read_file(input_geojson_path).to_crs(crs)
-# %%
-first_gpd: geopandas.GeoDataFrame = _gdf[_gdf.Day_Month_Year == first_image_date].reindex()
-second_gpd: geopandas.GeoDataFrame = _gdf[_gdf.Day_Month_Year == second_image_date].reindex()
+
+first_gpd: geopandas.GeoDataFrame = _gdf[
+    _gdf.Day_Month_Year == first_image_date
+].reindex()
+second_gpd: geopandas.GeoDataFrame = _gdf[
+    _gdf.Day_Month_Year == second_image_date
+].reindex()
 
 # # %% Visualizing the two GeoDataFrames
 if in_notebook():
@@ -113,20 +131,42 @@ if in_notebook():
         max_zoom=20,
     )
     appeared.explore(
-        m=_map, style_kwds=dict(color="green", opacity=0.3, weight=0.5, fill_opacity=0.2)
+        m=_map,
+        style_kwds=dict(color="green", opacity=0.3, weight=0.5, fill_opacity=0.2),
     )
     first_gpd.loc[persisted.index].explore(
-        m=_map, style_kwds=dict(color="yellow", opacity=0.3, weight=0.5, fill_opacity=0.1)
+        m=_map,
+        style_kwds=dict(color="yellow", opacity=0.3, weight=0.5, fill_opacity=0.1),
     )
     second_gpd.loc[persisted.index_right].explore(
-        m=_map, style_kwds=dict(color="purple", opacity=0.3, weight=0.5, fill_opacity=0.1)
+        m=_map,
+        style_kwds=dict(color="purple", opacity=0.3, weight=0.5, fill_opacity=0.1),
     )
     display(_map)
 
 # %% Save data
-appeared_path = str(output_directory_path / input_geojson_path.with_suffix(".appeared"+input_geojson_path.suffix).name)
-disappeared_path = str(output_directory_path / input_geojson_path.with_suffix(".disappeared"+input_geojson_path.suffix))
-persisted_path = str(output_directory_path / input_geojson_path.with_suffix(".persisted"+input_geojson_path.suffix))
+if not output_directory_path.exists():
+    os.makedirs(output_directory_path, exist_ok=True)
+
+input_suffix = input_geojson_path.suffix
+
+
+appeared_path = (
+    output_directory_path
+    / input_geojson_path.with_suffix(".appeared" + input_suffix).name
+)
+
+disappeared_path = (
+    output_directory_path
+    / input_geojson_path.with_suffix(".disappeared" + input_suffix).name
+)
+
+persisted_path = (
+    output_directory_path
+    / input_geojson_path.with_suffix(".persisted" + input_suffix).name
+)
+
+# %%
 appeared.to_file(appeared_path, na="keep")
 disappeared.to_file(disappeared_path, na="keep")
 persisted.to_file(persisted_path, na="keep")

@@ -1,0 +1,5 @@
+[core]
+    autostage = true
+    remote = boxx230_hdd1
+['remote "boxx230_hdd1"']
+    url = /HDD1/dvc_remotes/alceo
