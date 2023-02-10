@@ -8,8 +8,8 @@ stages:
       md5: 0a6adb41e885688ff236df0524ad611b
       size: 2727276
     - path: scripts/processing/change_from_annotations.py
-      md5: c5507f3e127dd3bf336d9f361690bfab
-      size: 4968
+      md5: e9bfe44abe7c0ce25ec93a8c40d6de1f
+      size: 5140
     outs:
     - path: data/change/DURA
       md5: 12153c8eea2a3edcb98907080521658e.dir
