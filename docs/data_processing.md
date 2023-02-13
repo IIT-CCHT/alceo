@@ -31,13 +31,16 @@ data
 ```
 
 ## Dataset Structure
+The Change Detection dataset for Pits has the following structure desiderata:
+```
+data
+    /dataset
+        /pits_change_detection
+            /<SITE NAME>
+                /im1/<ID>.tif
+                /im2/<ID>.tif
+                /appeared/<ID>.tif
+                /disappeared/<ID>.tif
+```
 
-```
-dataset
-    /pits_change_detection
-        /<SITE NAME>
-            /im1/<ID>.tif
-            /im2/<ID>.tif
-            /appeared/<ID>.tif
-            /disappeared/<ID>.tif
-```
+## Pipeline
