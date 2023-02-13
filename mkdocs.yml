@@ -2,6 +2,7 @@ site_name: ALCEO Docs
 nav:
   - Home: index.md
   - Data: data_processing.md
+  - DVC Journey: DVC.md
   - Code Reference: reference/
 plugins:
 - gen-files:

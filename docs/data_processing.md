@@ -1,5 +1,5 @@
 # Dataset Processing
-Most models work on raster data, we have the satellite images rasters as well as vectorial information concerning the looting pits.  
+Most machine learning models work on raster data, we have the satellite images rasters as well as vectorial information concerning the looting pits.  
 We need to process them because a satellite image is too big to be processes by our models and we cannot directly use vectorial information.
 
 ## Tilizing satelitte images
@@ -23,35 +23,21 @@ The mask can be tilized using `script/processing/rasterize_tiles.py`.
 Consult DVC.md for information about the process of creating the project's pipelines in DVC.
 
 ```
-data /
-    annotations / # Contains the annotations used to produce datasets
-        <SITE> /
-            pits.geojson # annotations specific to the looting pits
-
-dataset /
-    pits_monitoring /
-        <SITE>
+data
+    /sites
+        /<SITE NAME>
+            /annotations # contains annotation files (i.e. pits.geojson)
+            /images # contains images products
 ```
 
 ## Dataset Structure
 
 ```
-SITE, TILE_ID, START_DATE, END_DATE
-
-
-# possible formats.
-# <DATE> refers to either START or END programmatically.
-
-/ <SITE> 
-    / <DATE>
-        / tiles / <TILE_ID>.tif
-        / appeared / <TILE_ID>.tif # with respect of previous date.
-        / disappeared / <TILE_ID>.tif # with respect of previous date.
-
-/ <SITE> 
-    / tiles / <DATE> / <TILE_ID>.tif
-    / change / <START_DATE> / <END_DATE> / 
-        / appeared / <TILE_ID>.tif
-        / disappeared / <TILE_ID>.tif
-
+dataset
+    /pits_change_detection
+        /<SITE NAME>
+            /im1/<ID>.tif
+            /im2/<ID>.tif
+            /appeared/<ID>.tif
+            /disappeared/<ID>.tif
 ```

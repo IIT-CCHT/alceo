@@ -15,6 +15,7 @@
     I've used `dvc pull` after deleting both `data/annotations` and `.dvc/cache`. It gets copied correctly from the remote.
 
     <!-- TODO: investigate dvc pull by pipeline stage. --> I should investigate if by using `dvc pull <pipeline stage>` I get only the data needed by that stage or all the remote data.
+
 4. I've made a pipeline stage that computes changes from pits annotations of DURA (Dura Europhos) site. As a reference the command from bash is:
     ``` 
     python scripts/processing/change_from_annotations.py -i data/annotations/DURA/pits.geojson -o data/change/DURA -f 26/5/2013 -s 19/09/2014
@@ -22,4 +23,9 @@
     The stage was made with:
     ```
     dvc stage add -n DURA_changes -d scripts/processing/change_from_annotations.py -d data/annotations/DURA/pits.geojson -o data/change/DURA python scripts/processing/change_from_annotations.py -i data/annotations/DURA/pits.geojson -o data/change/DURA -f 26/5/2013 -s 19/09/2014
-    ```
+    ```  
+
+5. After thorough investigation DVC pull and push do not take into consideration sub-directories. This means that one cannot pull only a portion of a directory that has already been added.  
+    With this consideration in mind I've changed the structure of the data folder and created a sub-dir called `sites` in which each site will get a directory that will be `dvc add`ed.
+    
+6. I've created the `data/sites/DURA_EUROPOS` directory and put inside the previously created `annotations` directory. I've also created the `images` directory and placed `DE_19_09_2014` and `DE_26_5_2013` images that were given to me by Maria Cristina.
