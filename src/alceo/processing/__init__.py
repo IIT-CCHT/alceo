@@ -1,1 +1,0 @@
-from processing.change_from_annotations import *
