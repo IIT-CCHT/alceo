@@ -8,7 +8,7 @@ plugins:
     scripts:
       - docs/gen_ref_pages.py
 - literate-nav:
-    nav_file: SUMMARY.txt
+    nav_file: SUMMARY.txt # TODO: fix code references in mkdocs. 
 - section-index
 - mkdocstrings:
     handlers:
