@@ -56,36 +56,54 @@ else:
         "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/tiles"
     )
 
-output_filename = input_geotiff_path.stem + "_t-{}-{}.tif"
 
-# %% Create output directory if it doesn't exists
+def rasterize_tiles(
+    tiles_geojson_path: Path,
+    input_geotiff_path: Path,
+    output_directory_path: Path,
+    areas_of_interest_geojson: Path = None,
+    keep_partial: bool = False,
+):
+    """Given a GeoJSON containing vectorial features of tiles and a input GeoTIFF raster, split the latter in tiles and save them into output_directory_path. keep_partials saves also tiles that do not completely fill the tile raster. Some areas of interest can be provided via a GeoJSON.
 
-if not output_directory_path.exists():
-    os.makedirs(output_directory_path, exist_ok=True)
+    Args:
+        tiles_geojson_path (Path): Path to the tiles features GeoJSON.
+        input_geotiff_path (Path): Path to the input raster.
+        output_directory_path (Path): Directory where to save raster outputs.
+        areas_of_interest_geojson (Path, optional): Features of the various areas of interest to keep. Defaults to None.
+        keep_partial (bool, optional): Save tiles that are partially filled. Defaults to False.
+    """
+    output_filename = input_geotiff_path.stem + "_t-{}-{}.tif"
+    # %% Create output directory if it doesn't exists
 
-tiles_gdf = gpd.read_file(tiles_geojson_path)
+    if not output_directory_path.exists():
+        os.makedirs(output_directory_path, exist_ok=True)
 
-for id, row in tqdm(tiles_gdf.iterrows()):
-    src = rasterio.open(input_geotiff_path)
-    tile_window = windows.from_bounds(
-        *row.geometry.bounds,
-        transform=src.transform,
-    )
-    res = src.read(
-        window=tile_window,
-        out_shape=(src.count, row.height, row.width),
-        resampling=Resampling.bilinear,
-    )
+    tiles_gdf = gpd.read_file(tiles_geojson_path)
 
-    tile_path = output_directory_path / output_filename.format(
-        int(tile_window.col_off), int(tile_window.row_off)
-    )
+    for id, row in tqdm(tiles_gdf.iterrows()):
+        src = rasterio.open(input_geotiff_path)
+        tile_window = windows.from_bounds(
+            *row.geometry.bounds,
+            transform=src.transform,
+        )
+        res = src.read(
+            window=tile_window,
+            out_shape=(src.count, row.height, row.width),
+            resampling=Resampling.bilinear,
+        )
 
-    meta = src.meta.copy()
-    meta["width"] = row.width
-    meta["height"] = row.height
-    meta["transform"] = windows.transform(tile_window, src.transform)
+        tile_path = output_directory_path / output_filename.format(
+            int(tile_window.col_off), int(tile_window.row_off)
+        )
 
-    with rasterio.open(tile_path, "w", **meta) as out:
-        out.write(res)
+        meta = src.meta.copy()
+        meta["width"] = row.width
+        meta["height"] = row.height
+        meta["transform"] = windows.transform(tile_window, src.transform)
+
+        with rasterio.open(tile_path, "w", **meta) as out:
+            out.write(res)
+
+
 # %%
