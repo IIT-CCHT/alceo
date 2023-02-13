@@ -1,9 +1,0 @@
-stages:
-  DURA_changes:
-    cmd: python scripts/processing/change_from_annotations.py -i data/annotations/DURA/pits.geojson
-      -o data/change/DURA -f 26/5/2013 -s 19/09/2014
-    deps:
-    - data/annotations/DURA/pits.geojson
-    - scripts/processing/change_from_annotations.py
-    outs:
-    - data/change/DURA
