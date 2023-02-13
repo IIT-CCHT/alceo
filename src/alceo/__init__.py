@@ -1,5 +1,5 @@
-from dataset import *
-
+"""ALCEO principal module.
+"""
 __version__ = '0.1.0'
 
 def main():
@@ -24,10 +24,6 @@ def main():
 
         if not image1_path.exists() or not image2_path.exists() or not label1_path.exists() or not label2_path.exists():
             print(f"ID {image_id} is broken!")
-
-
-    # %%
-    import dataset
 
 
 if __name__ == '__main__':
