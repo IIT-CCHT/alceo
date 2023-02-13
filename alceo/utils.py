@@ -1,4 +1,4 @@
-def in_notebook():
+def in_notebook() -> bool:
     """Utility to check if the code is running in a IPKernel (like Jupyter or IPython cells).
     
     Code taken from: https://stackoverflow.com/a/22424821
