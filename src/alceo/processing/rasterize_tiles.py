@@ -56,12 +56,20 @@ def rasterize_tiles(
         meta["width"] = row.width
         meta["height"] = row.height
         meta["transform"] = windows.transform(tile_window, src.transform)
-        with rasterio.Env(CPL_LOG="/dev/null"):
-            with rasterio.open(tile_path, "w", **meta) as out:
-                out.write(res)
+        with rasterio.open(tile_path, "w", **meta) as out:
+            out.write(res)
 
 
 if __name__ == "__main__":
+    import logging
+
+    console_handler = logging.StreamHandler()
+    formatter = logging.Formatter("%(levelname)s:%(message)s")
+    console_handler.setFormatter(formatter)
+    logger = logging.getLogger("rasterio")
+    logger.addHandler(console_handler)
+    logger.setLevel(logging.ERROR)
+    
     if not in_notebook():
         parser = ArgumentParser(
             "rasterize_tiles.py",
