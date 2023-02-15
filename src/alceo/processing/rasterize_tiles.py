@@ -2,9 +2,7 @@
 import rasterio
 from rasterio import windows
 import rasterio.mask
-from itertools import product
-import shapely.geometry
-from shapely import intersection_all, union_all
+from shapely import union_all
 from pathlib import Path
 import geopandas as gpd
 from alceo.utils import in_notebook
@@ -12,14 +10,12 @@ from argparse import ArgumentParser
 from rasterio.enums import Resampling
 from tqdm import tqdm
 import os
-import numpy as np
 # %%
 def rasterize_tiles(
     tiles_geojson_path: Path,
     input_geotiff_path: Path,
     output_directory_path: Path,
     areas_of_interest_geojson: Path = None,
-    keep_partial: bool = False,
 ):
     """Given a GeoJSON containing vectorial features of tiles and a input GeoTIFF raster, split the latter in tiles and save them into output_directory_path. keep_partials saves also tiles that do not completely fill the tile raster. Some areas of interest can be provided via a GeoJSON.
 
