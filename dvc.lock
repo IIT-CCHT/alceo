@@ -21,8 +21,11 @@ stages:
   rasterize_tiles_DURA_EUROPOS:
     cmd: python src/alceo/processing/rasterize_tiles.py -t data/sites/DURA_EUROPOS/tiles.json
       -i data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
-      -o data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
+      -a data/sites/DURA_EUROPOS/area_of_interest.geojson -o data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
     deps:
+    - path: data/sites/DURA_EUROPOS/area_of_interest.geojson
+      md5: f132115120743eed070a7520706223be
+      size: 998
     - path: data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
       md5: 60cfa7d954df7d8f305366116203b284
       size: 1208292462
@@ -30,10 +33,10 @@ stages:
       md5: 17d2d670c2da8fdf98b123152bd92d54
       size: 178170
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: 3b874df7f2d1350ee97fd1e8b5c9c300
-      size: 4272
+      md5: 44c753eefaedd6992893fc0b87bb2e3d
+      size: 5204
     outs:
     - path: data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
-      md5: 4ab63def9235adcf9c6f83058ce7fafa.dir
-      size: 1190179494
-      nfiles: 567
+      md5: 9398e185b2abb2a583850aefebed7804.dir
+      size: 98656854
+      nfiles: 47
