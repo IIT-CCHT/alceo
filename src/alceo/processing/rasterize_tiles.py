@@ -12,50 +12,6 @@ from rasterio.enums import Resampling
 from tqdm import tqdm
 import os
 
-if not in_notebook():
-    parser = ArgumentParser(
-        "rasterize_tiles.py",
-        description="""
-Given a GeoJSON containing geometrical features describing tiles locations and a GeoTIFF raster sample it and obtain a GeoTIFF for each tile.
-""",
-    )
-    parser.add_argument(
-        "-t",
-        "--tiles_geojson_path",
-        nargs="+",
-        type=Path,
-        help="Input GeoJSON containing the geometries of the tiles as well as the expected pixel size in width, height properties.",
-        required=True,
-    )
-    parser.add_argument(
-        "-i",
-        "--input_geotiff_path",
-        type=Path,
-        help="Input GeoTIFF containing the raster data to sample in tiles.",
-        required=True,
-    )
-    parser.add_argument(
-        "-o",
-        "--output_directory_path",
-        type=Path,
-        help="Directory where the tiles GeoTIFFs will be stored.",
-    )
-
-    args = parser.parse_args()
-    tiles_geojson_path = args.tiles_geojson_path
-    input_geotiff_path = args.input_geotiff_path
-    output_directory_path = args.output_directory_path
-else:
-    tiles_geojson_path = Path(
-        "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/tiles.json"
-    )
-    input_geotiff_path = Path(
-        "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif"
-    )
-    output_directory_path = Path(
-        "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/tiles"
-    )
-
 
 def rasterize_tiles(
     tiles_geojson_path: Path,
@@ -73,7 +29,7 @@ def rasterize_tiles(
         areas_of_interest_geojson (Path, optional): Features of the various areas of interest to keep. Defaults to None.
         keep_partial (bool, optional): Save tiles that are partially filled. Defaults to False.
     """
-    output_filename = input_geotiff_path.stem + "_t-{}-{}.tif"
+    output_filename = "{}.tif"
     # %% Create output directory if it doesn't exists
 
     if not output_directory_path.exists():
@@ -106,4 +62,51 @@ def rasterize_tiles(
             out.write(res)
 
 
-# %%
+if __name__ == "__main__":
+    if not in_notebook():
+        parser = ArgumentParser(
+            "rasterize_tiles.py",
+            description="""
+    Given a GeoJSON containing geometrical features describing tiles locations and a GeoTIFF raster sample it and obtain a GeoTIFF for each tile.
+    """,
+        )
+        parser.add_argument(
+            "-t",
+            "--tiles_geojson_path",
+            type=Path,
+            help="Input GeoJSON containing the geometries of the tiles as well as the expected pixel size in width, height properties.",
+            required=True,
+        )
+        parser.add_argument(
+            "-i",
+            "--input_geotiff_path",
+            type=Path,
+            help="Input GeoTIFF containing the raster data to sample in tiles.",
+            required=True,
+        )
+        parser.add_argument(
+            "-o",
+            "--output_directory_path",
+            type=Path,
+            help="Directory where the tiles GeoTIFFs will be stored.",
+        )
+
+        args = parser.parse_args()
+        tiles_geojson_path = args.tiles_geojson_path
+        input_geotiff_path = args.input_geotiff_path
+        output_directory_path = args.output_directory_path
+    else:
+        tiles_geojson_path = Path(
+            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/tiles.json"
+        )
+        input_geotiff_path = Path(
+            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif"
+        )
+        output_directory_path = Path(
+            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/tiles"
+        )
+    rasterize_tiles(
+        tiles_geojson_path,
+        input_geotiff_path,
+        output_directory_path,
+    )
