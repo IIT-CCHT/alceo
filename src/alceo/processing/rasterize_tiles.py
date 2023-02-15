@@ -1,9 +1,10 @@
 # %%
 import rasterio
 from rasterio import windows
+import rasterio.mask
 from itertools import product
 import shapely.geometry
-from shapely import intersection_all
+from shapely import intersection_all, union_all
 from pathlib import Path
 import geopandas as gpd
 from alceo.utils import in_notebook
@@ -11,8 +12,8 @@ from argparse import ArgumentParser
 from rasterio.enums import Resampling
 from tqdm import tqdm
 import os
-
-
+import numpy as np
+# %%
 def rasterize_tiles(
     tiles_geojson_path: Path,
     input_geotiff_path: Path,
@@ -36,8 +37,14 @@ def rasterize_tiles(
         os.makedirs(output_directory_path, exist_ok=True)
 
     tiles_gdf = gpd.read_file(tiles_geojson_path)
-
+    
+    if areas_of_interest_geojson is not None and areas_of_interest_geojson.exists():
+        aoi_gdf = gpd.read_file(areas_of_interest_geojson, driver="GeoJSON").to_crs(tiles_gdf.crs)
+        aoi_shape = union_all(aoi_gdf.geometry)
+        tiles_gdf = tiles_gdf[tiles_gdf.geometry.covered_by(aoi_shape)]
+    # %%
     for id, row in tqdm(tiles_gdf.iterrows()):
+        # %%
         src = rasterio.open(input_geotiff_path)
         tile_window = windows.from_bounds(
             *row.geometry.bounds,
@@ -48,6 +55,10 @@ def rasterize_tiles(
             out_shape=(src.count, row.height, row.width),
             resampling=Resampling.bilinear,
         )
+        
+        # if np.any(np.all(res == 0.0, axis=0)): # discard tiles that have pixels with all bands at zero. 
+        #     continue
+        # %%
 
         tile_path = output_directory_path / output_filename.format(row.tile_id
         )
@@ -102,18 +113,26 @@ if __name__ == "__main__":
         tiles_geojson_path = args.tiles_geojson_path
         input_geotiff_path = args.input_geotiff_path
         output_directory_path = args.output_directory_path
+        areas_of_interest_geojson = args.areas_of_interest_geojson
     else:
+        # %%
         tiles_geojson_path = Path(
-            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/tiles.json"
+            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/tiles.json"
         )
         input_geotiff_path = Path(
-            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif"
+            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif"
         )
         output_directory_path = Path(
-            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/tiles"
+            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse"
         )
+        areas_of_interest_geojson = Path(
+            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/area_of_interest.geojson"
+        )
+        
+    # %%
     rasterize_tiles(
         tiles_geojson_path,
         input_geotiff_path,
         output_directory_path,
+        areas_of_interest_geojson
     )
