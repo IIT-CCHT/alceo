@@ -1,0 +1,22 @@
+stages:
+  produce_tiles_DURA_EUROPOS:
+    cmd: python src/alceo/processing/produce_tiles.py 
+      -i data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
+      -i /HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
+      -o data/sites/DURA_EUROPOS/tiles.json -p DURA_EUROPOS_
+    deps:
+    - data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
+    - data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
+    - src/alceo/processing/produce_tiles.py
+    outs:
+    - data/sites/DURA_EUROPOS/tiles.json
+  rasterize_tiles_DURA_EUROPOS:
+    cmd: python src/alceo/processing/rasterize_tiles.py 
+      -t data/sites/DURA_EUROPOS/tiles.json
+      -i data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif 
+      -o data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
+    deps:
+      - data/sites/DURA_EUROPOS/tiles.json
+      - data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
+    outs:
+      - data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
