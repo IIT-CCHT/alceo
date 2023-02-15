@@ -10,16 +10,20 @@ stages:
     - src/alceo/processing/produce_tiles.py
     outs:
     - data/sites/DURA_EUROPOS/tiles.json
-  rasterize_tiles_DURA_EUROPOS:
-    cmd: python src/alceo/processing/rasterize_tiles.py 
-      -t data/sites/DURA_EUROPOS/tiles.json
-      -i data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif 
-      -a data/sites/DURA_EUROPOS/area_of_interest.geojson
-      -o data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
-    deps:
-      - data/sites/DURA_EUROPOS/tiles.json
-      - data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
-      - data/sites/DURA_EUROPOS/area_of_interest.geojson
-      - src/alceo/processing/rasterize_tiles.py
-    outs:
-      - data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
+  tilize_image:
+    foreach:
+      - site: DURA_EUROPOS
+        image: DE_19_09_2014/DE_19_09_2014_NN_diffuse
+      - site: DURA_EUROPOS
+        image: DE_26_5_2013/DE_26_5_2013_NN_diffuse
+    do:
+      cmd: python src/alceo/processing/rasterize_tiles.py 
+          -t data/sites/${item.site}/tiles.json
+          -i data/sites/${item.site}/images/${item.image}.tif 
+          -a data/sites/${item.site}/area_of_interest.geojson
+          -o data/sites/${item.site}/tiles/${item.image}
+      deps:
+        - src/alceo/processing/rasterize_tiles.py
+        - data/sites/${item.site}/tiles.json
+        - data/sites/${item.site}/images/${item.image}.tif
+        - data/sites/${item.site}/area_of_interest.geojson
