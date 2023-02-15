@@ -62,46 +62,47 @@ def produce_tiles(
     tiles_gdf = gpd.GeoDataFrame(_tiles_data, geometry=_tiles_geoms, crs=_crs)
     tiles_gdf.to_file(output_geojson_path, index=False, driver="GeoJSON")
 
+if __name__ == '__main__':
+    if not in_notebook():
+        parser = ArgumentParser(
+            "change_from_annotations.py",
+            description="""
+    Given a GeoJSON containing geometrical features describing pits location for various dates (in a field called Day_Month_Year with dd/mm/YYYY format).
+    Compute the pits that appeared, disappeared and persisted between two dates.
+    """,
+        )
+        parser.add_argument(
+            "-i",
+            "--input_paths",
+            nargs="+",
+            type=Path,
+            help="Input GeoJSON containing the geometries of the annotations done on the various images.",
+            required=True,
+        )
+        parser.add_argument(
+            "-o",
+            "--output_geojson_path",
+            type=Path,
+            help="The output directory where the `.appeared`, `.disappeared` and `.persisted` features will be saved. Defaults to current directory.",
+            default="./tiles.json",
+        )
+        parser.add_argument(
+            "-p",
+            "--tile_prefix",
+            type=Path,
+            help="Prefix used for generating tile id. Defaults to 'tile_'.",
+            default="tile_",
+        )
 
-if not in_notebook():
-    parser = ArgumentParser(
-        "change_from_annotations.py",
-        description="""
-Given a GeoJSON containing geometrical features describing pits location for various dates (in a field called Day_Month_Year with dd/mm/YYYY format).
-Compute the pits that appeared, disappeared and persisted between two dates.
-""",
-    )
-    parser.add_argument(
-        "-i",
-        "--input_paths",
-        nargs="+",
-        type=Path,
-        help="Input GeoJSON containing the geometries of the annotations done on the various images.",
-        required=True,
-    )
-    parser.add_argument(
-        "-o",
-        "--output_geojson_path",
-        type=Path,
-        help="The output directory where the `.appeared`, `.disappeared` and `.persisted` features will be saved. Defaults to current directory.",
-        default="./tiles.json",
-    )
-    parser.add_argument(
-        "-p",
-        "--tile_prefix",
-        type=Path,
-        help="Prefix used for generating tile id. Defaults to 'tile_'.",
-        default="tile_",
-    )
-
-    args = parser.parse_args()
-    input_paths = args.input_paths
-    output_geojson_path = args.output_geojson_path
-    tile_prefix = args.tile_prefix
-else:
-    input_paths = [
-        "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif",
-        "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif",
-    ]
-    output_geojson_path = "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/tiles.json"
-    tile_prefix = "tile_"
+        args = parser.parse_args()
+        input_paths = args.input_paths
+        output_geojson_path = args.output_geojson_path
+        tile_prefix = args.tile_prefix
+    else:
+        input_paths = [
+            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif",
+            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif",
+        ]
+        output_geojson_path = "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/tiles.json"
+        tile_prefix = "tile_"
+    produce_tiles(input_paths, output_geojson_path, tile_prefix)
