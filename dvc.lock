@@ -29,8 +29,11 @@ stages:
     - path: data/sites/DURA_EUROPOS/tiles.json
       md5: 17d2d670c2da8fdf98b123152bd92d54
       size: 178170
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: f73d37edc7548140989232a77ce10ec6
+      size: 3978
     outs:
     - path: data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
-      md5: 55522e58aca98554dd9d04eb8578bed9.dir
+      md5: 4ab63def9235adcf9c6f83058ce7fafa.dir
       size: 1190179494
       nfiles: 567
