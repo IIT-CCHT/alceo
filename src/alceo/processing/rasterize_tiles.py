@@ -49,8 +49,7 @@ def rasterize_tiles(
             resampling=Resampling.bilinear,
         )
 
-        tile_path = output_directory_path / output_filename.format(
-            int(tile_window.col_off), int(tile_window.row_off)
+        tile_path = output_directory_path / output_filename.format(row.tile_id
         )
 
         meta = src.meta.copy()
