@@ -194,3 +194,4 @@ poetry.toml
 # CUSTOM FOR PROJECT
 *_logs
 linked_data
+*.qmd
