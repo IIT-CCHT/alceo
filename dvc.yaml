@@ -18,5 +18,6 @@ stages:
     deps:
       - data/sites/DURA_EUROPOS/tiles.json
       - data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
+      - src/alceo/processing/rasterize_tiles.py 
     outs:
       - data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
