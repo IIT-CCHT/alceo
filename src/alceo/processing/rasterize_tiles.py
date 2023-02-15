@@ -55,9 +55,6 @@ def rasterize_tiles(
             out_shape=(src.count, row.height, row.width),
             resampling=Resampling.bilinear,
         )
-        
-        # if np.any(np.all(res == 0.0, axis=0)): # discard tiles that have pixels with all bands at zero. 
-        #     continue
         # %%
 
         tile_path = output_directory_path / output_filename.format(row.tile_id
@@ -107,6 +104,12 @@ if __name__ == "__main__":
             "--output_directory_path",
             type=Path,
             help="Directory where the tiles GeoTIFFs will be stored.",
+        )
+        parser.add_argument(
+            "-a",
+            "--areas_of_interest_geojson",
+            type=Path,
+            help="GeoJSON containing areas of interest that have to completely cover tiles to be rasterized.",
         )
 
         args = parser.parse_args()
