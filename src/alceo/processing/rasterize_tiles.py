@@ -56,7 +56,7 @@ def rasterize_tiles(
         meta["width"] = row.width
         meta["height"] = row.height
         meta["transform"] = windows.transform(tile_window, src.transform)
-        with rasterio.drivers(CPL_LOG="/dev/null"):
+        with rasterio.Env(CPL_LOG="/dev/null"):
             with rasterio.open(tile_path, "w", **meta) as out:
                 out.write(res)
 
