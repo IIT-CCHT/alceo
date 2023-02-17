@@ -79,6 +79,11 @@ stages:
     - path: src/alceo/processing/rasterize_tiles.py
       md5: e77a6f9ca5ac7d84726ff0b84df5ad17
       size: 5081
+    outs:
+    - path: data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
+      md5: cbec4188df97b533faae4bbc55db96a8.dir
+      size: 839632800
+      nfiles: 400
   tilize_image@1:
     cmd: python src/alceo/processing/rasterize_tiles.py -t data/sites/DURA_EUROPOS/tiles.json
       -i data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif -a
@@ -96,3 +101,24 @@ stages:
     - path: src/alceo/processing/rasterize_tiles.py
       md5: e77a6f9ca5ac7d84726ff0b84df5ad17
       size: 5081
+    outs:
+    - path: data/sites/DURA_EUROPOS/tiles/DE_26_5_2013/DE_26_5_2013_NN_diffuse
+      md5: ba4ff4d04c9982edfda9d618327c1923.dir
+      size: 839632800
+      nfiles: 400
+  change_annotations_DE_26_5_2013_DE_19_09_2014:
+    cmd: python src/alceo/processing/change_from_annotations.py -i data/sites/DURA_EUROPOS/annotations/pits.geojson
+      -f 26/5/2013 -s 19/09/2014 -o data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/vectorial
+      --crs EPSG:32637
+    deps:
+    - path: data/sites/DURA_EUROPOS/annotations/pits.geojson
+      md5: 0a6adb41e885688ff236df0524ad611b
+      size: 2727276
+    - path: src/alceo/processing/change_from_annotations.py
+      md5: 709b58d7f45e1e8f131c3ed0c14c2d2e
+      size: 6581
+    outs:
+    - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/vectorial
+      md5: 12153c8eea2a3edcb98907080521658e.dir
+      size: 3295400
+      nfiles: 3

@@ -29,3 +29,56 @@
     With this consideration in mind I've changed the structure of the data folder and created a sub-dir called `sites` in which each site will get a directory that will be `dvc add`ed.
 
 7. I've created the `data/sites/DURA_EUROPOS` directory and put inside the previously created `annotations` directory. I've also created the `images` directory and placed `DE_19_09_2014` and `DE_26_5_2013` images that were given to me by Maria Cristina.
+8. I'm putting together the full pipeline using DVC
+    Tile featurization:
+
+    ```
+    python src/alceo/processing/produce_tiles.py \
+    -i data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif \
+    -i /HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif \
+    -o data/sites/DURA_EUROPOS/tiles.json -p DURA_EUROPOS_
+    ```
+    Tile rasterization:
+
+    ```
+    python src/alceo/processing/rasterize_tiles.py \
+        -t data/sites/DURA_EUROPOS/tiles.json \
+        -i data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif \
+        -o data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse
+    ```
+
+9. I've integrated the area of interest in tile rasterization and was able to apply [foreach stages](https://dvc.org/doc/user-guide/project-structure/dvcyaml-files#foreach-stages) to this pipeline stage obtaining the following `dvc.yaml` file:  
+
+    ```  
+    stages:
+    produce_tiles_DURA_EUROPOS:
+        cmd: python src/alceo/processing/produce_tiles.py 
+        -i data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
+        -i /HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
+        -o data/sites/DURA_EUROPOS/tiles.json -p DURA_EUROPOS_
+        deps:
+        - data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
+        - data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
+        - src/alceo/processing/produce_tiles.py
+        outs:
+        - data/sites/DURA_EUROPOS/tiles.json
+    tilize_image:
+        foreach:
+        - site: DURA_EUROPOS
+            image: DE_19_09_2014/DE_19_09_2014_NN_diffuse
+        - site: DURA_EUROPOS
+            image: DE_26_5_2013/DE_26_5_2013_NN_diffuse
+        do:
+        cmd: python src/alceo/processing/rasterize_tiles.py 
+            -t data/sites/${item.site}/tiles.json
+            -i data/sites/${item.site}/images/${item.image}.tif 
+            -a data/sites/${item.site}/area_of_interest.geojson
+            -o data/sites/${item.site}/tiles/${item.image}
+        deps:
+            - src/alceo/processing/rasterize_tiles.py
+            - data/sites/${item.site}/tiles.json
+            - data/sites/${item.site}/images/${item.image}.tif
+            - data/sites/${item.site}/area_of_interest.geojson
+    ```
+
+    I was unable to parametrize the deps for the `produce_tiles` stage. This needs more studying as I'm not sure how to parametrize a list of parameters for a command plus parametrizing a list of dependencies.

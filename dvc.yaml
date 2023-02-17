@@ -5,11 +5,11 @@ stages:
       -i /HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
       -o data/sites/DURA_EUROPOS/tiles.json -p DURA_EUROPOS_
     deps:
-    - data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
-    - data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
-    - src/alceo/processing/produce_tiles.py
+      - data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
+      - data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
+      - src/alceo/processing/produce_tiles.py
     outs:
-    - data/sites/DURA_EUROPOS/tiles.json
+      - data/sites/DURA_EUROPOS/tiles.json
   tilize_image:
     foreach:
       - site: DURA_EUROPOS
@@ -27,3 +27,38 @@ stages:
         - data/sites/${item.site}/tiles.json
         - data/sites/${item.site}/images/${item.image}.tif
         - data/sites/${item.site}/area_of_interest.geojson
+      outs:
+        - data/sites/${item.site}/tiles/${item.image}
+
+  change_annotations_DE_26_5_2013_DE_19_09_2014:
+    cmd: python src/alceo/processing/change_from_annotations.py 
+      -i data/sites/DURA_EUROPOS/annotations/pits.geojson 
+      -f 26/5/2013 -s 19/09/2014 
+      -o data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/vectorial
+      --crs EPSG:32637
+    deps:
+      - src/alceo/processing/change_from_annotations.py
+      - data/sites/DURA_EUROPOS/annotations/pits.geojson
+    outs:
+      - data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/vectorial
+
+  rasterize_change:
+    foreach:
+      - change: DE_26_5_2013/DE_19_09_2014
+        base_image: data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
+        change_kind: pits.appeared
+        site: DURA_EUROPOS
+      - change: DE_26_5_2013/DE_19_09_2014
+        base_image: data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
+        change_kind: pits.disappeared
+        site: DURA_EUROPOS
+    do:
+      cmd: rio rasterize data/sites/${item.site}/change/${item.change}/vectorial/${item.change_kind}.geojson 
+        --like ${item.base_image} 
+        --output data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}.geojson.tif
+      deps:
+        - data/sites/${item.site}/change/${item.change}/vectorial/${item.change_kind}.geojson
+        - ${item.base_image}
+      outs:
+        - data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}.geojson.tif
+        
