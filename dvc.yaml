@@ -53,12 +53,12 @@ stages:
         change_kind: pits.disappeared
         site: DURA_EUROPOS
     do:
-      cmd: rio rasterize data/sites/${item.site}/change/${item.change}/vectorial/${item.change_kind}.geojson 
+      cmd: mkdir -p data/sites/${item.site}/change/${item.change}/raster/ & rio rasterize data/sites/${item.site}/change/${item.change}/vectorial/${item.change_kind}.geojson 
         --like ${item.base_image} 
-        --output data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}.geojson.tif
+        --output data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}.tif
       deps:
         - data/sites/${item.site}/change/${item.change}/vectorial/${item.change_kind}.geojson
         - ${item.base_image}
       outs:
-        - data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}.geojson.tif
+        - data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}.tif
         
