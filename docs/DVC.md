@@ -81,4 +81,9 @@
             - data/sites/${item.site}/area_of_interest.geojson
     ```
 
-    I was unable to parametrize the deps for the `produce_tiles` stage. This needs more studying as I'm not sure how to parametrize a list of parameters for a command plus parametrizing a list of dependencies.
+    I was unable to parametrize the deps for the `produce_tiles` stage. This needs more studying as I'm not sure how to parametrize a list of parameters for a command plus parametrizing a list of dependencies.  
+    
+10. I've created the `change_annotations` stage using `foreach` so that we can produce automatically more stages by defining what changes we are interested in.  
+    TODO: once the pipeline is done I should try to move all the various parametrizations outside of the loops itselfs. Maybe using a [parameters file](https://dvc.org/doc/user-guide/project-structure/dvcyaml-files#parameters-files)?  
+
+11. `rasterize_change` was also added to the pipeline and uses a foreach. This stage does not depend on my code, it uses `mkdir -p` to create the folder in which rasters will be generated (if needed) and then runs `rio rasterize ...`.  

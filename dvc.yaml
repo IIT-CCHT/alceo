@@ -1,13 +1,17 @@
+vars:
+  - DURA_EUROPOS:
+      images: 
+      - data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
+      - data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
 stages:
   produce_tiles_DURA_EUROPOS:
     cmd: python src/alceo/processing/produce_tiles.py 
-      -i data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
-      -i /HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
+      -i ${DURA_EUROPOS.images[0]} ${DURA_EUROPOS.images[1]}
       -o data/sites/DURA_EUROPOS/tiles.json -p DURA_EUROPOS_
     deps:
-      - data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
-      - data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
       - src/alceo/processing/produce_tiles.py
+      - ${DURA_EUROPOS.images[0]}
+      - ${DURA_EUROPOS.images[1]}
     outs:
       - data/sites/DURA_EUROPOS/tiles.json
   tilize_image:
@@ -30,17 +34,28 @@ stages:
       outs:
         - data/sites/${item.site}/tiles/${item.image}
 
-  change_annotations_DE_26_5_2013_DE_19_09_2014:
-    cmd: python src/alceo/processing/change_from_annotations.py 
-      -i data/sites/DURA_EUROPOS/annotations/pits.geojson 
-      -f 26/5/2013 -s 19/09/2014 
-      -o data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/vectorial
-      --crs EPSG:32637
-    deps:
-      - src/alceo/processing/change_from_annotations.py
-      - data/sites/DURA_EUROPOS/annotations/pits.geojson
-    outs:
-      - data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/vectorial
+  change_annotations:
+    foreach:
+      - change: DE_26_5_2013/DE_19_09_2014
+        first:
+          date: 26/5/2013
+          image_folder: DE_26_5_2013
+        second:
+          date: 19/09/2014
+          image_folder: DE_19_09_2014
+        site: DURA_EUROPOS
+        crs: "EPSG:32637"
+    do:
+      cmd: python src/alceo/processing/change_from_annotations.py 
+        -i data/sites/${item.site}/annotations/pits.geojson 
+        -f ${item.first.date} -s ${item.second.date}
+        -o data/sites/${item.site}/change/${item.first.image_folder}/${item.second.image_folder}/vectorial
+        --crs ${item.crs}
+      deps:
+        - src/alceo/processing/change_from_annotations.py
+        - data/sites/${item.site}/annotations/pits.geojson
+      outs:
+        - data/sites/${item.site}/change/${item.first.image_folder}/${item.second.image_folder}/vectorial
 
   rasterize_change:
     foreach:
