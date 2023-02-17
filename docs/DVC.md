@@ -14,8 +14,6 @@
     And I've experimented with `dvc push` and it saves a copy of `.dvc/cache/` content on the remote. 
     I've used `dvc pull` after deleting both `data/annotations` and `.dvc/cache`. It gets copied correctly from the remote.
 
-    <!-- TODO: investigate dvc pull by pipeline stage. --> I should investigate if by using `dvc pull <pipeline stage>` I get only the data needed by that stage or all the remote data.
-
 5. I've made a pipeline stage that computes changes from pits annotations of DURA (Dura Europhos) site. As a reference the command from bash is:
     ``` 
     python scripts/processing/change_from_annotations.py -i data/annotations/DURA/pits.geojson -o data/change/DURA -f 26/5/2013 -s 19/09/2014
@@ -82,8 +80,12 @@
     ```
 
     I was unable to parametrize the deps for the `produce_tiles` stage. This needs more studying as I'm not sure how to parametrize a list of parameters for a command plus parametrizing a list of dependencies.  
-    
+
 10. I've created the `change_annotations` stage using `foreach` so that we can produce automatically more stages by defining what changes we are interested in.  
     TODO: once the pipeline is done I should try to move all the various parametrizations outside of the loops itselfs. Maybe using a [parameters file](https://dvc.org/doc/user-guide/project-structure/dvcyaml-files#parameters-files)?  
 
 11. `rasterize_change` was also added to the pipeline and uses a foreach. This stage does not depend on my code, it uses `mkdir -p` to create the folder in which rasters will be generated (if needed) and then runs `rio rasterize ...`.  
+
+12. Started working on full pipeline parametrization. It seems like I cannot unpack a list into `stage.deps`. This means that I have to re-think about `produce_tiles`. New strategy will be getting a single raster (a la `rio rasterize --like`), the `area_of_interest` GeoJSON and use them to produce the vectorial tiles.
+    - Pro: rasterize_tile does not need to handle filtering.
+    - Con: I cannot be sure that the area of interest covers ALL future images unless I "intersect" the area of interest with the images bounds before creating the tiles. This could be problematic because I would need to create an intermediate "true area of interest" file.

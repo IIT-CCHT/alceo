@@ -76,4 +76,24 @@ stages:
         - ${item.base_image}
       outs:
         - data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}.tif
-        
+  tilize_change:
+    foreach:
+      - change: DE_26_5_2013/DE_19_09_2014
+        change_kind: pits.appeared
+        site: DURA_EUROPOS
+      - change: DE_26_5_2013/DE_19_09_2014
+        change_kind: pits.disappeared
+        site: DURA_EUROPOS
+    do:
+      cmd: mkdir -p data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}/tiles & python src/alceo/processing/rasterize_tiles.py 
+        -t data/sites/${item.site}/tiles.json
+        -i data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}.tif 
+        -a data/sites/${item.site}/area_of_interest.geojson
+        -o data/sites/${item.site}/change/${item.change}/raster/tiles
+      deps:
+        - src/alceo/processing/rasterize_tiles.py
+        - data/sites/${item.site}/tiles.json
+        - data/sites/${item.site}/area_of_interest.geojson
+        - data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}.tif
+      outs:
+        - data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}/tiles

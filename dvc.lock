@@ -170,3 +170,49 @@ stages:
       md5: 12153c8eea2a3edcb98907080521658e.dir
       size: 3295400
       nfiles: 3
+  tilize_change@0:
+    cmd: mkdir -p data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared/tiles
+      & python src/alceo/processing/rasterize_tiles.py -t data/sites/DURA_EUROPOS/tiles.json
+      -i data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared.tif
+      -a data/sites/DURA_EUROPOS/area_of_interest.geojson -o data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/tiles
+    deps:
+    - path: data/sites/DURA_EUROPOS/area_of_interest.geojson
+      md5: 6db7aa1ffe2fc97f118167209b908975
+      size: 1107
+    - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared.tif
+      md5: b502f0705339177c6a49169bf065275d
+      size: 296967600
+    - path: data/sites/DURA_EUROPOS/tiles.json
+      md5: 271794011c0c5686aa8999d22e1e465d
+      size: 178170
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
+      size: 5081
+    outs:
+    - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared/tiles
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
+  tilize_change@1:
+    cmd: mkdir -p data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared/tiles
+      & python src/alceo/processing/rasterize_tiles.py -t data/sites/DURA_EUROPOS/tiles.json
+      -i data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared.tif
+      -a data/sites/DURA_EUROPOS/area_of_interest.geojson -o data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/tiles
+    deps:
+    - path: data/sites/DURA_EUROPOS/area_of_interest.geojson
+      md5: 6db7aa1ffe2fc97f118167209b908975
+      size: 1107
+    - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared.tif
+      md5: 3b32c1afd6890b8ab119ebf253eaec5a
+      size: 296967600
+    - path: data/sites/DURA_EUROPOS/tiles.json
+      md5: 271794011c0c5686aa8999d22e1e465d
+      size: 178170
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
+      size: 5081
+    outs:
+    - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared/tiles
+      md5: d751713988987e9331980363e24189ce.dir
+      size: 0
+      nfiles: 0
