@@ -1,19 +1,27 @@
 vars:
-  - DURA_EUROPOS:
-      images: 
-      - data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
-      - data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
+  - sites:
+      - site_name: DURA_EUROPOS
+        images: 
+        - name: DE_19_09_2014/DE_19_09_2014_NN_diffuse
+          site_name: DURA_EUROPOS # VERY BAD!!! NORMALIZATION PROBLEM!!! NEEDS REFACTORING
+        - name: DE_26_5_2013/DE_26_5_2013_NN_diffuse
+          site_name: DURA_EUROPOS
+        tile_prefix: DURA_EUROPOS_
 stages:
-  produce_tiles_DURA_EUROPOS:
-    cmd: python src/alceo/processing/produce_tiles.py 
-      -i ${DURA_EUROPOS.images[0]} ${DURA_EUROPOS.images[1]}
-      -o data/sites/DURA_EUROPOS/tiles.json -p DURA_EUROPOS_
-    deps:
-      - src/alceo/processing/produce_tiles.py
-      - ${DURA_EUROPOS.images[0]}
-      - ${DURA_EUROPOS.images[1]}
-    outs:
-      - data/sites/DURA_EUROPOS/tiles.json
+  produce_tiles:
+    foreach: ${sites}
+    do:
+      cmd: python src/alceo/processing/produce_tiles.py 
+        -i data/sites/${item.site_name}/images/${item.images[0].name}.tif
+        -p ${item.tile_prefix}
+        -a data/sites/${item.site_name}/area_of_interest.geojson
+        -o data/sites/${item.site_name}/tiles.json 
+      deps:
+        - src/alceo/processing/produce_tiles.py
+        - data/sites/${item.site_name}/images/${item.images[0].name}.tif
+        - data/sites/${item.site_name}/area_of_interest.geojson
+      outs:
+        - data/sites/${item.site_name}/tiles.json 
   tilize_image:
     foreach:
       - site: DURA_EUROPOS
@@ -24,13 +32,11 @@ stages:
       cmd: python src/alceo/processing/rasterize_tiles.py 
           -t data/sites/${item.site}/tiles.json
           -i data/sites/${item.site}/images/${item.image}.tif 
-          -a data/sites/${item.site}/area_of_interest.geojson
           -o data/sites/${item.site}/tiles/${item.image}
       deps:
         - src/alceo/processing/rasterize_tiles.py
         - data/sites/${item.site}/tiles.json
         - data/sites/${item.site}/images/${item.image}.tif
-        - data/sites/${item.site}/area_of_interest.geojson
       outs:
         - data/sites/${item.site}/tiles/${item.image}
 
@@ -38,7 +44,7 @@ stages:
     foreach:
       - change: DE_26_5_2013/DE_19_09_2014
         first:
-          date: 26/5/2013
+          date: 26/05/2013
           image_folder: DE_26_5_2013
         second:
           date: 19/09/2014
@@ -89,7 +95,7 @@ stages:
         -t data/sites/${item.site}/tiles.json
         -i data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}.tif 
         -a data/sites/${item.site}/area_of_interest.geojson
-        -o data/sites/${item.site}/change/${item.change}/raster/tiles
+        -o data/sites/${item.site}/change/${item.change}/raster/${item.change_kind}/tiles
       deps:
         - src/alceo/processing/rasterize_tiles.py
         - data/sites/${item.site}/tiles.json
