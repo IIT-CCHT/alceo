@@ -1,3 +1,6 @@
+# This dvc.yaml file contains the pipeline description for processing a single 
+# site as well as the configuration variables for the DURA_EUROPOS site.
+
 vars:
   - site_name: DURA_EUROPOS
   - images:

@@ -1,9 +1,0 @@
-vars:
-  - sites:
-      - site_name: DURA_EUROPOS
-        images: 
-        - name: DE_19_09_2014/DE_19_09_2014_NN_diffuse
-          site_name: DURA_EUROPOS # VERY BAD!!! NORMALIZATION PROBLEM!!! NEEDS REFACTORING
-        - name: DE_26_5_2013/DE_26_5_2013_NN_diffuse
-          site_name: DURA_EUROPOS
-        tile_prefix: DURA_EUROPOS_
