@@ -1,0 +1,97 @@
+vars:
+  - site_name: DURA_EUROPOS
+  - images:
+      - name: DE_26_5_2013/DE_26_5_2013_NN_diffuse
+      - name: DE_19_09_2014/DE_19_09_2014_NN_diffuse
+  - tile_prefix: DURA_EUROPOS_
+  - change_steps:
+      - change: DE_26_5_2013/DE_19_09_2014
+        crs: "EPSG:32637"
+        first:
+          date: 26/05/2013
+          image_folder: DE_26_5_2013
+        second:
+          date: 19/09/2014
+          image_folder: DE_19_09_2014
+  - change_kinds:
+      - change: DE_26_5_2013/DE_19_09_2014
+        base_image: DE_26_5_2013/DE_26_5_2013_NN_diffuse
+        kind: pits.appeared
+      - change: DE_26_5_2013/DE_19_09_2014
+        base_image: DE_26_5_2013/DE_26_5_2013_NN_diffuse
+        kind: pits.disappeared
+stages:
+  produce_vectorial_tiles:
+    wdir: ../../../.
+    cmd: python src/alceo/processing/produce_tiles.py
+      -i data/sites/${site_name}/images/${images[0].name}.tif
+      -p ${tile_prefix}
+      -a data/sites/${site_name}/area_of_interest.geojson
+      -o data/sites/${site_name}/tiles.json
+    deps:
+      - src/alceo/processing/produce_tiles.py
+      - data/sites/${site_name}/images/${images[0].name}.tif
+      - data/sites/${site_name}/area_of_interest.geojson
+    outs:
+      - data/sites/${site_name}/tiles.json
+  tilize_image:
+    foreach: ${images}
+    do:
+      wdir: ../../../.
+      cmd: python src/alceo/processing/rasterize_tiles.py
+        -t data/sites/${site_name}/tiles.json
+        -i data/sites/${site_name}/images/${item.name}.tif
+        -o data/sites/${site_name}/tiles/${item.name}
+      deps:
+        - src/alceo/processing/rasterize_tiles.py
+        - data/sites/${site_name}/tiles.json
+        - data/sites/${site_name}/images/${item.name}.tif
+      outs:
+        - data/sites/${site_name}/tiles/${item.name}
+  produce_vectorial_change:
+    foreach: ${change_steps}
+    do:
+      wdir: ../../../.
+      cmd: python src/alceo/processing/change_from_annotations.py
+        -i data/sites/${site_name}/annotations/pits.geojson
+        -f ${item.first.date} -s ${item.second.date}
+        -o data/sites/${site_name}/change/${item.first.image_folder}/${item.second.image_folder}/vectorial
+        --crs ${item.crs}
+      deps:
+        - src/alceo/processing/change_from_annotations.py
+        - data/sites/${site_name}/annotations/pits.geojson
+      outs:
+        - data/sites/${site_name}/change/${item.first.image_folder}/${item.second.image_folder}/vectorial
+  rasterize_change:
+    foreach: ${change_kinds}
+    do:
+      wdir: ../../../.
+      cmd:
+        - mkdir -p data/sites/${site_name}/change/${item.change}/raster/
+        - rio rasterize
+          data/sites/${site_name}/change/${item.change}/vectorial/${item.kind}.geojson
+          --like data/sites/${site_name}/images/${item.base_image}.tif
+          --output data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif
+      deps:
+        - data/sites/${site_name}/change/${item.change}/vectorial/${item.kind}.geojson
+        - data/sites/${site_name}/images/${item.base_image}.tif
+      outs:
+        - data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif
+  tilize_change:
+    foreach: ${change_kinds}
+    do:
+      wdir: ../../../.
+      cmd: 
+        - mkdir -p data/sites/${site_name}/change/${item.change}/raster/${item.kind}/tiles
+        - python src/alceo/processing/rasterize_tiles.py 
+          -t data/sites/${site_name}/tiles.json
+          -i data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif 
+          -a data/sites/${site_name}/area_of_interest.geojson
+          -o data/sites/${site_name}/change/${item.change}/raster/${item.kind}/tiles
+      deps:
+        - src/alceo/processing/rasterize_tiles.py
+        - data/sites/${site_name}/tiles.json
+        - data/sites/${site_name}/area_of_interest.geojson
+        - data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif
+      outs:
+        - data/sites/${site_name}/change/${item.change}/raster/${item.kind}/tiles
