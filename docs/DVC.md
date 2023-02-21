@@ -89,3 +89,46 @@
 12. Started working on full pipeline parametrization. It seems like I cannot unpack a list into `stage.deps`. This means that I have to re-think about `produce_tiles`. New strategy will be getting a single raster (a la `rio rasterize --like`), the `area_of_interest` GeoJSON and use them to produce the vectorial tiles.
     - Pro: rasterize_tile does not need to handle filtering.
     - Con: I cannot be sure that the area of interest covers ALL future images unless I "intersect" the area of interest with the images bounds before creating the tiles. This could be problematic because I would need to create an intermediate "true area of interest" file.
+13. I've implemented the `areas_of_interest` in tiles vectorial representation. Also, I've parametrized successfuly the pipeline for DURA_EUROPOS with minimal de-normalization. Right now I had to split `change_steps` and `change_kinds` into two sub-arrays. They are strongly linked by a `change` identifier. In needed, to avoid this de-normalization I should collapse `change_kind` by re-making `change_from_annotations.py` and `rasterize_change` by modeling a single GeoJSON for the various `change_kind`. However it doesn't make much sense to do this kind of change.
+
+14. I've implemented a script to move the generated data into the correct dataset's site folder for the `pits` dataset.
+The current `dvc dag` is:
+```mermaid
+flowchart TD
+        node1["data/sites/DURA_EUROPOS/annotations.dvc"]
+        node2["data/sites/DURA_EUROPOS/area_of_interest.geojson.dvc"]
+        node3["data/sites/DURA_EUROPOS/dvc.yaml:produce_vectorial_change@0"]
+        node4["data/sites/DURA_EUROPOS/dvc.yaml:produce_vectorial_tiles"]
+        node5["data/sites/DURA_EUROPOS/dvc.yaml:rasterize_change@0"]
+        node6["data/sites/DURA_EUROPOS/dvc.yaml:rasterize_change@1"]
+        node7["data/sites/DURA_EUROPOS/dvc.yaml:tilize_change@0"]
+        node8["data/sites/DURA_EUROPOS/dvc.yaml:tilize_change@1"]
+        node9["data/sites/DURA_EUROPOS/dvc.yaml:tilize_image@0"]
+        node10["data/sites/DURA_EUROPOS/dvc.yaml:tilize_image@1"]
+        node11["data/sites/DURA_EUROPOS/images.dvc"]
+        node12["dataset/pits/dvc.yaml:build_DURA_EUROPOS"]
+        node1-->node3
+        node2-->node4
+        node2-->node7
+        node2-->node8
+        node3-->node5
+        node3-->node6
+        node3-->node12
+        node4-->node7
+        node4-->node8
+        node4-->node9
+        node4-->node10
+        node5-->node7
+        node5-->node12
+        node6-->node8
+        node6-->node12
+        node7-->node12
+        node8-->node12
+        node9-->node12
+        node10-->node12
+        node11-->node4
+        node11-->node5
+        node11-->node6
+        node11-->node9
+        node11-->node10
+```
