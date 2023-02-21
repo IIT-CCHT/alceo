@@ -91,12 +91,10 @@ stages:
         - python src/alceo/processing/rasterize_tiles.py 
           -t data/sites/${site_name}/tiles.geojson
           -i data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif 
-          -a data/sites/${site_name}/area_of_interest.geojson
           -o data/sites/${site_name}/change/${item.change}/raster/${item.kind}/tiles
       deps:
         - src/alceo/processing/rasterize_tiles.py
         - data/sites/${site_name}/tiles.geojson
-        - data/sites/${site_name}/area_of_interest.geojson
         - data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif
       outs:
         - data/sites/${site_name}/change/${item.change}/raster/${item.kind}/tiles

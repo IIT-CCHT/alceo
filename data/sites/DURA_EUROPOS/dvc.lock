@@ -74,11 +74,8 @@ stages:
     - mkdir -p data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared/tiles
     - python src/alceo/processing/rasterize_tiles.py -t data/sites/DURA_EUROPOS/tiles.geojson
       -i data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared.tif
-      -a data/sites/DURA_EUROPOS/area_of_interest.geojson -o data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared/tiles
+      -o data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared/tiles
     deps:
-    - path: data/sites/DURA_EUROPOS/area_of_interest.geojson
-      md5: 6db7aa1ffe2fc97f118167209b908975
-      size: 1107
     - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared.tif
       md5: e495d8feeb4071cf4ec9e0aa9a203151
       size: 296967600
@@ -134,11 +131,8 @@ stages:
     - mkdir -p data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared/tiles
     - python src/alceo/processing/rasterize_tiles.py -t data/sites/DURA_EUROPOS/tiles.geojson
       -i data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared.tif
-      -a data/sites/DURA_EUROPOS/area_of_interest.geojson -o data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared/tiles
+      -o data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared/tiles
     deps:
-    - path: data/sites/DURA_EUROPOS/area_of_interest.geojson
-      md5: 6db7aa1ffe2fc97f118167209b908975
-      size: 1107
     - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared.tif
       md5: 4d27bcdc6909241d1ee336c8e9b20ea0
       size: 296967600

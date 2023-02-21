@@ -91,7 +91,7 @@
     - Con: I cannot be sure that the area of interest covers ALL future images unless I "intersect" the area of interest with the images bounds before creating the tiles. This could be problematic because I would need to create an intermediate "true area of interest" file.
 13. I've implemented the `areas_of_interest` in tiles vectorial representation. Also, I've parametrized successfuly the pipeline for DURA_EUROPOS with minimal de-normalization. Right now I had to split `change_steps` and `change_kinds` into two sub-arrays. They are strongly linked by a `change` identifier. In needed, to avoid this de-normalization I should collapse `change_kind` by re-making `change_from_annotations.py` and `rasterize_change` by modeling a single GeoJSON for the various `change_kind`. However it doesn't make much sense to do this kind of change.
 
-14. I've implemented a script to move the generated data into the correct dataset's site folder for the `pits` dataset.
+14. I've implemented a script to move the generated data into the correct dataset's site folder for the `pits` dataset. I've also removed the remaining references to areas_of_interest.geojson into rasterize_change.
 The current `dvc dag` is:
 ```mermaid
 flowchart TD
@@ -109,8 +109,6 @@ flowchart TD
         node12["dataset/pits/dvc.yaml:build_DURA_EUROPOS"]
         node1-->node3
         node2-->node4
-        node2-->node7
-        node2-->node8
         node3-->node5
         node3-->node6
         node3-->node12
