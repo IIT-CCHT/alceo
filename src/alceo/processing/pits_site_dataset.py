@@ -1,7 +1,9 @@
 # %%
-from argparse import ArgumentParser
 import shutil
 import os
+import geopandas as gpd
+import pandas as pd
+from argparse import ArgumentParser
 from pathlib import Path
 from glob import glob
 
@@ -26,17 +28,73 @@ def pits_site_dataset(site_data_path: Path, output_path: Path):
     assert output_path.exists(), f"Provided output path does not exists ({output_path})"
 
     # %%
-
+    vectorial_gdf = None
+    _change_tiles_meta = []
     for cs_dir in os.scandir(change_folder_path):
+        if not cs_dir.is_dir():
+            continue
         change_start_dir = cs_dir.name
         for ce_dir in os.scandir(change_folder_path / change_start_dir):
+            if not ce_dir.is_dir():
+                continue
             change_end_dir = ce_dir.name
+
+            vec_appeared = gpd.read_file(
+                change_folder_path
+                / change_start_dir
+                / change_end_dir
+                / "vectorial"
+                / "pits.appeared.geojson"
+            )
+            vec_appeared["change_kind"] = "pits.appeared"
+
+            vec_disappeared = gpd.read_file(
+                change_folder_path
+                / change_start_dir
+                / change_end_dir
+                / "vectorial"
+                / "pits.disappeared.geojson"
+            )
+            vec_disappeared["change_kind"] = "pits.disappeared"
+
+            vec_ = gpd.GeoDataFrame(
+                pd.concat([vec_appeared, vec_disappeared], ignore_index=True),
+            )
+            change = f"{change_start_dir}-{change_end_dir}"
+            vec_["change"] = change
+
+            if vectorial_gdf is None:
+                vectorial_gdf = vec_
+            else:
+                vectorial_gdf = gpd.GeoDataFrame(
+                    pd.concat([vectorial_gdf, vec_], ignore_index=True)
+                )
+
             change_kind = "pits.appeared"
-            raster_glob_string = str(change_folder_path / change_start_dir / change_end_dir / "raster" / change_kind / "tiles" / "*.tif")
+            raster_glob_string = str(
+                change_folder_path
+                / change_start_dir
+                / change_end_dir
+                / "raster"
+                / change_kind
+                / "tiles"
+                / "*.tif"
+            )
+
             for tile_path in glob(raster_glob_string):
                 tile_path = Path(tile_path)
-            # %%
-                out_filename = "-".join([change_start_dir, change_end_dir, tile_path.name])
+                # %%
+                out_filename = "-".join(
+                    [change_start_dir, change_end_dir, tile_path.name]
+                )
+                _change_tiles_meta.append(
+                    {
+                        "change": change,
+                        "change_start": change_start_dir,
+                        "change_end": change_end_dir,
+                        "tile_name": out_filename,
+                    }
+                )
 
                 im1_in_path = tiles_folder_path / change_start_dir / tile_path.name
                 im1_out_path = output_path / "im1" / out_filename
@@ -44,9 +102,8 @@ def pits_site_dataset(site_data_path: Path, output_path: Path):
                 im2_in_path = tiles_folder_path / change_end_dir / tile_path.name
                 im2_out_path = output_path / "im2" / out_filename
 
-                app_out_path = output_path / "pits.appeared" / out_filename 
-                disapp_out_path = output_path / "pits.disappeared" / out_filename 
-
+                app_out_path = output_path / "pits.appeared" / out_filename
+                disapp_out_path = output_path / "pits.disappeared" / out_filename
 
                 os.makedirs(im1_out_path.parent, exist_ok=True)
                 shutil.copy2(im1_in_path, im1_out_path)
@@ -59,7 +116,9 @@ def pits_site_dataset(site_data_path: Path, output_path: Path):
 
                 os.makedirs(disapp_out_path.parent, exist_ok=True)
                 shutil.copy2(tile_path, disapp_out_path)
-
+    vectorial_gdf.to_file(output_path / "vectorial.geojson", index=False, driver="GeoJSON")
+    pd.DataFrame(_change_tiles_meta).to_csv(output_path / "tiles_meta.csv", index=False)
+    
 
 if __name__ == "__main__":
     # %%
@@ -84,7 +143,6 @@ if __name__ == "__main__":
             help="Output folder path.",
             required=True,
         )
-        
 
         args = parser.parse_args()
         site_path = args.site_path

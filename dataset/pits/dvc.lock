@@ -15,10 +15,10 @@ stages:
       size: 1679265629
       nfiles: 801
     - path: src/alceo/processing/pits_site_dataset.py
-      md5: e4cbde0b57a3ef0ac726eb754cb9653c
-      size: 3337
+      md5: d54a73c4483cdd6cd784b4d245ccea1b
+      size: 5254
     outs:
     - path: dataset/pits/DURA_EUROPOS
-      md5: 97f9f9be574eeb524394d03390afc809.dir
-      size: 2099291200
-      nfiles: 1600
+      md5: 4b08da6b017c38308c34b0bb38853742.dir
+      size: 2105689070
+      nfiles: 1602
