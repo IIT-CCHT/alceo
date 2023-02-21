@@ -1,0 +1,24 @@
+schema: '2.0'
+stages:
+  build_DURA_EUROPOS:
+    cmd:
+    - mkdir -p dataset/pits/DURA_EUROPOS
+    - python src/alceo/processing/pits_site_dataset.py -s data/sites/DURA_EUROPOS
+      -o dataset/pits/DURA_EUROPOS
+    deps:
+    - path: data/sites/DURA_EUROPOS/change
+      md5: 29a0626c9d8d772f89f201ab1dc09736.dir
+      size: 1021180096
+      nfiles: 806
+    - path: data/sites/DURA_EUROPOS/tiles
+      md5: c6d700cb7271ec07c9dee6afc945f989.dir
+      size: 1679265629
+      nfiles: 801
+    - path: src/alceo/processing/pits_site_dataset.py
+      md5: e4cbde0b57a3ef0ac726eb754cb9653c
+      size: 3337
+    outs:
+    - path: dataset/pits/DURA_EUROPOS
+      md5: 97f9f9be574eeb524394d03390afc809.dir
+      size: 2099291200
+      nfiles: 1600
