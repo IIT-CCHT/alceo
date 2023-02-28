@@ -7,18 +7,18 @@ stages:
       -o dataset/pits/DURA_EUROPOS
     deps:
     - path: data/sites/DURA_EUROPOS/change
-      md5: 29a0626c9d8d772f89f201ab1dc09736.dir
-      size: 1021180096
-      nfiles: 806
+      md5: e35716150efc6f2e912281a3112f2326.dir
+      size: 1042299408
+      nfiles: 3360
     - path: data/sites/DURA_EUROPOS/tiles
-      md5: c6d700cb7271ec07c9dee6afc945f989.dir
-      size: 1679265629
-      nfiles: 801
+      md5: 4bb4076f35e947b64d2d73e1cf2fe1e6.dir
+      size: 1761071393
+      nfiles: 3355
     - path: src/alceo/processing/pits_site_dataset.py
       md5: d54a73c4483cdd6cd784b4d245ccea1b
       size: 5254
     outs:
     - path: dataset/pits/DURA_EUROPOS
-      md5: 4b08da6b017c38308c34b0bb38853742.dir
-      size: 2105689070
-      nfiles: 1602
+      md5: 9c45d97446be6b97513945f09202b0d4.dir
+      size: 2208772494
+      nfiles: 6710

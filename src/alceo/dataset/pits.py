@@ -49,37 +49,31 @@ class PitsSiteDataset(Dataset[Dict[str, Any]]):
     def __len__(self):
         return len(self.tiles_df)
 
-    def _load_raster_and_meta(self, raster_path: Path):
+    def _load_raster(self, raster_path: Path):
         with rio.open(raster_path) as ref:
-            raster_meta = ref.meta
-            raster_meta["bounds"] = ref.bounds
             raster = ref.read()
-            return raster, raster_meta
+            return raster
 
     def __getitem__(self, index) -> Dict[str, Any]:
         item = self.tiles_df.loc[index].to_dict()
-        im1_loaded = self._load_raster_and_meta(self.im1_folder / item["tile_name"])
-        item["im1_meta"] = im1_loaded[1]
-        item["im1"] = torch.from_numpy(im1_loaded[0].astype(np.int32))
+        im1_loaded = self._load_raster(self.im1_folder / item["tile_name"])
+        item["im1"] = torch.from_numpy(im1_loaded.astype(np.int32))
 
-        im2_loaded = self._load_raster_and_meta(self.im2_folder / item["tile_name"])
-        item["im2_meta"] = im2_loaded[1]
-        item["im2"] = torch.from_numpy(im2_loaded[0].astype(np.int32))
+        im2_loaded = self._load_raster(self.im2_folder / item["tile_name"])
+        item["im2"] = torch.from_numpy(im2_loaded.astype(np.int32))
 
-        pits_appeared_loaded = self._load_raster_and_meta(
+        pits_appeared_loaded = self._load_raster(
             self.pits_appeared_folder / item["tile_name"]
         )
-        item["pits.appeared_meta"] = pits_appeared_loaded[1]
         item["pits.appeared"] = torch.from_numpy(
-            pits_appeared_loaded[0].astype(np.int32)
+            pits_appeared_loaded.astype(np.int32)
         )
 
-        pits_disappeared_loaded = self._load_raster_and_meta(
+        pits_disappeared_loaded = self._load_raster(
             self.pits_disappeared_folder / item["tile_name"]
         )
-        item["pits.disappeared_meta"] = pits_disappeared_loaded[1]
         item["pits.disappeared"] = torch.from_numpy(
-            pits_disappeared_loaded[0].astype(np.int32)
+            pits_disappeared_loaded.astype(np.int32)
         )
 
         return item

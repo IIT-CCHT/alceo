@@ -15,6 +15,8 @@ def produce_tiles(
     output_geojson_path,
     tile_prefix,
     areas_of_interest_geojson: Path,
+    tile_width = 512,
+    tile_height = 512,
 ):
     #%% Loading all images bounds and find intersection
     all_bounds = []
@@ -38,8 +40,7 @@ def produce_tiles(
     bounds_intersection = intersection_all(all_geoms)
 
     # Compute tiles for common area
-    tile_width = 512
-    tile_height = 512
+    
 
     big_window = windows.from_bounds(
         *bounds_intersection.bounds,
@@ -117,12 +118,29 @@ if __name__ == "__main__":
             help="GeoJSON containing areas of interest that have to completely cover tiles to be rasterized.",
             required=True,
         )
+        parser.add_argument(
+            "-tw",
+            "--tile_width",
+            type=int,
+            default=512,
+            help="Width of the tile in pixels.",
+        )
+        parser.add_argument(
+            "-th",
+            "--tile_height",
+            type=int,
+            default=512,
+            help="Height of the tile in pixels.",
+        )
 
         args = parser.parse_args()
         input_paths = args.input_paths
         output_geojson_path = args.output_geojson_path
         tile_prefix = args.tile_prefix
         areas_of_interest_geojson = args.areas_of_interest_geojson
+        tile_width = args.tile_width
+        tile_height = args.tile_height
+        
     else:
         input_paths = [
             "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif",
@@ -132,9 +150,12 @@ if __name__ == "__main__":
             "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/tiles.json"
         )
         tile_prefix = "tile_"
+        tile_width, tile_height = 512, 512
     produce_tiles(
         input_paths,
         output_geojson_path,
         tile_prefix,
         areas_of_interest_geojson,
+        tile_width=tile_width,
+        tile_height=tile_height,
     )
