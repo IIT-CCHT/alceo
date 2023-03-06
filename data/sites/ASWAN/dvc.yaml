@@ -1,0 +1,132 @@
+# This dvc.yaml file contains the pipeline description for processing a single 
+# site as well as the configuration variables for the ASWAN site.
+
+vars:
+  - site_name: ASWAN
+  - images:
+      - name: AS_04_08_2005
+        path: AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo.tif
+      - name: AS_05_10_2015
+        path: AS_05_10_2015/AS_05_10_2015_NN_diffuse_geo.tif
+      - name: AS_20_03_2018
+        path: AS_20_03_2018/AS_20_03_2018_NN_diffuse.tif
+  - tile_prefix: ASWAN_
+  - change_steps: # TODO parametrize overlaps rules thresholds!
+      - change: AS_04_08_2005/AS_05_10_2015
+        crs: "EPSG:32636" # TODO change this CRS
+        first:
+          date: 04/08/2005
+          image_folder: AS_04_08_2005
+        second:
+          date: 05/10/2015
+          image_folder: AS_05_10_2015
+      - change: AS_05_10_2015/AS_20_03_2018
+        crs: "EPSG:32636" # TODO change this CRS
+        first:
+          date: 05/10/2015
+          image_folder: AS_05_10_2015
+        second:
+          date: 20/03/2018
+          image_folder: AS_20_03_2018
+      - change: AS_04_08_2005/AS_20_03/2018
+        crs: "EPSG:32636" # TODO change this CRS
+        first:
+          date: 04/08/2005
+          image_folder: AS_04_08_2005
+        second:
+          date: 05/10/2015
+          image_folder: AS_20_03/2018
+  - change_kinds:
+      - change: AS_04_08_2005/AS_05_10_2015
+        base_image: AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo
+        kind: pits.appeared
+      - change: AS_04_08_2005/AS_05_10_2015
+        base_image: AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo
+        kind: pits.disappeared
+      - change: AS_05_10_2015/AS_20_03_2018
+        base_image: AS_05_10_2015/AS_05_10_2015_NN_diffuse_geo
+        kind: pits.appeared
+      - change: AS_05_10_2015/AS_20_03_2018
+        base_image: AS_05_10_2015/AS_05_10_2015_NN_diffuse_geo
+        kind: pits.disappeared
+      - change: AS_04_08_2005/AS_20_03/2018
+        base_image: AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo
+        kind: pits.appeared
+      - change: AS_04_08_2005/AS_20_03/2018
+        base_image: AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo
+        kind: pits.disappeared
+stages:
+  produce_vectorial_tiles:
+    wdir: ../../../.
+    cmd: python src/alceo/processing/produce_tiles.py
+      -i data/sites/${site_name}/images/${images[0].path}
+      -p ${tile_prefix}
+      -a data/sites/${site_name}/area_of_interest.geojson
+      -o data/sites/${site_name}/tiles.geojson
+      -tw 256
+      -th 256
+    deps:
+      - src/alceo/processing/produce_tiles.py
+      - data/sites/${site_name}/images/${images[0].path}
+      - data/sites/${site_name}/area_of_interest.geojson
+    outs:
+      - data/sites/${site_name}/tiles.geojson
+  tilize_image:
+    foreach: ${images}
+    do:
+      wdir: ../../../.
+      cmd: python src/alceo/processing/rasterize_tiles.py
+        -t data/sites/${site_name}/tiles.geojson
+        -i data/sites/${site_name}/images/${item.path}
+        -o data/sites/${site_name}/tiles/${item.name}
+      deps:
+        - src/alceo/processing/rasterize_tiles.py
+        - data/sites/${site_name}/tiles.geojson
+        - data/sites/${site_name}/images/${item.path}
+      outs:
+        - data/sites/${site_name}/tiles/${item.name}/
+  produce_vectorial_change:
+    foreach: ${change_steps}
+    do:
+      wdir: ../../../.
+      cmd: python src/alceo/processing/change_from_annotations.py
+        -i data/sites/${site_name}/annotations/pits.geojson
+        -f ${item.first.date} -s ${item.second.date}
+        -o data/sites/${site_name}/change/${item.first.image_folder}/${item.second.image_folder}/vectorial
+        --crs ${item.crs}
+      deps:
+        - src/alceo/processing/change_from_annotations.py
+        - data/sites/${site_name}/annotations/pits.geojson
+      outs:
+        - data/sites/${site_name}/change/${item.first.image_folder}/${item.second.image_folder}/vectorial
+  rasterize_change:
+    foreach: ${change_kinds}
+    do:
+      wdir: ../../../.
+      cmd:
+        - mkdir -p data/sites/${site_name}/change/${item.change}/raster/
+        - rio rasterize
+          data/sites/${site_name}/change/${item.change}/vectorial/${item.kind}.geojson
+          --like data/sites/${site_name}/images/${item.base_image}.tif
+          --output data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif
+      deps:
+        - data/sites/${site_name}/change/${item.change}/vectorial/${item.kind}.geojson
+        - data/sites/${site_name}/images/${item.base_image}.tif
+      outs:
+        - data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif
+  tilize_change:
+    foreach: ${change_kinds}
+    do:
+      wdir: ../../../.
+      cmd: 
+        - mkdir -p data/sites/${site_name}/change/${item.change}/raster/${item.kind}/tiles
+        - python src/alceo/processing/rasterize_tiles.py 
+          -t data/sites/${site_name}/tiles.geojson
+          -i data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif 
+          -o data/sites/${site_name}/change/${item.change}/raster/${item.kind}/tiles
+      deps:
+        - src/alceo/processing/rasterize_tiles.py
+        - data/sites/${site_name}/tiles.geojson
+        - data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif
+      outs:
+        - data/sites/${site_name}/change/${item.change}/raster/${item.kind}/tiles
