@@ -33,6 +33,8 @@ stages:
       -p ${tile_prefix}
       -a data/sites/${site_name}/area_of_interest.geojson
       -o data/sites/${site_name}/tiles.geojson
+      -tw 256
+      -th 256
     deps:
       - src/alceo/processing/produce_tiles.py
       - data/sites/${site_name}/images/${images[0].path}

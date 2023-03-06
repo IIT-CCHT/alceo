@@ -9,7 +9,7 @@ if __name__ == "__main__":
         strategy="ddp",
         devices=[0, 1],
         precision=16,
-        max_epochs=10,
+        max_epochs=100,
         logger=DVCLiveLogger(),
         log_every_n_steps=5,
     )

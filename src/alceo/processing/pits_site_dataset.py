@@ -71,22 +71,25 @@ def pits_site_dataset(site_data_path: Path, output_path: Path):
                 )
 
             change_kind = "pits.appeared"
+            change_raster_dir = change_folder_path / change_start_dir / change_end_dir / "raster"
             raster_glob_string = str(
-                change_folder_path
-                / change_start_dir
-                / change_end_dir
-                / "raster"
+                change_raster_dir
                 / change_kind
                 / "tiles"
                 / "*.tif"
             )
 
-            for tile_path in glob(raster_glob_string):
-                tile_path = Path(tile_path)
+            for appeared_tile_path in glob(raster_glob_string):
+                # Input paths!
+                appeared_tile_path = Path(appeared_tile_path)
+                dis_tile_path = change_raster_dir / "pits.disappeared" / "tiles" / appeared_tile_path.name
+                im1_in_path = tiles_folder_path / change_start_dir / appeared_tile_path.name
+                im2_in_path = tiles_folder_path / change_end_dir / appeared_tile_path.name
                 # %%
                 out_filename = "-".join(
-                    [change_start_dir, change_end_dir, tile_path.name]
+                    [change_start_dir, change_end_dir, appeared_tile_path.name]
                 )
+                                
                 _change_tiles_meta.append(
                     {
                         "change": change,
@@ -96,12 +99,9 @@ def pits_site_dataset(site_data_path: Path, output_path: Path):
                     }
                 )
 
-                im1_in_path = tiles_folder_path / change_start_dir / tile_path.name
+                # Output paths
                 im1_out_path = output_path / "im1" / out_filename
-
-                im2_in_path = tiles_folder_path / change_end_dir / tile_path.name
                 im2_out_path = output_path / "im2" / out_filename
-
                 app_out_path = output_path / "pits.appeared" / out_filename
                 disapp_out_path = output_path / "pits.disappeared" / out_filename
 
@@ -112,10 +112,10 @@ def pits_site_dataset(site_data_path: Path, output_path: Path):
                 shutil.copy2(im2_in_path, im2_out_path)
 
                 os.makedirs(app_out_path.parent, exist_ok=True)
-                shutil.copy2(tile_path, app_out_path)
-
+                shutil.copy2(appeared_tile_path, app_out_path)
+                
                 os.makedirs(disapp_out_path.parent, exist_ok=True)
-                shutil.copy2(tile_path, disapp_out_path)
+                shutil.copy2(dis_tile_path, disapp_out_path)
     vectorial_gdf.to_file(output_path / "vectorial.geojson", index=False, driver="GeoJSON")
     pd.DataFrame(_change_tiles_meta).to_csv(output_path / "tiles_meta.csv", index=False)
     

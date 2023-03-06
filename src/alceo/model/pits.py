@@ -56,19 +56,13 @@ class PitsLightningModule(pl.LightningModule):
         self.batch_ids_to_monitor = None
         self.network = PitsChangeDetectionNetwork()
         self.loss_fn = JaccardLoss(mode="multilabel")
-        self.mIoU = MetricCollection(
+        self.mIoU_appeared = MetricCollection(
             {
                 "stage_train": MeanMetric(dist_sync_on_step=True),
                 "stage_validation": MeanMetric(dist_sync_on_step=True),
             }
         )
-        self.mIoU1 = MetricCollection(
-            {
-                "stage_train": MeanMetric(dist_sync_on_step=True),
-                "stage_validation": MeanMetric(dist_sync_on_step=True),
-            }
-        )
-        self.mIoU2 = MetricCollection(
+        self.mIoU_disappeared = MetricCollection(
             {
                 "stage_train": MeanMetric(dist_sync_on_step=True),
                 "stage_validation": MeanMetric(dist_sync_on_step=True),
@@ -87,7 +81,7 @@ class PitsLightningModule(pl.LightningModule):
     def _dataloader_for_dataset(self, dataset: Dataset):
         return DataLoader(
             dataset=dataset,
-            batch_size=5,
+            batch_size=8,
             num_workers=5,
         )
 
@@ -98,10 +92,9 @@ class PitsLightningModule(pl.LightningModule):
         return super().on_after_batch_transfer(batch, dataloader_idx)
 
     def configure_optimizers(self) -> Any:
-        return torch.optim.SGD(
+        return torch.optim.Adam(
             params=self.parameters(),
-            lr=1e-4,
-            momentum=0.001,
+            lr=1e-5,
         )
 
     def train_dataloader(self) -> TRAIN_DATALOADERS:
@@ -116,7 +109,7 @@ class PitsLightningModule(pl.LightningModule):
         pits_disappeared = batch["pits.disappeared"]
         im1 = batch["im1"]
         im2 = batch["im2"]
-        change_truth = torch.stack([pits_appeared, pits_disappeared], dim=1)
+        change_truth = torch.cat([pits_appeared, pits_disappeared], dim=1)
 
         change_pred = self.network(im1, im2)
 
@@ -125,9 +118,17 @@ class PitsLightningModule(pl.LightningModule):
         # computing full loss!
         loss = self.loss_fn(change_pred, change_truth)
         self.log(f"{stage}/loss", loss, prog_bar=True, sync_dist=True, on_epoch=True)
-
-        for logger in self.loggers:
-            self._log_datapoints(batch, logger, stage)
+        
+        stats = get_stats(change_pred, change_truth, mode="multilabel", threshold=0.5, num_classes=2)
+        
+        ious = iou_score(*stats)
+        
+        iou_app = self.mIoU_appeared[f"stage_{stage}"]
+        iou_diss = self.mIoU_disappeared[f"stage_{stage}"]
+        iou_app(ious[:, 0])
+        iou_diss(ious[:, 1])
+        self.log(f"{stage}/iou_appeared", iou_app, on_epoch=True)
+        self.log(f"{stage}/iou_disappeared", iou_diss, on_epoch=True)
 
         return loss
 
@@ -146,3 +147,49 @@ class PitsLightningModule(pl.LightningModule):
         self, batch, batch_idx, dataloader_idx=0, *args: Any, **kwargs: Any
     ) -> Optional[STEP_OUTPUT]:
         return self._shared_step(batch, "validation")
+
+# %%
+if __name__ == "__main__":
+    # %%
+    model = PitsLightningModule()
+    model = model.load_from_checkpoint("/HDD1/gsech/source/alceo/epoch=60-step=5124.ckpt")
+    # %%
+    from pytorch_lightning import seed_everything
+    seed_everything(1234, workers=True)
+    # %%
+    model.setup("fit")
+    # %%
+    for i in range(len(model.test_dataset)):
+        item = model.test_dataset[i]
+        item = model.on_after_batch_transfer(item, 0)
+        print(f"index: {i}, changes: {item['pits.appeared'].sum()}")
+        if i > 20:
+            break
+    # %%
+    import matplotlib.pyplot as plt
+    item = model.test_dataset[18]
+    item = model.on_after_batch_transfer(item, 0)
+    pits_appeared = item["pits.appeared"]
+    pits_disappeared = item["pits.disappeared"]
+    im1 = item["im1"].unsqueeze(dim=0)
+    im2 = item["im2"].unsqueeze(dim=0)
+
+    change_pred = model.network(im1, im2).squeeze().detach().numpy()
+    # %%
+    print("Pred appeared")
+    plt.imshow(change_pred[0] > 0.5)
+    # %%
+    print("Pred disappeared")
+    plt.imshow(change_pred[1] > 0.5)
+    # %%
+    print("Pits appeared")
+    plt.imshow(pits_appeared[0])
+    # %%
+    print("Pits disappeared")
+    plt.imshow(pits_disappeared[0])
+
+    # %%
+    item["tile_name"]
+    # %%
+    torch.all(pits_appeared == pits_disappeared)
+    # %%

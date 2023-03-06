@@ -2,6 +2,7 @@ schema: '2.0'
 stages:
   build_DURA_EUROPOS:
     cmd:
+    - rm -rf dataset/pits/DURA_EUROPOS
     - mkdir -p dataset/pits/DURA_EUROPOS
     - python src/alceo/processing/pits_site_dataset.py -s data/sites/DURA_EUROPOS
       -o dataset/pits/DURA_EUROPOS
@@ -15,10 +16,10 @@ stages:
       size: 1761071393
       nfiles: 3355
     - path: src/alceo/processing/pits_site_dataset.py
-      md5: d54a73c4483cdd6cd784b4d245ccea1b
-      size: 5254
+      md5: 61594ac44f483dabce6cb8f299353d2e
+      size: 5539
     outs:
     - path: dataset/pits/DURA_EUROPOS
-      md5: 9c45d97446be6b97513945f09202b0d4.dir
+      md5: d49987fefa287eba1337a1ba2b6a27f1.dir
       size: 2208772494
       nfiles: 6710
