@@ -23,3 +23,25 @@ stages:
       md5: d49987fefa287eba1337a1ba2b6a27f1.dir
       size: 2208772494
       nfiles: 6710
+  build_ASWAN:
+    cmd:
+    - rm -rf dataset/pits/ASWAN
+    - mkdir -p dataset/pits/ASWAN
+    - python src/alceo/processing/pits_site_dataset.py -s data/sites/ASWAN -o dataset/pits/ASWAN
+    deps:
+    - path: data/sites/ASWAN/change
+      md5: c2b38c9fb977bcb18e98fd6fdf9187dd.dir
+      size: 1410338316
+      nfiles: 1727
+    - path: data/sites/ASWAN/tiles
+      md5: 739c463a4dda6364d1afb47815df9469.dir
+      size: 447356277
+      nfiles: 853
+    - path: src/alceo/processing/pits_site_dataset.py
+      md5: 61594ac44f483dabce6cb8f299353d2e
+      size: 5539
+    outs:
+    - path: dataset/pits/ASWAN
+      md5: 8fe092e7802adb0993ef69ed4ef0e161.dir
+      size: 1121286997
+      nfiles: 3410

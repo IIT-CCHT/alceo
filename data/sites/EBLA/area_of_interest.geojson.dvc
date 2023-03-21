@@ -1,0 +1,4 @@
+outs:
+- md5: c12a3a2c7521b45f0b52fbe503a16d29
+  size: 1133
+  path: area_of_interest.geojson

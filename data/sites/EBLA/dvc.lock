@@ -1,0 +1,296 @@
+schema: '2.0'
+stages:
+  produce_vectorial_change@2:
+    cmd: python src/alceo/processing/change_from_annotations.py -i data/sites/EBLA/annotations/pits.geojson
+      -f 13/04/2018 -s 07/06/2022 -o data/sites/EBLA/change/E_13_04_2018/E_07_06_2022/vectorial
+      --crs EPSG:32636
+    deps:
+    - path: data/sites/EBLA/annotations/pits.geojson
+      md5: 2f77c52532d3cc1240439099bfec5980
+      size: 166865
+    - path: src/alceo/processing/change_from_annotations.py
+      md5: 709b58d7f45e1e8f131c3ed0c14c2d2e
+      size: 6581
+    outs:
+    - path: data/sites/EBLA/change/E_13_04_2018/E_07_06_2022/vectorial
+      md5: 6e68e9e9d2a5f7343e5879844e1468ba.dir
+      size: 17344
+      nfiles: 3
+  produce_vectorial_tiles:
+    cmd: python src/alceo/processing/produce_tiles.py -i data/sites/EBLA/images/E_01_09_2004/E_01_09_2004_QB_NN_Diffuse_geo.tif
+      -p EBLA_ -a data/sites/EBLA/area_of_interest.geojson -o data/sites/EBLA/tiles.geojson
+      -tw 256 -th 256
+    deps:
+    - path: data/sites/EBLA/area_of_interest.geojson
+      md5: c12a3a2c7521b45f0b52fbe503a16d29
+      size: 1133
+    - path: data/sites/EBLA/images/E_01_09_2004/E_01_09_2004_QB_NN_Diffuse_geo.tif
+      md5: 324f15d982d460df2bd79c693314bb74
+      size: 612746507
+    - path: src/alceo/processing/produce_tiles.py
+      md5: e3033891187c53a440fd74a286c6228d
+      size: 5313
+    outs:
+    - path: data/sites/EBLA/tiles.geojson
+      md5: 7c84dde2b681f44b4a619d67449cd227
+      size: 122533
+  tilize_image@1:
+    cmd: python src/alceo/processing/rasterize_tiles.py -t data/sites/EBLA/tiles.geojson
+      -i data/sites/EBLA/images/E_03_04_2014/E_03_04_2014_PL_NN_Diffuse_geo.tif -o
+      data/sites/EBLA/tiles/E_03_04_2014
+    deps:
+    - path: data/sites/EBLA/images/E_03_04_2014/E_03_04_2014_PL_NN_Diffuse_geo.tif
+      md5: 2807158ec70270492a6a7cb29430b1c0
+      size: 1300213931
+    - path: data/sites/EBLA/tiles.geojson
+      md5: 7c84dde2b681f44b4a619d67449cd227
+      size: 122533
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
+      size: 5081
+    outs:
+    - path: data/sites/EBLA/tiles/E_03_04_2014/
+      md5: 9f00b6fa7b4ab428f742903822d12c50.dir
+      size: 142817952
+      nfiles: 272
+  produce_vectorial_change@0:
+    cmd: python src/alceo/processing/change_from_annotations.py -i data/sites/EBLA/annotations/pits.geojson
+      -f 01/09/2004 -s 03/04/2014 -o data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/vectorial
+      --crs EPSG:32636
+    deps:
+    - path: data/sites/EBLA/annotations/pits.geojson
+      md5: 2f77c52532d3cc1240439099bfec5980
+      size: 166865
+    - path: src/alceo/processing/change_from_annotations.py
+      md5: 709b58d7f45e1e8f131c3ed0c14c2d2e
+      size: 6581
+    outs:
+    - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/vectorial
+      md5: 8013bff66fa2f26c73035aa01175760a.dir
+      size: 45947
+      nfiles: 3
+  rasterize_change@0:
+    cmd:
+    - mkdir -p data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/
+    - rio rasterize data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/vectorial/pits.appeared.geojson
+      --like data/sites/EBLA/images/E_01_09_2004/E_01_09_2004_QB_NN_Diffuse_geo.tif
+      --output data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.appeared.tif
+    deps:
+    - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/vectorial/pits.appeared.geojson
+      md5: 378b686d2563d84293fca7fe33bbae72
+      size: 38623
+    - path: data/sites/EBLA/images/E_01_09_2004/E_01_09_2004_QB_NN_Diffuse_geo.tif
+      md5: 324f15d982d460df2bd79c693314bb74
+      size: 612746507
+    outs:
+    - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.appeared.tif
+      md5: 2c5ec41d3eb5cafbeb8934abefcd78c9
+      size: 153186048
+  tilize_change@0:
+    cmd:
+    - mkdir -p data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.appeared/tiles
+    - python src/alceo/processing/rasterize_tiles.py -t data/sites/EBLA/tiles.geojson
+      -i data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.appeared.tif
+      -o data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.appeared/tiles
+    deps:
+    - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.appeared.tif
+      md5: 2c5ec41d3eb5cafbeb8934abefcd78c9
+      size: 153186048
+    - path: data/sites/EBLA/tiles.geojson
+      md5: 7c84dde2b681f44b4a619d67449cd227
+      size: 122533
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
+      size: 5081
+    outs:
+    - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.appeared/tiles
+      md5: 8d79ffaecbfeeb091313ca958091cf6b.dir
+      size: 35775616
+      nfiles: 272
+  tilize_image@0:
+    cmd: python src/alceo/processing/rasterize_tiles.py -t data/sites/EBLA/tiles.geojson
+      -i data/sites/EBLA/images/E_01_09_2004/E_01_09_2004_QB_NN_Diffuse_geo.tif -o
+      data/sites/EBLA/tiles/E_01_09_2004
+    deps:
+    - path: data/sites/EBLA/images/E_01_09_2004/E_01_09_2004_QB_NN_Diffuse_geo.tif
+      md5: 324f15d982d460df2bd79c693314bb74
+      size: 612746507
+    - path: data/sites/EBLA/tiles.geojson
+      md5: 7c84dde2b681f44b4a619d67449cd227
+      size: 122533
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
+      size: 5081
+    outs:
+    - path: data/sites/EBLA/tiles/E_01_09_2004/
+      md5: 57e813e514d2b64a0990d3adf168347c.dir
+      size: 142817952
+      nfiles: 272
+  tilize_image@3:
+    cmd: python src/alceo/processing/rasterize_tiles.py -t data/sites/EBLA/tiles.geojson
+      -i data/sites/EBLA/images/E_07_06_2022/E_07_06_2022_WV2_40cm_NN_Diffuse.tif
+      -o data/sites/EBLA/tiles/E_07_06_2022
+    deps:
+    - path: data/sites/EBLA/images/E_07_06_2022/E_07_06_2022_WV2_40cm_NN_Diffuse.tif
+      md5: c36009e4ad4e60996bca157a84a19a60
+      size: 2712738556
+    - path: data/sites/EBLA/tiles.geojson
+      md5: 7c84dde2b681f44b4a619d67449cd227
+      size: 122533
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
+      size: 5081
+    outs:
+    - path: data/sites/EBLA/tiles/E_07_06_2022/
+      md5: a1413d0afefe2f2ac238b3fa664c21ab.dir
+      size: 285535264
+      nfiles: 272
+  rasterize_change@1:
+    cmd:
+    - mkdir -p data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/
+    - rio rasterize data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/vectorial/pits.disappeared.geojson
+      --like data/sites/EBLA/images/E_01_09_2004/E_01_09_2004_QB_NN_Diffuse_geo.tif
+      --output data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.disappeared.tif
+    deps:
+    - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/vectorial/pits.disappeared.geojson
+      md5: d6e50d1e11eef40bb89299255c3b0241
+      size: 7190
+    - path: data/sites/EBLA/images/E_01_09_2004/E_01_09_2004_QB_NN_Diffuse_geo.tif
+      md5: 324f15d982d460df2bd79c693314bb74
+      size: 612746507
+    outs:
+    - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.disappeared.tif
+      md5: 2c5ec41d3eb5cafbeb8934abefcd78c9
+      size: 153186048
+  produce_vectorial_change@1:
+    cmd: python src/alceo/processing/change_from_annotations.py -i data/sites/EBLA/annotations/pits.geojson
+      -f 03/04/2014 -s 13/04/2018 -o data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/vectorial
+      --crs EPSG:32636
+    deps:
+    - path: data/sites/EBLA/annotations/pits.geojson
+      md5: 2f77c52532d3cc1240439099bfec5980
+      size: 166865
+    - path: src/alceo/processing/change_from_annotations.py
+      md5: 709b58d7f45e1e8f131c3ed0c14c2d2e
+      size: 6581
+    outs:
+    - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/vectorial
+      md5: 434925ec9aa7ff1e0cd74d05b412417c.dir
+      size: 54159
+      nfiles: 3
+  tilize_image@2:
+    cmd: python src/alceo/processing/rasterize_tiles.py -t data/sites/EBLA/tiles.geojson
+      -i data/sites/EBLA/images/E_13_04_2018/E_13_04_2018_WV2_50cm_NN_Diffuse_geo.tif
+      -o data/sites/EBLA/tiles/E_13_04_2018
+    deps:
+    - path: data/sites/EBLA/images/E_13_04_2018/E_13_04_2018_WV2_50cm_NN_Diffuse_geo.tif
+      md5: bdafe7ff8459eddcffcb876b38d0353e
+      size: 1764919347
+    - path: data/sites/EBLA/tiles.geojson
+      md5: 7c84dde2b681f44b4a619d67449cd227
+      size: 122533
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
+      size: 5081
+    outs:
+    - path: data/sites/EBLA/tiles/E_13_04_2018/
+      md5: af7cf42fdfc5ac608cccb5bce02423dc.dir
+      size: 285535264
+      nfiles: 272
+  rasterize_change@2:
+    cmd:
+    - mkdir -p data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/
+    - rio rasterize data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/vectorial/pits.appeared.geojson
+      --like data/sites/EBLA/images/E_03_04_2014/E_03_04_2014_PL_NN_Diffuse_geo.tif
+      --output data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.appeared.tif
+    deps:
+    - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/vectorial/pits.appeared.geojson
+      md5: d7f27652527ec24494217f5aa1a7ca77
+      size: 15402
+    - path: data/sites/EBLA/images/E_03_04_2014/E_03_04_2014_PL_NN_Diffuse_geo.tif
+      md5: 2807158ec70270492a6a7cb29430b1c0
+      size: 1300213931
+    outs:
+    - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.appeared.tif
+      md5: df0a482ee3baf673b9b1e99fdb8bb257
+      size: 325052904
+  tilize_change@1:
+    cmd:
+    - mkdir -p data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.disappeared/tiles
+    - python src/alceo/processing/rasterize_tiles.py -t data/sites/EBLA/tiles.geojson
+      -i data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.disappeared.tif
+      -o data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.disappeared/tiles
+    deps:
+    - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.disappeared.tif
+      md5: 2c5ec41d3eb5cafbeb8934abefcd78c9
+      size: 153186048
+    - path: data/sites/EBLA/tiles.geojson
+      md5: 7c84dde2b681f44b4a619d67449cd227
+      size: 122533
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
+      size: 5081
+    outs:
+    - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.disappeared/tiles
+      md5: 8d79ffaecbfeeb091313ca958091cf6b.dir
+      size: 35775616
+      nfiles: 272
+  rasterize_change@3:
+    cmd:
+    - mkdir -p data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/
+    - rio rasterize data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/vectorial/pits.disappeared.geojson
+      --like data/sites/EBLA/images/E_03_04_2014/E_03_04_2014_PL_NN_Diffuse_geo.tif
+      --output data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.disappeared.tif
+    deps:
+    - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/vectorial/pits.disappeared.geojson
+      md5: 378b686d2563d84293fca7fe33bbae72
+      size: 38623
+    - path: data/sites/EBLA/images/E_03_04_2014/E_03_04_2014_PL_NN_Diffuse_geo.tif
+      md5: 2807158ec70270492a6a7cb29430b1c0
+      size: 1300213931
+    outs:
+    - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.disappeared.tif
+      md5: df0a482ee3baf673b9b1e99fdb8bb257
+      size: 325052904
+  tilize_change@3:
+    cmd:
+    - mkdir -p data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.disappeared/tiles
+    - python src/alceo/processing/rasterize_tiles.py -t data/sites/EBLA/tiles.geojson
+      -i data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.disappeared.tif
+      -o data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.disappeared/tiles
+    deps:
+    - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.disappeared.tif
+      md5: df0a482ee3baf673b9b1e99fdb8bb257
+      size: 325052904
+    - path: data/sites/EBLA/tiles.geojson
+      md5: 7c84dde2b681f44b4a619d67449cd227
+      size: 122533
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
+      size: 5081
+    outs:
+    - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.disappeared/tiles
+      md5: 052f2307e3e232586abd34c3a1988aed.dir
+      size: 35775616
+      nfiles: 272
+  tilize_change@2:
+    cmd:
+    - mkdir -p data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.appeared/tiles
+    - python src/alceo/processing/rasterize_tiles.py -t data/sites/EBLA/tiles.geojson
+      -i data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.appeared.tif
+      -o data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.appeared/tiles
+    deps:
+    - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.appeared.tif
+      md5: df0a482ee3baf673b9b1e99fdb8bb257
+      size: 325052904
+    - path: data/sites/EBLA/tiles.geojson
+      md5: 7c84dde2b681f44b4a619d67449cd227
+      size: 122533
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
+      size: 5081
+    outs:
+    - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.appeared/tiles
+      md5: 052f2307e3e232586abd34c3a1988aed.dir
+      size: 35775616
+      nfiles: 272
