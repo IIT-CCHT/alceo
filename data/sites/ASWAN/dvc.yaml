@@ -1,4 +1,4 @@
-# This dvc.yaml file contains the pipeline description for processing a single 
+# This dvc.yaml file contains the pipeline description for processing a single
 # site as well as the configuration variables for the ASWAN site.
 
 vars:
@@ -28,14 +28,14 @@ vars:
         second:
           date: 20/03/2018
           image_folder: AS_20_03_2018
-      - change: AS_04_08_2005/AS_20_03/2018
+      - change: AS_04_08_2005/AS_20_03_2018
         crs: "EPSG:32636" # TODO change this CRS
         first:
           date: 04/08/2005
           image_folder: AS_04_08_2005
         second:
-          date: 05/10/2015
-          image_folder: AS_20_03/2018
+          date: 20/03/2018
+          image_folder: AS_20_03_2018
   - change_kinds:
       - change: AS_04_08_2005/AS_05_10_2015
         base_image: AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo
@@ -49,10 +49,10 @@ vars:
       - change: AS_05_10_2015/AS_20_03_2018
         base_image: AS_05_10_2015/AS_05_10_2015_NN_diffuse_geo
         kind: pits.disappeared
-      - change: AS_04_08_2005/AS_20_03/2018
+      - change: AS_04_08_2005/AS_20_03_2018
         base_image: AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo
         kind: pits.appeared
-      - change: AS_04_08_2005/AS_20_03/2018
+      - change: AS_04_08_2005/AS_20_03_2018
         base_image: AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo
         kind: pits.disappeared
 stages:
@@ -118,11 +118,11 @@ stages:
     foreach: ${change_kinds}
     do:
       wdir: ../../../.
-      cmd: 
+      cmd:
         - mkdir -p data/sites/${site_name}/change/${item.change}/raster/${item.kind}/tiles
-        - python src/alceo/processing/rasterize_tiles.py 
+        - python src/alceo/processing/rasterize_tiles.py
           -t data/sites/${site_name}/tiles.geojson
-          -i data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif 
+          -i data/sites/${site_name}/change/${item.change}/raster/${item.kind}.tif
           -o data/sites/${site_name}/change/${item.change}/raster/${item.kind}/tiles
       deps:
         - src/alceo/processing/rasterize_tiles.py
