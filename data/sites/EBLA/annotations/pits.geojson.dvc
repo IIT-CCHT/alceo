@@ -1,0 +1,4 @@
+outs:
+- md5: 2f77c52532d3cc1240439099bfec5980
+  size: 166865
+  path: pits.geojson
