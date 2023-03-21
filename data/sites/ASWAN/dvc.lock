@@ -52,7 +52,7 @@ stages:
       size: 144861452
   produce_vectorial_change@2:
     cmd: python src/alceo/processing/change_from_annotations.py -i data/sites/ASWAN/annotations/pits.geojson
-      -f 04/08/2005 -s 05/10/2015 -o data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/vectorial
+      -f 04/08/2005 -s 20/03/2018 -o data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/vectorial
       --crs EPSG:32636
     deps:
     - path: data/sites/ASWAN/annotations/pits.geojson
@@ -62,26 +62,26 @@ stages:
       md5: 709b58d7f45e1e8f131c3ed0c14c2d2e
       size: 6581
     outs:
-    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/vectorial
-      md5: e30689d1e44ea0ddf452effc082435f5.dir
-      size: 783801
+    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/vectorial
+      md5: 0e92aa32b9da87b72854f8aa493d5816.dir
+      size: 1090057
       nfiles: 3
   rasterize_change@4:
     cmd:
-    - mkdir -p data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/
-    - rio rasterize data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/vectorial/pits.appeared.geojson
+    - mkdir -p data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/
+    - rio rasterize data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/vectorial/pits.appeared.geojson
       --like data/sites/ASWAN/images/AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo.tif
-      --output data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.appeared.tif
+      --output data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.appeared.tif
     deps:
-    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/vectorial/pits.appeared.geojson
-      md5: 02f7e44d47210ef590094899e405b8b9
-      size: 474981
+    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/vectorial/pits.appeared.geojson
+      md5: 446775c5de122f42f5073ef3a79c6419
+      size: 781214
     - path: data/sites/ASWAN/images/AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo.tif
       md5: d5d532307cd9d2df5a731a32c096f534
       size: 579448123
     outs:
-    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.appeared.tif
-      md5: baff79a55f362f2a49d2fed8ac3f219c
+    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.appeared.tif
+      md5: 23cb1331ef4f1ba3e2816cc6dd3594b3
       size: 144861452
   produce_vectorial_change@1:
     cmd: python src/alceo/processing/change_from_annotations.py -i data/sites/ASWAN/annotations/pits.geojson
@@ -274,30 +274,30 @@ stages:
       nfiles: 284
   rasterize_change@5:
     cmd:
-    - mkdir -p data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/
-    - rio rasterize data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/vectorial/pits.disappeared.geojson
+    - mkdir -p data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/
+    - rio rasterize data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/vectorial/pits.disappeared.geojson
       --like data/sites/ASWAN/images/AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo.tif
-      --output data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.disappeared.tif
+      --output data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.disappeared.tif
     deps:
-    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/vectorial/pits.disappeared.geojson
-      md5: 1f0f8f983d4cb5259b2d2abc0e262425
-      size: 246052
+    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/vectorial/pits.disappeared.geojson
+      md5: b9a3a5e32a1a919ad7fc370804336d37
+      size: 245621
     - path: data/sites/ASWAN/images/AS_04_08_2005/AS_04_08_2005_QB_NN_diffuse_geo.tif
       md5: d5d532307cd9d2df5a731a32c096f534
       size: 579448123
     outs:
-    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.disappeared.tif
-      md5: c2b46089d06d95922264e4466409e737
+    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.disappeared.tif
+      md5: 22956ba99791fd862a4b1d0f81bc794f
       size: 144861452
   tilize_change@5:
     cmd:
-    - mkdir -p data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.disappeared/tiles
+    - mkdir -p data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.disappeared/tiles
     - python src/alceo/processing/rasterize_tiles.py -t data/sites/ASWAN/tiles.geojson
-      -i data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.disappeared.tif
-      -o data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.disappeared/tiles
+      -i data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.disappeared.tif
+      -o data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.disappeared/tiles
     deps:
-    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.disappeared.tif
-      md5: c2b46089d06d95922264e4466409e737
+    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.disappeared.tif
+      md5: 22956ba99791fd862a4b1d0f81bc794f
       size: 144861452
     - path: data/sites/ASWAN/tiles.geojson
       md5: dcc608faf859c814cd81bc4de4550ca5
@@ -306,19 +306,19 @@ stages:
       md5: e77a6f9ca5ac7d84726ff0b84df5ad17
       size: 5081
     outs:
-    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.disappeared/tiles
-      md5: 6eb5ac58a8a2a7fece4911d0ca153bbd.dir
+    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.disappeared/tiles
+      md5: dcc87aa68f56d9a4eabca62459e2fca3.dir
       size: 37353952
       nfiles: 284
   tilize_change@4:
     cmd:
-    - mkdir -p data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.appeared/tiles
+    - mkdir -p data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.appeared/tiles
     - python src/alceo/processing/rasterize_tiles.py -t data/sites/ASWAN/tiles.geojson
-      -i data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.appeared.tif
-      -o data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.appeared/tiles
+      -i data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.appeared.tif
+      -o data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.appeared/tiles
     deps:
-    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.appeared.tif
-      md5: baff79a55f362f2a49d2fed8ac3f219c
+    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.appeared.tif
+      md5: 23cb1331ef4f1ba3e2816cc6dd3594b3
       size: 144861452
     - path: data/sites/ASWAN/tiles.geojson
       md5: dcc608faf859c814cd81bc4de4550ca5
@@ -327,8 +327,8 @@ stages:
       md5: e77a6f9ca5ac7d84726ff0b84df5ad17
       size: 5081
     outs:
-    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03/2018/raster/pits.appeared/tiles
-      md5: b991d9af71c052c28be20513a2a2c1ef.dir
+    - path: data/sites/ASWAN/change/AS_04_08_2005/AS_20_03_2018/raster/pits.appeared/tiles
+      md5: 5bf6d7d7d77e2a4ff1c0a23d746344b7.dir
       size: 37353952
       nfiles: 284
   tilize_image@0:
