@@ -70,18 +70,28 @@ class PitsLightningModule(pl.LightningModule):
         )
 
     def setup(self, stage: Optional[str] = None) -> None:
-        dataset = PitsSiteDataset(
-            Path("/HDD1/gsech/source/alceo/dataset/pits/DURA_EUROPOS")
-        )
-        self.train_dataset, self.validation_dataset, self.test_dataset = random_split(
-            dataset, [0.8, 0.1, 0.1]
-        )
+        pits_dataset_path = Path("/HDD1/gsech/source/alceo/dataset/pits/")
+        dataset = PitsSiteDataset(pits_dataset_path / "DURA_EUROPOS")
+        self.datasets = [
+            ("DURA_EUROPOS", PitsSiteDataset(pits_dataset_path / "DURA_EUROPOS")),
+            ("ASWAN", PitsSiteDataset(pits_dataset_path / "ASWAN")),
+        ]
+        self.train_datasets, self.validation_datasets, self.test_datasets = [], [], []
+        
+        for label, dataset in self.datasets:
+            train_dataset, validation_dataset, test_dataset = random_split(
+                dataset, [0.8, 0.1, 0.1]
+            )
+            self.train_datasets.append(train_dataset)
+            self.validation_datasets.append(validation_dataset)
+            self.test_datasets.append(test_dataset)
+            
         return super().setup(stage)
 
     def _dataloader_for_dataset(self, dataset: Dataset):
         return DataLoader(
             dataset=dataset,
-            batch_size=8,
+            batch_size=16,
             num_workers=5,
         )
 
@@ -118,11 +128,13 @@ class PitsLightningModule(pl.LightningModule):
         # computing full loss!
         loss = self.loss_fn(change_pred, change_truth)
         self.log(f"{stage}/loss", loss, prog_bar=True, sync_dist=True, on_epoch=True)
-        
-        stats = get_stats(change_pred, change_truth, mode="multilabel", threshold=0.5, num_classes=2)
-        
+
+        stats = get_stats(
+            change_pred, change_truth, mode="multilabel", threshold=0.5, num_classes=2
+        )
+
         ious = iou_score(*stats)
-        
+
         iou_app = self.mIoU_appeared[f"stage_{stage}"]
         iou_diss = self.mIoU_disappeared[f"stage_{stage}"]
         iou_app(ious[:, 0])
@@ -131,8 +143,6 @@ class PitsLightningModule(pl.LightningModule):
         self.log(f"{stage}/iou_disappeared", iou_diss, on_epoch=True)
 
         return loss
-
-        
 
     # def training_step_end(self, step_output: STEP_OUTPUT) -> STEP_OUTPUT:
     #     return self._shared_step_end("train", step_output)
@@ -148,26 +158,25 @@ class PitsLightningModule(pl.LightningModule):
     ) -> Optional[STEP_OUTPUT]:
         return self._shared_step(batch, "validation")
 
+
 # %%
 if __name__ == "__main__":
     # %%
     model = PitsLightningModule()
-    model = model.load_from_checkpoint("/HDD1/gsech/source/alceo/epoch=60-step=5124.ckpt")
+    model = model.load_from_checkpoint(
+        "/HDD1/gsech/source/alceo/DvcLiveLogger/dvclive_run/checkpoints/epoch=99-step=4200.ckpt"
+    )
     # %%
     from pytorch_lightning import seed_everything
+
     seed_everything(1234, workers=True)
-    # %%
+    
     model.setup("fit")
-    # %%
-    for i in range(len(model.test_dataset)):
-        item = model.test_dataset[i]
-        item = model.on_after_batch_transfer(item, 0)
-        print(f"index: {i}, changes: {item['pits.appeared'].sum()}")
-        if i > 20:
-            break
+
     # %%
     import matplotlib.pyplot as plt
-    item = model.test_dataset[18]
+
+    item = model.test_datasets[0][18]
     item = model.on_after_batch_transfer(item, 0)
     pits_appeared = item["pits.appeared"]
     pits_disappeared = item["pits.disappeared"]
@@ -175,21 +184,78 @@ if __name__ == "__main__":
     im2 = item["im2"].unsqueeze(dim=0)
 
     change_pred = model.network(im1, im2).squeeze().detach().numpy()
-    # %%
-    print("Pred appeared")
-    plt.imshow(change_pred[0] > 0.5)
-    # %%
-    print("Pred disappeared")
-    plt.imshow(change_pred[1] > 0.5)
-    # %%
-    print("Pits appeared")
-    plt.imshow(pits_appeared[0])
-    # %%
-    print("Pits disappeared")
-    plt.imshow(pits_disappeared[0])
 
     # %%
-    item["tile_name"]
+    fig, [[a_im1, a_im2], [a_app, a_dis]] = plt.subplots(nrows=2, ncols=2)
+    a_im1.imshow(tvf.to_pil_image(im1[0, [0, 1, 2]]))
+    a_im1.set_title(f"Image 1: {item['change_start']}")
+    a_im1.tick_params(
+        axis="both",
+        which="both",
+        labelbottom=False,
+        labelleft=False,
+        bottom=False,
+        left=False,
+    )
+    a_im2.imshow(tvf.to_pil_image(im2[0, [0, 1, 2]]))
+    a_im2.set_title(f"Image 2: {item['change_end']}")
+    a_im2.tick_params(
+        axis="both",
+        which="both",
+        labelbottom=False,
+        labelleft=False,
+        bottom=False,
+        left=False,
+    )
+    a_app.imshow((pits_appeared[0]))
+    a_app.set_title("Pits appeared")
+    a_app.tick_params(
+        axis="both",
+        which="both",
+        labelbottom=False,
+        labelleft=False,
+        bottom=False,
+        left=False,
+    )
+    a_dis.axis("off")
+    # a_dis.imshow((pits_disappeared[0]))
+    # a_dis.set_title("Pits disappeared")
+    # a_dis.tick_params(
+    #     axis="both",
+    #     which="both",
+    #     labelbottom=False,
+    #     labelleft=False,
+    #     bottom=False,
+    #     left=False,
+    # )
+
     # %%
-    torch.all(pits_appeared == pits_disappeared)
+    import pandas as pd
+
+    app_df = pd.read_csv(
+        "/HDD1/gsech/source/alceo/dvclive/plots/metrics/validation/iou_appeared.tsv",
+        sep="\t",
+    )
+    app_df
+    disapp_df = pd.read_csv(
+        "/HDD1/gsech/source/alceo/dvclive/plots/metrics/validation/iou_disappeared.tsv",
+        sep="\t",
+    )
+    disapp_df
     # %%
+    import matplotlib.pyplot as plt
+
+    # fig, [app_ax, disapp_ax] = plt.subplots(nrows=2, ncols=1)
+    app_ax = plt.axes()
+    app_ax.plot(app_df["step"], app_df["iou_appeared"])
+    app_ax.set_title("mIoU pits appeared")
+    app_ax.set_ylabel("Validation mIoU")
+    app_ax.set_xlabel("Training step")
+    app_ax.set_ylim([0, 1])
+    # disapp_ax.plot(disapp_df["step"], disapp_df["iou_disappeared"])
+    # disapp_ax.set_title("mIoU pits disappeared")
+    # disapp_ax.set_ylabel("Validation mIoU")
+    # disapp_ax.set_xlabel("Training step")
+    # disapp_ax.set_ylim([0, 1])
+    plt.tight_layout()
+# %%

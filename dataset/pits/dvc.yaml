@@ -13,3 +13,17 @@ stages:
       - data/sites/DURA_EUROPOS/change
     outs:
       - dataset/pits/DURA_EUROPOS
+  build_ASWAN:
+    wdir: ../../.
+    cmd:
+      - rm -rf dataset/pits/ASWAN
+      - mkdir -p dataset/pits/ASWAN
+      - python src/alceo/processing/pits_site_dataset.py
+        -s data/sites/ASWAN
+        -o dataset/pits/ASWAN
+    deps:
+      - src/alceo/processing/pits_site_dataset.py
+      - data/sites/ASWAN/tiles
+      - data/sites/ASWAN/change
+    outs:
+      - dataset/pits/ASWAN
