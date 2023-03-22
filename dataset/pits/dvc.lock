@@ -12,9 +12,9 @@ stages:
       size: 1042299408
       nfiles: 3360
     - path: data/sites/DURA_EUROPOS/tiles
-      md5: 4bb4076f35e947b64d2d73e1cf2fe1e6.dir
-      size: 1761071393
-      nfiles: 3355
+      md5: 1445c9fb632efe00ea83e912acabfeb7.dir
+      size: 3241235828
+      nfiles: 4765
     - path: src/alceo/processing/pits_site_dataset.py
       md5: 61594ac44f483dabce6cb8f299353d2e
       size: 5539

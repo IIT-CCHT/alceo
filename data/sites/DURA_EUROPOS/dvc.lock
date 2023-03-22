@@ -30,8 +30,8 @@ stages:
       md5: 1734cdb300990d5bbb704b09221fa7f1
       size: 526710
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
-      size: 5081
+      md5: c1578773c1a6a65e90810b2027f7525f
+      size: 5352
     outs:
     - path: data/sites/DURA_EUROPOS/tiles/DE_26_5_2013/
       md5: d5b04bfbd4006c2dadcbe6e5582f2665.dir
@@ -84,8 +84,8 @@ stages:
       md5: 1734cdb300990d5bbb704b09221fa7f1
       size: 526710
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
-      size: 5081
+      md5: c1578773c1a6a65e90810b2027f7525f
+      size: 5352
     outs:
     - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared/tiles
       md5: a1b7aac19abb052bced5fd9e2b97da62.dir
@@ -103,8 +103,8 @@ stages:
       md5: 1734cdb300990d5bbb704b09221fa7f1
       size: 526710
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
-      size: 5081
+      md5: c1578773c1a6a65e90810b2027f7525f
+      size: 5352
     outs:
     - path: data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/
       md5: 2310a92e025082da20f80d7529b276d1.dir
@@ -141,10 +141,29 @@ stages:
       md5: 1734cdb300990d5bbb704b09221fa7f1
       size: 526710
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: e77a6f9ca5ac7d84726ff0b84df5ad17
-      size: 5081
+      md5: c1578773c1a6a65e90810b2027f7525f
+      size: 5352
     outs:
     - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared/tiles
       md5: f295c209a56470911fbf9bc2491e2ae4.dir
       size: 220572456
       nfiles: 1677
+  tilize_image@2:
+    cmd: python src/alceo/processing/rasterize_tiles.py -t data/sites/DURA_EUROPOS/tiles.geojson
+      -i data/sites/DURA_EUROPOS/images/DE_21_07_2018/DE_21_07_2018_50_cm_WV2_NN_diffuse_geo.tif
+      -o data/sites/DURA_EUROPOS/tiles/DE_21_07_2018
+    deps:
+    - path: data/sites/DURA_EUROPOS/images/DE_21_07_2018/DE_21_07_2018_50_cm_WV2_NN_diffuse_geo.tif
+      md5: 0d256688f56f4a34269717db550d8d84
+      size: 1633573179
+    - path: data/sites/DURA_EUROPOS/tiles.geojson
+      md5: 1734cdb300990d5bbb704b09221fa7f1
+      size: 526710
+    - path: src/alceo/processing/rasterize_tiles.py
+      md5: c1578773c1a6a65e90810b2027f7525f
+      size: 5352
+    outs:
+    - path: data/sites/DURA_EUROPOS/tiles/DE_21_07_2018/
+      md5: 89dc0981a1e889703cdb9aa72d7af9c8.dir
+      size: 1480164420
+      nfiles: 1410
