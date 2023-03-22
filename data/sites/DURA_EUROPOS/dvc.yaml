@@ -8,6 +8,8 @@ vars:
         path: DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
       - name: DE_19_09_2014
         path: DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif
+      - name: DE_21_07_2018
+        path: DE_21_07_2018/DE_21_07_2018_50_cm_WV2_NN_diffuse_geo.tif
   - tile_prefix: DURA_EUROPOS_
   - change_steps:
       - change: DE_26_5_2013/DE_19_09_2014
