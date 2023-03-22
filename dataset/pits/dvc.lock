@@ -45,3 +45,25 @@ stages:
       md5: bde572614f1fbdcbc1829cf777f9cf52.dir
       size: 1121605647
       nfiles: 3410
+  build_EBLA:
+    cmd:
+    - rm -rf dataset/pits/EBLA
+    - mkdir -p dataset/pits/EBLA
+    - python src/alceo/processing/pits_site_dataset.py -s data/sites/EBLA -o dataset/pits/EBLA
+    deps:
+    - path: data/sites/EBLA/change
+      md5: 84c41048070fb02e6ca7e28091618ae4.dir
+      size: 1099697961
+      nfiles: 1110
+    - path: data/sites/EBLA/tiles
+      md5: 30dc10a735669ca9d1ea4ad28d4ef719.dir
+      size: 856706488
+      nfiles: 1089
+    - path: src/alceo/processing/pits_site_dataset.py
+      md5: 61594ac44f483dabce6cb8f299353d2e
+      size: 5539
+    outs:
+    - path: dataset/pits/EBLA
+      md5: 2ea92ee047b9a19bad0c9e7706b52a97.dir
+      size: 857282541
+      nfiles: 2178
