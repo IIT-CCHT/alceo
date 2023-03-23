@@ -59,7 +59,7 @@ def produce_tiles(
         _window = windows.Window(
             col_off=col_off,
             row_off=row_off,
-            width=512,
+            width=tile_width,
             height=tile_height,
         ).intersection(big_window)
         _window_bounds = windows.bounds(_window, _transform)

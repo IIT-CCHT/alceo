@@ -13,7 +13,7 @@ from pytorch_lightning.utilities.types import (
 )
 import time
 from alceo.dataset.pits import PitsSiteDataset
-from torch.utils.data import DataLoader, Dataset, random_split
+from torch.utils.data import DataLoader, Dataset, random_split, ConcatDataset
 import torch
 import torchvision.transforms.functional as tvf
 from torch.nn.functional import one_hot
@@ -56,6 +56,7 @@ class PitsLightningModule(pl.LightningModule):
         self.batch_ids_to_monitor = None
         self.network = PitsChangeDetectionNetwork()
         self.loss_fn = JaccardLoss(mode="multilabel")
+
         self.mIoU_appeared = MetricCollection(
             {
                 "stage_train": MeanMetric(dist_sync_on_step=True),
@@ -68,16 +69,31 @@ class PitsLightningModule(pl.LightningModule):
                 "stage_validation": MeanMetric(dist_sync_on_step=True),
             }
         )
+        
+        self.ne_mIoU_appeared = MetricCollection(
+            {
+                "stage_train": MeanMetric(dist_sync_on_step=True),
+                "stage_validation": MeanMetric(dist_sync_on_step=True),
+            }
+        )
+        self.ne_mIoU_disappeared = MetricCollection(
+            {
+                "stage_train": MeanMetric(dist_sync_on_step=True),
+                "stage_validation": MeanMetric(dist_sync_on_step=True),
+            }
+        )
+        
 
     def setup(self, stage: Optional[str] = None) -> None:
         pits_dataset_path = Path("/HDD1/gsech/source/alceo/dataset/pits/")
         dataset = PitsSiteDataset(pits_dataset_path / "DURA_EUROPOS")
         self.datasets = [
-            ("DURA_EUROPOS", PitsSiteDataset(pits_dataset_path / "DURA_EUROPOS")),
+            ("DURAEUROPOS", PitsSiteDataset(pits_dataset_path / "DURA_EUROPOS")),
             ("ASWAN", PitsSiteDataset(pits_dataset_path / "ASWAN")),
+            ("EBLA", PitsSiteDataset(pits_dataset_path / "EBLA")),
         ]
         self.train_datasets, self.validation_datasets, self.test_datasets = [], [], []
-        
+
         for label, dataset in self.datasets:
             train_dataset, validation_dataset, test_dataset = random_split(
                 dataset, [0.8, 0.1, 0.1]
@@ -85,7 +101,7 @@ class PitsLightningModule(pl.LightningModule):
             self.train_datasets.append(train_dataset)
             self.validation_datasets.append(validation_dataset)
             self.test_datasets.append(test_dataset)
-            
+
         return super().setup(stage)
 
     def _dataloader_for_dataset(self, dataset: Dataset):
@@ -95,9 +111,18 @@ class PitsLightningModule(pl.LightningModule):
             num_workers=5,
         )
 
-    def on_after_batch_transfer(self, batch: Any, dataloader_idx: int) -> Any:
+    def single_batch_transfer(self, batch: Any, dataloader_idx: int) -> Any:
         batch["im1"] = batch["im1"].float()
         batch["im2"] = batch["im2"].float()
+        return batch
+
+    def on_after_batch_transfer(self, batch: Any, dataloader_idx: int = -1) -> Any:
+        if isinstance(batch, list):
+            for i in range(len(batch)):
+                batch[i] = self.single_batch_transfer(batch[i], dataloader_idx)
+            return batch
+        else:
+            batch = self.single_batch_transfer(batch, dataloader_idx)
 
         return super().on_after_batch_transfer(batch, dataloader_idx)
 
@@ -108,13 +133,20 @@ class PitsLightningModule(pl.LightningModule):
         )
 
     def train_dataloader(self) -> TRAIN_DATALOADERS:
-        return self._dataloader_for_dataset(self.train_dataset)
+        return self._dataloader_for_dataset(ConcatDataset(self.train_datasets))
 
     def val_dataloader(self) -> EVAL_DATALOADERS:
-        return self._dataloader_for_dataset(self.validation_dataset)
+        _dataloaders = [
+            self._dataloader_for_dataset(dataset)
+            for dataset in self.validation_datasets
+        ]
+        return _dataloaders
 
-    def _shared_step(self, batch, stage: str) -> STEP_OUTPUT:
-
+    def _shared_step(self, batch, stage: str, dataloader_idx=-1) -> STEP_OUTPUT:
+        log_stage = stage
+        if dataloader_idx >= 0:
+            log_stage = f"{stage}/{self.datasets[dataloader_idx][0]}"
+            
         pits_appeared = batch["pits.appeared"]
         pits_disappeared = batch["pits.disappeared"]
         im1 = batch["im1"]
@@ -127,20 +159,53 @@ class PitsLightningModule(pl.LightningModule):
 
         # computing full loss!
         loss = self.loss_fn(change_pred, change_truth)
-        self.log(f"{stage}/loss", loss, prog_bar=True, sync_dist=True, on_epoch=True)
+        self.log(f"{log_stage}/loss", loss, prog_bar=True, sync_dist=True, on_epoch=True)
 
         stats = get_stats(
             change_pred, change_truth, mode="multilabel", threshold=0.5, num_classes=2
         )
 
         ious = iou_score(*stats)
-
+        ne_ious = iou_score(*stats, zero_division=-1)
         iou_app = self.mIoU_appeared[f"stage_{stage}"]
         iou_diss = self.mIoU_disappeared[f"stage_{stage}"]
         iou_app(ious[:, 0])
         iou_diss(ious[:, 1])
-        self.log(f"{stage}/iou_appeared", iou_app, on_epoch=True)
-        self.log(f"{stage}/iou_disappeared", iou_diss, on_epoch=True)
+    
+        
+        self.log(
+            f"{log_stage}/appeared/iou",
+            iou_app,
+            on_epoch=True,
+            add_dataloader_idx=False,
+        )
+        self.log(
+            f"{log_stage}/disappeared/iou",
+            iou_diss,
+            on_epoch=True,
+            add_dataloader_idx=False,
+        )
+
+        
+        ne_weights = torch.ones_like(ne_ious)
+        ne_weights[ne_ious < 0.0] = 0.0
+        ne_iou_app = self.ne_mIoU_appeared[f"stage_{stage}"]
+        ne_iou_diss = self.ne_mIoU_disappeared[f"stage_{stage}"]
+        ne_iou_app(ne_ious[:, 0], ne_weights[:, 0])
+        ne_iou_diss(ne_ious[:, 1], ne_weights[:, 1])
+
+        self.log(
+            f"{log_stage}/appeared/iou-no-empty",
+            ne_iou_app,
+            on_epoch=True,
+            add_dataloader_idx=False,
+        )
+        self.log(
+            f"{log_stage}/disappeared/iou-no-empty",
+            ne_iou_diss,
+            on_epoch=True,
+            add_dataloader_idx=False,
+        )
 
         return loss
 
@@ -154,9 +219,13 @@ class PitsLightningModule(pl.LightningModule):
         return self._shared_step(batch, "train")
 
     def validation_step(
-        self, batch, batch_idx, dataloader_idx=0, *args: Any, **kwargs: Any
+        self, batch, batch_idx, dataloader_idx=-1, *args: Any, **kwargs: Any
     ) -> Optional[STEP_OUTPUT]:
-        return self._shared_step(batch, "validation")
+        if isinstance(batch, list):
+            for i in range(len(batch)):
+                self._shared_step(batch[i], "validation", dataloader_idx=dataloader_idx)
+        else:
+            return self._shared_step(batch, "validation", dataloader_idx=dataloader_idx)
 
 
 # %%
@@ -170,7 +239,7 @@ if __name__ == "__main__":
     from pytorch_lightning import seed_everything
 
     seed_everything(1234, workers=True)
-    
+
     model.setup("fit")
 
     # %%
