@@ -3,6 +3,7 @@ import rasterio
 from rasterio import windows
 import rasterio.mask
 from shapely import union_all
+from shapely.geometry import box
 from pathlib import Path
 import geopandas as gpd
 from alceo.utils import in_notebook
@@ -39,29 +40,33 @@ def rasterize_tiles(
         aoi_shape = union_all(aoi_gdf.geometry)
         tiles_gdf = tiles_gdf[tiles_gdf.geometry.covered_by(aoi_shape)]
     # %%
-    for id, row in tqdm(tiles_gdf.iterrows()):
-        # %%
-        src = rasterio.open(input_geotiff_path)
-        tile_window = windows.from_bounds(
-            *row.geometry.bounds,
-            transform=src.transform,
-        )
-        res = src.read(
-            window=tile_window,
-            out_shape=(src.count, row.height, row.width),
-            resampling=Resampling.bilinear,
-        )
-        # %%
+    with rasterio.open(input_geotiff_path) as src:
+        image_box = box(*src.bounds)
+        # src = rasterio.open(input_geotiff_path)
+        for id, row in tqdm(tiles_gdf.iterrows()):
+            # %%
+            if not image_box.covers(row.geometry):
+                continue
+            tile_window = windows.from_bounds(
+                *row.geometry.bounds,
+                transform=src.transform,
+            )
+            res = src.read(
+                window=tile_window,
+                out_shape=(src.count, row.height, row.width),
+                resampling=Resampling.bilinear,
+            )
+            # %%
 
-        tile_path = output_directory_path / output_filename.format(row.tile_id
-        )
+            tile_path = output_directory_path / output_filename.format(row.tile_id
+            )
 
-        meta = src.meta.copy()
-        meta["width"] = row.width
-        meta["height"] = row.height
-        meta["transform"] = windows.transform(tile_window, src.transform)
-        with rasterio.open(tile_path, "w", **meta) as out:
-            out.write(res)
+            meta = src.meta.copy()
+            meta["width"] = row.width
+            meta["height"] = row.height
+            meta["transform"] = windows.transform(tile_window, src.transform)
+            with rasterio.open(tile_path, "w", **meta) as out:
+                out.write(res)
 
 
 if __name__ == "__main__":
@@ -116,13 +121,13 @@ if __name__ == "__main__":
     else:
         # %%
         tiles_geojson_path = Path(
-            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/tiles.json"
+            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/tiles.geojson"
         )
         input_geotiff_path = Path(
             "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif"
         )
         output_directory_path = Path(
-            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/tiles/DE_19_09_2014/DE_19_09_2014_NN_diffuse"
+            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/tiles/DE_21_07_2018"
         )
         areas_of_interest_geojson = Path(
             "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/area_of_interest.geojson"
