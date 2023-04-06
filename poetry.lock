@@ -896,6 +896,37 @@ docs = ["mkdocs (==1.3.1)", "mkdocs-gen-files (==0.3.5)", "mkdocs-material (==8.
 tests = ["celery-types (>=0.11.0)", "flaky (==3.7.0)", "mypy (==0.971)", "pylint (==2.15.0)", "pytest (==7.2.0)", "pytest-celery", "pytest-cov (==3.0.0)", "pytest-mock (==3.8.2)", "pytest-sugar (==0.9.5)", "pytest-test-utils (>=0.0.6)"]
 
 [[package]]
+name = "dvclive"
+version = "2.6.2"
+description = "Metric logger for ML projects."
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+dvc = ">2.45.1"
+funcy = "*"
+"ruamel.yaml" = "*"
+
+[package.extras]
+all = ["catalyst (>22)", "datasets", "fastai", "lightgbm", "matplotlib", "mmcv", "numpy", "optuna", "pillow", "pytorch-lightning (>=1.9)", "scikit-learn", "tensorflow", "torch (<1.13)", "transformers", "xgboost"]
+catalyst = ["catalyst (>22)"]
+dev = ["catalyst (>22)", "datasets", "fastai", "ipython", "lightgbm", "matplotlib", "mmcv", "mypy (>=1.1.1)", "numpy", "optuna", "pillow", "pylint (==2.15.0)", "pylint-plugin-utils (>=0.6)", "pytest (==7.2.0)", "pytest-cov (==3.0.0)", "pytest-mock (==3.8.2)", "pytest-sugar (==0.9.5)", "pytorch-lightning (>=1.9)", "scikit-learn", "tensorflow", "torch (<1.13)", "transformers", "xgboost"]
+fastai = ["fastai"]
+huggingface = ["datasets", "transformers"]
+image = ["numpy", "pillow"]
+lgbm = ["lightgbm"]
+markdown = ["matplotlib"]
+mmcv = ["mmcv"]
+optuna = ["optuna"]
+plots = ["scikit-learn"]
+pytorch-lightning = ["pytorch-lightning (>=1.9)", "torch (<1.13)"]
+sklearn = ["scikit-learn"]
+tests = ["ipython", "matplotlib", "mypy (>=1.1.1)", "numpy", "pillow", "pylint (==2.15.0)", "pylint-plugin-utils (>=0.6)", "pytest (==7.2.0)", "pytest-cov (==3.0.0)", "pytest-mock (==3.8.2)", "pytest-sugar (==0.9.5)", "scikit-learn"]
+tf = ["tensorflow"]
+xgb = ["xgboost"]
+
+[[package]]
 name = "efficientnet-pytorch"
 version = "0.7.1"
 description = "EfficientNet implemented in PyTorch."
@@ -3991,7 +4022,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "6ef5281cf872cfe41a2e3e3768f4d44bb718a9d5b6930ed716323dee78eb692e"
+content-hash = "83141826fbe9f1de3700ee5040380ddc0b5e8544102a297079f402c34b12a6db"
 
 [metadata.files]
 absl-py = [
@@ -4640,6 +4671,10 @@ dvc-studio-client = [
 dvc-task = [
     {file = "dvc-task-0.2.0.tar.gz", hash = "sha256:6c44a22e5c0c4054b34181c517db13fef23678c96d4ebbcfb8ddfffb2404999c"},
     {file = "dvc_task-0.2.0-py3-none-any.whl", hash = "sha256:af3bbdbb1fe2f88fb091c7405d1f71897f7f8bb6736b9ba3752fb039b3e56448"},
+]
+dvclive = [
+    {file = "dvclive-2.6.2-py3-none-any.whl", hash = "sha256:c787cb509fe419896b514d3e960bc4c4731337413a438d8a37d2a8de18158539"},
+    {file = "dvclive-2.6.2.tar.gz", hash = "sha256:d2960b7bcc350fa56836b12495a9da6f165c80d5572cde498e87b8c763b922d5"},
 ]
 efficientnet-pytorch = [
     {file = "efficientnet_pytorch-0.7.1.tar.gz", hash = "sha256:00b9b261effce59d2d47aae2ad238c29a2a65175470f41ada7ecac439b7c1ee1"},

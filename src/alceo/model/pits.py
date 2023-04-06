@@ -1,6 +1,6 @@
 # %%
 from pathlib import Path
-from typing import Any, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 import pytorch_lightning as pl
 from segmentation_models_pytorch import Unet
 from segmentation_models_pytorch.metrics.functional import get_stats, iou_score
@@ -19,6 +19,7 @@ import torchvision.transforms.functional as tvf
 from torch.nn.functional import one_hot
 from sorcery import dict_of, unpack_keys
 from torchmetrics import MeanMetric, MetricCollection
+from torchmetrics.classification import BinaryJaccardIndex, BinaryF1Score, BinaryPrecision, BinaryRecall
 
 
 class PitsChangeDetectionNetwork(torch.nn.Module):
@@ -51,96 +52,96 @@ class PitsChangeDetectionNetwork(torch.nn.Module):
 
 
 class PitsLightningModule(pl.LightningModule):
-    def __init__(self) -> None:
+    
+    @property
+    def stage_tag(self):
+        if self.trainer.training:
+            return "training"
+        if self.trainer.validating:
+            return "validation"
+        if self.trainer.testing:
+            return "testing"
+        return "NE"
+    
+    @property
+    def stage_labels(self):
+        if self.trainer.training:
+            return self.training_labels
+        if self.trainer.validating:
+            return self.validation_labels
+        if self.trainer.testing:
+            return self.test_labels
+        return []
+            
+    def update_for_tag(self, tag: str, predicted: torch.Tensor, correct: torch.Tensor):
+        stats = get_stats(
+            predicted,
+            correct,
+            mode="binary",
+        )
+        
+        ious = iou_score(*stats)
+        ne_ious = iou_score(*stats, zero_division=-1)
+        ne_weights = torch.ones_like(ne_ious)
+        ne_weights[ne_ious < 0.0] = 0.0
+        
+        self.torchmetrics[f"{tag}/mIoU"](ious)
+        self.torchmetrics[f"{tag}/ne_mIoU"](ne_ious, ne_weights)
+        
+        self.torchmetrics[f"{tag}/IoU"](predicted, correct)
+        self.torchmetrics[f"{tag}/F1"](predicted, correct)
+        self.torchmetrics[f"{tag}/precision"](predicted, correct)
+        self.torchmetrics[f"{tag}/recall"](predicted, correct)   
+    
+    def log_for_tag(self, tag: str):
+        self.log(f"{tag}/mIoU", self.torchmetrics[f"{tag}/mIoU"])
+        self.log(f"{tag}/ne_mIoU", self.torchmetrics[f"{tag}/ne_mIoU"])
+        self.log(f"{tag}/IoU", self.torchmetrics[f"{tag}/IoU"])
+        self.log(f"{tag}/F1", self.torchmetrics[f"{tag}/F1"])
+        self.log(f"{tag}/precision", self.torchmetrics[f"{tag}/precision"])
+        self.log(f"{tag}/recall", self.torchmetrics[f"{tag}/recall"])
+    
+    def setup_metrics(self):
+        def metrics_for_tag(tag: str):
+            return {
+                f"{tag}/mIoU": MeanMetric(),
+                f"{tag}/ne_mIoU": MeanMetric(),
+                f"{tag}/IoU": BinaryJaccardIndex(),
+                f"{tag}/F1": BinaryF1Score(),
+                f"{tag}/precision": BinaryPrecision(),
+                f"{tag}/recall": BinaryRecall(),
+            }
+        # training metrics
+        _metrics = metrics_for_tag("training")
+        for label in self.training_labels:
+            _metrics.update(metrics_for_tag(f"training/{label}"))
+            
+        _metrics.update(metrics_for_tag("validation"))
+        for label in self.validation_labels:
+            _metrics.update(metrics_for_tag(f"validation/{label}"))
+        
+        _metrics.update(metrics_for_tag("testing"))
+        for label in self.test_labels:
+            _metrics.update(metrics_for_tag(f"testing/{label}"))
+        
+        self.torchmetrics = MetricCollection(_metrics)
+
+    def __init__(self, network: PitsChangeDetectionNetwork, training_labels: List[str], validation_labels, test_labels,) -> None:
         super().__init__()
         self.batch_ids_to_monitor = None
-        self.network = PitsChangeDetectionNetwork()
+        self.network = network
         self.loss_fn = JaccardLoss(mode="multilabel")
-        self.n_dataloaders = 3
-
-        self.mIoU_appeared = MetricCollection(
-            {
-                "stage_train": MeanMetric(dist_sync_on_step=True),
-                "stage_validation": MeanMetric(dist_sync_on_step=True),
-            }
-        )
-        self.mIoU_disappeared = MetricCollection(
-            {
-                "stage_train": MeanMetric(dist_sync_on_step=True),
-                "stage_validation": MeanMetric(dist_sync_on_step=True),
-            }
-        )
-
-        self.ne_mIoU_appeared = MetricCollection(
-            {
-                "stage_train": MeanMetric(dist_sync_on_step=True),
-                "stage_validation": MeanMetric(dist_sync_on_step=True),
-            }
-        )
-        self.ne_mIoU_disappeared = MetricCollection(
-            {
-                "stage_train": MeanMetric(dist_sync_on_step=True),
-                "stage_validation": MeanMetric(dist_sync_on_step=True),
-            }
-        )
-
-    def setup(self, stage: Optional[str] = None) -> None:
-        pits_dataset_path = Path("/HDD1/gsech/source/alceo/dataset/pits/")
-        dataset = PitsSiteDataset(pits_dataset_path / "DURA_EUROPOS")
-        self.datasets = [
-            ("DURAEUROPOS", PitsSiteDataset(pits_dataset_path / "DURA_EUROPOS")),
-            ("ASWAN", PitsSiteDataset(pits_dataset_path / "ASWAN")),
-            ("EBLA", PitsSiteDataset(pits_dataset_path / "EBLA")),
-        ]
-        self.train_datasets, self.validation_datasets, self.test_datasets = [], [], []
-
-        for label, dataset in self.datasets:
-            train_dataset, validation_dataset, test_dataset = random_split(
-                dataset, [0.8, 0.1, 0.1]
-            )
-            self.train_datasets.append(train_dataset)
-            self.validation_datasets.append(validation_dataset)
-            self.test_datasets.append(test_dataset)
-
-        return super().setup(stage)
-
-    def _dataloader_for_dataset(self, dataset: Dataset):
-        return DataLoader(
-            dataset=dataset,
-            batch_size=16,
-            num_workers=5,
-        )
-
-    def single_batch_transfer(self, batch: Any, dataloader_idx: int) -> Any:
-        batch["im1"] = batch["im1"].float()
-        batch["im2"] = batch["im2"].float()
-        return batch
-
-    def on_after_batch_transfer(self, batch: Any, dataloader_idx: int = -1) -> Any:
-        if isinstance(batch, list):
-            for i in range(len(batch)):
-                batch[i] = self.single_batch_transfer(batch[i], dataloader_idx)
-            return batch
-        else:
-            batch = self.single_batch_transfer(batch, dataloader_idx)
-
-        return super().on_after_batch_transfer(batch, dataloader_idx)
+        
+        self.training_labels = training_labels
+        self.validation_labels = validation_labels
+        self.test_labels = test_labels
+        self.setup_metrics()
 
     def configure_optimizers(self) -> Any:
         return torch.optim.Adam(
             params=self.parameters(),
             lr=1e-5,
         )
-
-    def train_dataloader(self) -> TRAIN_DATALOADERS:
-        return self._dataloader_for_dataset(ConcatDataset(self.train_datasets))
-
-    def val_dataloader(self) -> EVAL_DATALOADERS:
-        _dataloaders = [
-            self._dataloader_for_dataset(dataset)
-            for dataset in self.validation_datasets
-        ]
-        return _dataloaders
 
     def forward(self, batch):
         im1 = batch["im1"]
@@ -161,15 +162,19 @@ class PitsLightningModule(pl.LightningModule):
         # computing loss
         loss = self.loss_fn(change_pred, change_truth)
         self.log(f"{log_stage}/loss", loss, sync_dist=True, on_epoch=True)
+        
+        change_pred_mask = change_pred[:, 0] > 0
+        change_target = change_truth[:, 0]
+            
+        self.update_for_tag(self.stage_tag, change_pred_mask, change_target)
+        if dataloader_idx > 0:
+            tag = f"{self.stage_tag}/{self.stage_labels[dataloader_idx]}"
+            self.update_for_tag(tag, change_pred_mask, change_target)
 
-        return {
-            "loss": loss,
-            "change_prediction": change_pred,
-            "change_target": change_truth,
-        }
+        return loss
 
     def training_step(self, batch, batch_idx, *args, **kwargs) -> STEP_OUTPUT:
-        return self._shared_step(batch, "train")
+        return self._shared_step(batch)
 
     def validation_step(
         self,
@@ -181,76 +186,15 @@ class PitsLightningModule(pl.LightningModule):
     ) -> Optional[STEP_OUTPUT]:
         if isinstance(batch, list):
             for i in range(len(batch)):
-                self._shared_step(batch[i], "validation", dataloader_idx=dataloader_idx)
+                self._shared_step(batch[i], dataloader_idx=dataloader_idx)
         else:
-            return self._shared_step(batch, "validation", dataloader_idx=dataloader_idx)
+            return self._shared_step(batch, dataloader_idx=dataloader_idx)
+    
+    def _shared_epoch_end(self):
+        self.log_for_tag(self.stage_tag)
+        for label in self.stage_labels:
+            self.log_for_tag(f"{self.stage_tag}/{label}")
 
-    def _shared_step_end(
-        self,
-        step_output: STEP_OUTPUT,
-        stage: str,
-        dataloader_idx=-1,
-    ) -> STEP_OUTPUT:
-        change_pred = step_output["change_prediction"]
-        change_target = step_output["change_target"]
-        stats = get_stats(
-            change_pred,
-            change_target,
-            mode="multilabel",
-            threshold=0.5,
-            num_classes=2,
-        )
-
-        ious = iou_score(*stats)
-        ne_ious = iou_score(*stats, zero_division=-1)
-        iou_app = self.mIoU_appeared[f"stage_{stage}"]
-        iou_diss = self.mIoU_disappeared[f"stage_{stage}"]
-        iou_app(ious[:, 0])
-        iou_diss(ious[:, 1])
-
-        log_stage = stage
-        if dataloader_idx >= 0:
-            log_stage = f"{stage}/{self.datasets[dataloader_idx][0]}"
-
-        self.log(
-            f"{log_stage}/appeared/iou",
-            iou_app,
-            on_epoch=True,
-            add_dataloader_idx=False,
-        )
-        self.log(
-            f"{log_stage}/disappeared/iou",
-            iou_diss,
-            on_epoch=True,
-            add_dataloader_idx=False,
-        )
-
-        ne_weights = torch.ones_like(ne_ious)
-        ne_weights[ne_ious < 0.0] = 0.0
-        ne_iou_app = self.ne_mIoU_appeared[f"stage_{stage}"]
-        ne_iou_diss = self.ne_mIoU_disappeared[f"stage_{stage}"]
-        ne_iou_app(ne_ious[:, 0], ne_weights[:, 0])
-        ne_iou_diss(ne_ious[:, 1], ne_weights[:, 1])
-
-        self.log(
-            f"{log_stage}/appeared/iou-no-empty",
-            ne_iou_app,
-            on_epoch=True,
-            add_dataloader_idx=False,
-        )
-        self.log(
-            f"{log_stage}/disappeared/iou-no-empty",
-            ne_iou_diss,
-            on_epoch=True,
-            add_dataloader_idx=False,
-        )
-        return step_output
-
-    def training_step_end(self, step_output: STEP_OUTPUT) -> STEP_OUTPUT:
-        return super().training_step_end(step_output)
-
-    def validation_step_end(self, *args: Any, **kwargs: Any) -> Optional[STEP_OUTPUT]:
-        return super().validation_step_end(*args, **kwargs)
 
 
 # %%
