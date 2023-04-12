@@ -56,15 +56,17 @@ class PitsSiteDataset(Dataset[Dict[str, Any]]):
 
     def __getitem__(self, index) -> Dict[str, Any]:
         item = self.tiles_df.loc[index].to_dict()
-        im1_loaded = self._load_raster(self.im1_folder / item["tile_name"])
+        im1_path = self.im1_folder / item["tile_name"]
+        item["im1_path"] = str(im1_path)
+        im1_loaded = self._load_raster(im1_path)
         
-        item["im1"] = torch.from_numpy(im1_loaded.astype(np.int32))
+        item["im1"] = torch.from_numpy(im1_loaded.astype(np.int32)).float()
         c, w, h = item["im1"].shape
         if c == 8:
             item["im1"] = item["im1"][[4, 2, 1, 7], :, :]
 
         im2_loaded = self._load_raster(self.im2_folder / item["tile_name"])
-        item["im2"] = torch.from_numpy(im2_loaded.astype(np.int32))
+        item["im2"] = torch.from_numpy(im2_loaded.astype(np.int32)).float()
         c, w, h = item["im2"].shape
         if c == 8:
             item["im2"] = item["im2"][[4, 2, 1, 7], :, :]

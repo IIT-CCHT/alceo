@@ -1,8 +1,19 @@
+from pathlib import Path
+from typing import Any, Optional
+from alceo.dataset.pits import PitsSiteDataset
 from alceo.model.pits import PitsLightningModule, PitsChangeDetectionNetwork
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from dvclive.lightning import DVCLiveLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
+from torch.utils.data import random_split, Dataset, ConcatDataset, DataLoader
+from pytorch_lightning.utilities.types import (
+    TRAIN_DATALOADERS,
+    STEP_OUTPUT,
+    EVAL_DATALOADERS,
+    EPOCH_OUTPUT,
+)
+
 
 class PitsDataModule(pl.LightningDataModule):
     def setup(self, stage: Optional[str] = None) -> None:
@@ -24,29 +35,14 @@ class PitsDataModule(pl.LightningDataModule):
             self.test_datasets.append(test_dataset)
 
         return super().setup(stage)
-    
+
     def _dataloader_for_dataset(self, dataset: Dataset):
         return DataLoader(
             dataset=dataset,
-            batch_size=16,
+            batch_size=4,
             num_workers=5,
         )
-        
-    def single_batch_transfer(self, batch: Any, dataloader_idx: int) -> Any:
-        batch["im1"] = batch["im1"].float()
-        batch["im2"] = batch["im2"].float()
-        return batch
 
-    def on_after_batch_transfer(self, batch: Any, dataloader_idx: int = -1) -> Any:
-        if isinstance(batch, list):
-            for i in range(len(batch)):
-                batch[i] = self.single_batch_transfer(batch[i], dataloader_idx)
-            return batch
-        else:
-            batch = self.single_batch_transfer(batch, dataloader_idx)
-
-        return super().on_after_batch_transfer(batch, dataloader_idx)
-    
     def train_dataloader(self) -> TRAIN_DATALOADERS:
         return self._dataloader_for_dataset(ConcatDataset(self.train_datasets))
 
@@ -57,6 +53,13 @@ class PitsDataModule(pl.LightningDataModule):
         ]
         return _dataloaders
 
+    def test_dataloader(self) -> EVAL_DATALOADERS:
+        _dataloaders = [
+            self._dataloader_for_dataset(dataset) for dataset in self.test_datasets
+        ]
+        return _dataloaders
+
+
 if __name__ == "__main__":
     pl.seed_everything(1234, workers=True)
     trainer = pl.Trainer(
@@ -64,20 +67,28 @@ if __name__ == "__main__":
         strategy="ddp",
         devices=[0, 1, 2, 3],
         precision=16,
-        max_time="00:12:00:00",
+        max_time="00:10:00:00",
         logger=DVCLiveLogger(run_name="pits_change_detection", dir="log"),
         log_every_n_steps=5,
         callbacks=[
             ModelCheckpoint(
-                monitor="validation/DURAEUROPOS/appeared/iou-no-empty",
+                monitor="validation/appeared/mIoU",
                 save_last=True,
                 save_top_k=2,
                 mode="max",
-                filename="DURAEUROPOS-{epoch:02d}-{validation/DURAEUROPOS/appeared/iou-no-empty:.5f}",
+                filename="epoch={epoch:02d}-mIoU={validation/appeared/mIoU:.5f}",
+                auto_insert_metric_name=False,
             ),
         ],
     )
+    datamodule = PitsDataModule()
+    datasets_labels = ["DE", "AS", "EB"]
     network = PitsChangeDetectionNetwork()
-    model = PitsLightningModule()
-    trainer.fit(model=model)
+    model = PitsLightningModule(
+        network=network,
+        training_labels=[],
+        validation_labels=datasets_labels,
+        test_labels=datasets_labels,
+    )
+    trainer.fit(model=model, datamodule=datamodule)
 #
