@@ -1,7 +1,9 @@
 from pathlib import Path
 from typing import Any, Optional
 from alceo.dataset.pits import PitsSiteDataset
-from alceo.model.pits import PitsLightningModule, PitsChangeDetectionNetwork
+from alceo.model.pits import PitsChangeDetectionNetwork
+from alceo.model.alceo_metric_module import AlceoMetricModule
+from alceo.model.siam_diff import SiamUnet_diff
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from dvclive.lightning import DVCLiveLogger
@@ -13,6 +15,8 @@ from pytorch_lightning.utilities.types import (
     EVAL_DATALOADERS,
     EPOCH_OUTPUT,
 )
+from segmentation_models_pytorch.losses import JaccardLoss
+
 
 
 class PitsDataModule(pl.LightningDataModule):
@@ -68,24 +72,26 @@ if __name__ == "__main__":
         devices=[0, 1, 2, 3],
         precision=16,
         max_time="00:10:00:00",
-        logger=DVCLiveLogger(run_name="pits_change_detection", dir="log"),
+        logger=DVCLiveLogger(run_name="pits_change_detection", dir="log", report="md"),
         log_every_n_steps=5,
         callbacks=[
             ModelCheckpoint(
-                monitor="validation/appeared/mIoU",
+                monitor="validation/appeared/IoU",
                 save_last=True,
                 save_top_k=2,
                 mode="max",
-                filename="epoch={epoch:02d}-mIoU={validation/appeared/mIoU:.5f}",
+                filename="epoch={epoch:02d}-IoU={validation/appeared/IoU:.5f}",
                 auto_insert_metric_name=False,
             ),
         ],
     )
+    loss_fn = JaccardLoss(mode="multilabel")
     datamodule = PitsDataModule()
     datasets_labels = ["DE", "AS", "EB"]
-    network = PitsChangeDetectionNetwork()
-    model = PitsLightningModule(
+    network = SiamUnet_diff(input_nbr=4, label_nbr=2)
+    model = AlceoMetricModule(
         network=network,
+        loss_fn=loss_fn,
         training_labels=[],
         validation_labels=datasets_labels,
         test_labels=datasets_labels,
