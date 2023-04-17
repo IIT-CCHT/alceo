@@ -212,6 +212,7 @@ optional = false
 python-versions = ">= 3.6"
 
 [package.dependencies]
+bcrypt = {version = ">=3.1.3", optional = true, markers = "extra == \"bcrypt\""}
 cryptography = ">=3.1"
 typing-extensions = ">=3.6"
 
@@ -262,6 +263,18 @@ description = "Specifications for callback functions passed in to an API"
 category = "main"
 optional = false
 python-versions = "*"
+
+[[package]]
+name = "bcrypt"
+version = "4.0.1"
+description = "Modern password hashing for your software and your servers"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.extras]
+tests = ["pytest (>=3.2.1,!=3.3.0)"]
+typecheck = ["mypy"]
 
 [[package]]
 name = "beautifulsoup4"
@@ -856,6 +869,22 @@ docs = ["mkdocs (==1.3.1)", "mkdocs-gen-files (==0.3.5)", "mkdocs-material (==8.
 markdown = ["matplotlib", "tabulate (>=0.8.7)"]
 table = ["tabulate (>=0.8.7)"]
 tests = ["funcy (>=1.17)", "matplotlib", "mypy (==0.981)", "pylint (==2.15.0)", "pytest (==7.2.0)", "pytest-cov (==3.0.0)", "pytest-mock (==3.8.2)", "pytest-sugar (==0.9.5)", "pytest-test-utils (>=0.0.6)", "tabulate (>=0.8.7)"]
+
+[[package]]
+name = "dvc-ssh"
+version = "2.22.1"
+description = "ssh plugin for dvc"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+dvc = "*"
+sshfs = {version = ">=2023.4.1", extras = ["bcrypt"]}
+
+[package.extras]
+gssapi = ["sshfs[gssapi] (>=2021.11.2)"]
+tests = ["Pygments (==2.10.0)", "collective.checkdocs (==0.2)", "dvc[testing]", "filelock (==3.3.2)", "flaky (==3.7.0)", "mock (==4.0.3)", "mypy (==0.910)", "pydocstyle (==6.1.1)", "pylint (==2.15.9)", "pylint-plugin-utils (==0.6)", "pytest (==6.2.5)", "pytest-cov (==3.0.0)", "pytest-docker (>=1,<2)", "pytest-lazy-fixture (==0.6.3)", "pytest-mock (==3.6.1)", "pytest-xdist (==2.4.0)", "pywin32 (>=225)", "types-requests (==2.25.11)", "types-tabulate (==0.8.3)", "types-toml (==0.10.1)", "wget (==3.2)", "wheel (==0.37.0)", "xmltodict (==0.12.0)"]
 
 [[package]]
 name = "dvc-studio-client"
@@ -3477,6 +3506,30 @@ dev = ["mypy (==0.971)", "pyinstaller", "pylint (==2.15.0)", "pytest (==7.2.0)",
 tests = ["mypy (==0.971)", "pyinstaller", "pylint (==2.15.0)", "pytest (==7.2.0)", "pytest-benchmark", "pytest-cov (==3.0.0)", "pytest-mock (==3.8.2)", "pytest-sugar (==0.9.5)"]
 
 [[package]]
+name = "sshfs"
+version = "2023.4.1"
+description = "SSH Filesystem -- Async SSH/SFTP backend for fsspec"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+asyncssh = [
+    {version = ">=2.11.0,<3"},
+    {version = "*", extras = ["bcrypt"], optional = true, markers = "extra == \"bcrypt\""},
+]
+fsspec = ">=2021.8.1"
+
+[package.extras]
+bcrypt = ["asyncssh[bcrypt]"]
+fido2 = ["asyncssh[fido2]"]
+gssapi = ["asyncssh[gssapi]"]
+libnacl = ["asyncssh[libnacl]"]
+pkcs11 = ["asyncssh[python-pkcs11]"]
+pyopenssl = ["asyncssh[pyopenssl]"]
+pywin32 = ["asyncssh[pywin32]"]
+
+[[package]]
 name = "stack-data"
 version = "0.6.2"
 description = "Extract data from python stack frames and tracebacks for informative displays"
@@ -4022,7 +4075,7 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "83141826fbe9f1de3700ee5040380ddc0b5e8544102a297079f402c34b12a6db"
+content-hash = "8f76efc6d3fcbd316df3e4324b17b335f629fe7db877055cfcd791da54700857"
 
 [metadata.files]
 absl-py = [
@@ -4218,6 +4271,29 @@ attrs = [
 backcall = [
     {file = "backcall-0.2.0-py2.py3-none-any.whl", hash = "sha256:fbbce6a29f263178a1f7915c1940bde0ec2b2a967566fe1c65c1dfb7422bd255"},
     {file = "backcall-0.2.0.tar.gz", hash = "sha256:5cbdbf27be5e7cfadb448baf0aa95508f91f2bbc6c6437cd9cd06e2a4c215e1e"},
+]
+bcrypt = [
+    {file = "bcrypt-4.0.1-cp36-abi3-macosx_10_10_universal2.whl", hash = "sha256:b1023030aec778185a6c16cf70f359cbb6e0c289fd564a7cfa29e727a1c38f8f"},
+    {file = "bcrypt-4.0.1-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_24_aarch64.whl", hash = "sha256:08d2947c490093a11416df18043c27abe3921558d2c03e2076ccb28a116cb6d0"},
+    {file = "bcrypt-4.0.1-cp36-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:0eaa47d4661c326bfc9d08d16debbc4edf78778e6aaba29c1bc7ce67214d4410"},
+    {file = "bcrypt-4.0.1-cp36-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ae88eca3024bb34bb3430f964beab71226e761f51b912de5133470b649d82344"},
+    {file = "bcrypt-4.0.1-cp36-abi3-manylinux_2_24_x86_64.whl", hash = "sha256:a522427293d77e1c29e303fc282e2d71864579527a04ddcfda6d4f8396c6c36a"},
+    {file = "bcrypt-4.0.1-cp36-abi3-manylinux_2_28_aarch64.whl", hash = "sha256:fbdaec13c5105f0c4e5c52614d04f0bca5f5af007910daa8b6b12095edaa67b3"},
+    {file = "bcrypt-4.0.1-cp36-abi3-manylinux_2_28_x86_64.whl", hash = "sha256:ca3204d00d3cb2dfed07f2d74a25f12fc12f73e606fcaa6975d1f7ae69cacbb2"},
+    {file = "bcrypt-4.0.1-cp36-abi3-musllinux_1_1_aarch64.whl", hash = "sha256:089098effa1bc35dc055366740a067a2fc76987e8ec75349eb9484061c54f535"},
+    {file = "bcrypt-4.0.1-cp36-abi3-musllinux_1_1_x86_64.whl", hash = "sha256:e9a51bbfe7e9802b5f3508687758b564069ba937748ad7b9e890086290d2f79e"},
+    {file = "bcrypt-4.0.1-cp36-abi3-win32.whl", hash = "sha256:2caffdae059e06ac23fce178d31b4a702f2a3264c20bfb5ff541b338194d8fab"},
+    {file = "bcrypt-4.0.1-cp36-abi3-win_amd64.whl", hash = "sha256:8a68f4341daf7522fe8d73874de8906f3a339048ba406be6ddc1b3ccb16fc0d9"},
+    {file = "bcrypt-4.0.1-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bf4fa8b2ca74381bb5442c089350f09a3f17797829d958fad058d6e44d9eb83c"},
+    {file = "bcrypt-4.0.1-pp37-pypy37_pp73-manylinux_2_24_x86_64.whl", hash = "sha256:67a97e1c405b24f19d08890e7ae0c4f7ce1e56a712a016746c8b2d7732d65d4b"},
+    {file = "bcrypt-4.0.1-pp37-pypy37_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:b3b85202d95dd568efcb35b53936c5e3b3600c7cdcc6115ba461df3a8e89f38d"},
+    {file = "bcrypt-4.0.1-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cbb03eec97496166b704ed663a53680ab57c5084b2fc98ef23291987b525cb7d"},
+    {file = "bcrypt-4.0.1-pp38-pypy38_pp73-manylinux_2_24_x86_64.whl", hash = "sha256:5ad4d32a28b80c5fa6671ccfb43676e8c1cc232887759d1cd7b6f56ea4355215"},
+    {file = "bcrypt-4.0.1-pp38-pypy38_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:b57adba8a1444faf784394de3436233728a1ecaeb6e07e8c22c8848f179b893c"},
+    {file = "bcrypt-4.0.1-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:705b2cea8a9ed3d55b4491887ceadb0106acf7c6387699fca771af56b1cdeeda"},
+    {file = "bcrypt-4.0.1-pp39-pypy39_pp73-manylinux_2_24_x86_64.whl", hash = "sha256:2b3ac11cf45161628f1f3733263e63194f22664bf4d0c0f3ab34099c02134665"},
+    {file = "bcrypt-4.0.1-pp39-pypy39_pp73-manylinux_2_28_x86_64.whl", hash = "sha256:3100851841186c25f127731b9fa11909ab7b1df6fc4b9f8353f4f1fd952fbf71"},
+    {file = "bcrypt-4.0.1.tar.gz", hash = "sha256:27d375903ac8261cfe4047f6709d16f7d18d39b1ec92aaf72af989552a650ebd"},
 ]
 beautifulsoup4 = [
     {file = "beautifulsoup4-4.12.0-py3-none-any.whl", hash = "sha256:2130a5ad7f513200fae61a17abb5e338ca980fa28c439c0571014bc0217e9591"},
@@ -4663,6 +4739,10 @@ dvc-objects = [
 dvc-render = [
     {file = "dvc-render-0.3.1.tar.gz", hash = "sha256:af718d813017db9b2e688576f33a8ce27398949620340894afae4f1023f0e07a"},
     {file = "dvc_render-0.3.1-py3-none-any.whl", hash = "sha256:98667e4290bab07bb9c404e796a212d41408d70e8094ed9b73166176788de944"},
+]
+dvc-ssh = [
+    {file = "dvc-ssh-2.22.1.tar.gz", hash = "sha256:58715fab40b0d7b01682652591950e3bab7a5dc3d88cb1d4cf8b34c1c5589257"},
+    {file = "dvc_ssh-2.22.1-py3-none-any.whl", hash = "sha256:97b353ea45d4dd75ca2fa8e0901d566f7a34bc3c3938b61420e66ab92706977a"},
 ]
 dvc-studio-client = [
     {file = "dvc-studio-client-0.6.1.tar.gz", hash = "sha256:341b33075a32a3ec93bc509a7114664d94c9f4c554ca554f648cb6004acd857b"},
@@ -6337,6 +6417,10 @@ soupsieve = [
 sqltrie = [
     {file = "sqltrie-0.3.0-py3-none-any.whl", hash = "sha256:5c19fc547378f84fd0fa88b0e6be160303b5e9933e8c01e2f48ecbbb61208b36"},
     {file = "sqltrie-0.3.0.tar.gz", hash = "sha256:edb81e142ce7fc2d9b4ae2063a08fbec143309a93bd80826f8ceafc155f08cc6"},
+]
+sshfs = [
+    {file = "sshfs-2023.4.1-py3-none-any.whl", hash = "sha256:b210a92c48005faba67dae036950b6291f8788059b298a394ad2def8e17e8e21"},
+    {file = "sshfs-2023.4.1.tar.gz", hash = "sha256:d4aba679144e5bc47491395b929c48450daa13738986b41959e1d3673addff7c"},
 ]
 stack-data = [
     {file = "stack_data-0.6.2-py3-none-any.whl", hash = "sha256:cbb2a53eb64e5785878201a97ed7c7b94883f48b87bfb0bbe8b623c74679e4a8"},
