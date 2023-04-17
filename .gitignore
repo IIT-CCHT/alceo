@@ -198,3 +198,4 @@ linked_data
 *.ckpt
 *.pid
 *.png
+inference

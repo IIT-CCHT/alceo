@@ -3,3 +3,5 @@
     remote = boxx230_hdd1
 ['remote "boxx230_hdd1"']
     url = /HDD1/dvc_remotes/alceo
+['remote "ssh_boxx230_hdd1"']
+    url = ssh://user@157.138.138.230/HDD1/dvc_remotes/alceo

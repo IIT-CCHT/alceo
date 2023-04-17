@@ -3,9 +3,11 @@ from pathlib import Path
 from alceo.dataset.pits import PitsSiteDataset
 import pytorch_lightning as pl
 from alceo.callback.pits_prediction_writer import TiffPredictionWriter
-from alceo.model.pits import PitsChangeDetectionNetwork, PitsLightningModule
+from alceo.model.pits import PitsChangeDetectionNetwork
+from alceo.model.alceo_metric_module import AlceoMetricModule
 from torch.utils.data import DataLoader
-
+from alceo.model.siam_diff import SiamUnet_diff
+from segmentation_models_pytorch.losses import JaccardLoss
 # %%
 if __name__ == '__main__':
     # %%
@@ -26,9 +28,12 @@ if __name__ == '__main__':
     dataset = PitsSiteDataset(pits_dataset_path / "DURA_EUROPOS")
     pred_loader = DataLoader(dataset, batch_size=6, num_workers=5)
     datasets_labels = ["DE", "AS", "EB"]
-    network = PitsChangeDetectionNetwork()
-    model = PitsLightningModule.load_from_checkpoint("/HDD1/gsech/source/alceo/DvcLiveLogger/pits_change_detection/checkpoints/last.ckpt",
+    network = SiamUnet_diff(input_nbr=4, label_nbr=2)
+    loss_fn = JaccardLoss(mode="multilabel")
+    
+    model = AlceoMetricModule.load_from_checkpoint("/HDD1/gsech/source/alceo/DvcLiveLogger/epoch=1017-IoU=0.34307.ckpt",
         network=network,
+        loss_fn=loss_fn,
         training_labels=[],
         validation_labels=datasets_labels,
         test_labels=datasets_labels,

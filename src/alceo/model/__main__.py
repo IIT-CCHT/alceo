@@ -1,19 +1,15 @@
 from pathlib import Path
-from typing import Any, Optional
+from typing import Optional
 from alceo.dataset.pits import PitsSiteDataset
-from alceo.model.pits import PitsChangeDetectionNetwork
 from alceo.model.alceo_metric_module import AlceoMetricModule
 from alceo.model.siam_diff import SiamUnet_diff
 import pytorch_lightning as pl
-from pytorch_lightning.loggers import CSVLogger, TensorBoardLogger
 from dvclive.lightning import DVCLiveLogger
 from pytorch_lightning.callbacks import ModelCheckpoint
 from torch.utils.data import random_split, Dataset, ConcatDataset, DataLoader
 from pytorch_lightning.utilities.types import (
     TRAIN_DATALOADERS,
-    STEP_OUTPUT,
     EVAL_DATALOADERS,
-    EPOCH_OUTPUT,
 )
 from segmentation_models_pytorch.losses import JaccardLoss
 
@@ -43,7 +39,7 @@ class PitsDataModule(pl.LightningDataModule):
     def _dataloader_for_dataset(self, dataset: Dataset):
         return DataLoader(
             dataset=dataset,
-            batch_size=4,
+            batch_size=16,
             num_workers=5,
         )
 
@@ -68,11 +64,11 @@ if __name__ == "__main__":
     pl.seed_everything(1234, workers=True)
     trainer = pl.Trainer(
         accelerator="gpu",
-        strategy="ddp",
+        strategy="ddp_find_unused_parameters_false",
         devices=[0, 1, 2, 3],
         precision=16,
         max_time="00:10:00:00",
-        logger=DVCLiveLogger(run_name="pits_change_detection", dir="log", report="md"),
+        logger=DVCLiveLogger(run_name="pits_change_detection", dir="log"),
         log_every_n_steps=5,
         callbacks=[
             ModelCheckpoint(

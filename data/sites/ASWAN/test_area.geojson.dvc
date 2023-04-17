@@ -1,0 +1,5 @@
+outs:
+- md5: 5161a8ef2486e6ac5b5bf5e23af29525
+  size: 523
+  isexec: true
+  path: test_area.geojson
