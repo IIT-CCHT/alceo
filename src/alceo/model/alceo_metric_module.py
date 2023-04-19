@@ -24,7 +24,7 @@ class AlceoMetricModule(pl.LightningModule):
         self,
         network: nn.Module,
         loss_fn: nn.Module,
-        training_labels: List[str],
+        train_labels: List[str],
         validation_labels: List[str],
         test_labels: List[str],
     ) -> None:
@@ -33,19 +33,19 @@ class AlceoMetricModule(pl.LightningModule):
         Args:
             network (nn.Module): A PyTorch Module that takes as input two images and returns multilabel activations for pits that appeared (channel 0) and pits that disappeared (channel 1)
             loss_fn (nn.Module): The loss function used to optimise the network.
-            training_labels (List[str]): The tags to use for the training datasets
+            train_labels (List[str]): The tags to use for the training datasets
             validation_labels (List[str]): The tags to use for the validation datasets
             test_labels (List[str]): The tags to use for the test datasets
         """
         super().__init__()
+        self.save_hyperparameters(ignore=["network", "loss_fn"])
         self.network = network
         self.loss_fn = loss_fn
-
-        self.training_labels = training_labels
-        self.validation_labels = validation_labels
-        self.test_labels = test_labels
+        self.train_labels = self.hparams.train_labels
+        self.validation_labels = self.hparams.validation_labels
+        self.test_labels = self.hparams.test_labels
         self._phase_labels = [
-            self.training_labels,
+            self.train_labels,
             self.validation_labels,
             self.test_labels,
         ]
@@ -229,11 +229,11 @@ class AlceoMetricModule(pl.LightningModule):
 
         self.torchmetrics = MetricCollection(_metrics)
 
-    def configure_optimizers(self) -> Any:
-        return torch.optim.Adam(
-            params=self.parameters(),
-            lr=1e-5,
-        )
+    # def configure_optimizers(self) -> Any:
+    #     return torch.optim.Adam(
+    #         params=self.parameters(),
+    #         lr=1e-5,
+    #     )
 
     def _step(
         self,
@@ -305,8 +305,6 @@ class AlceoMetricModule(pl.LightningModule):
         **kwargs: Any,
     ) -> Optional[STEP_OUTPUT]:
         return self._step(_TEST_IDX, batch, batch_idx, dataloader_idx=dataloader_idx)
-
-
 
     def on_train_epoch_end(self) -> None:
         self._on_epoch_end(_TRAIN_IDX)

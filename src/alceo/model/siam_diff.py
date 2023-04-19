@@ -11,7 +11,11 @@ from torch.nn.modules.padding import ReplicationPad2d
 class SiamUnet_diff(nn.Module):
     """SiamUnet_diff segmentation network."""
 
-    def __init__(self, input_nbr, label_nbr):
+    def __init__(
+        self,
+        input_nbr: int,
+        label_nbr: int,
+    ):
         super(SiamUnet_diff, self).__init__()
 
         self.input_nbr = input_nbr
@@ -184,5 +188,5 @@ class SiamUnet_diff(nn.Module):
         x1d = torch.cat((pad1(x1d), torch.abs(x12_1 - x12_2)), 1)
         x12d = self.do12d(F.relu(self.bn12d(self.conv12d(x1d))))
         x11d = self.conv11d(x12d)
-        return x11d # Gregory Sech: change for multi-label context.
+        return x11d  # Gregory Sech: change for multi-label context.
         # return self.sm(x11d)

@@ -30,21 +30,21 @@ stages:
     - python src/alceo/processing/pits_site_dataset.py -s data/sites/ASWAN -o dataset/pits/ASWAN
     deps:
     - path: data/sites/ASWAN/change
-      md5: 2a0862adbf9373aea275367473d73f7e.dir
-      size: 1428066885
-      nfiles: 1863
+      md5: a0111cd41d2803688a3efd37bdc59738.dir
+      size: 1428856053
+      nfiles: 1869
     - path: data/sites/ASWAN/tiles
-      md5: 44a948ed07875db248e41cfb34c57677.dir
-      size: 482010633
-      nfiles: 919
+      md5: fa21ad6ca33b409df7a46c1553bb374e.dir
+      size: 483585831
+      nfiles: 922
     - path: src/alceo/processing/pits_site_dataset.py
       md5: 61594ac44f483dabce6cb8f299353d2e
       size: 5539
     outs:
     - path: dataset/pits/ASWAN
-      md5: 9104b2d92f2cd09f969d51a2adbf5454.dir
-      size: 1208340470
-      nfiles: 3674
+      md5: e2dd01d2bb9d6361f2450d40859c5634.dir
+      size: 1212280442
+      nfiles: 3686
   build_EBLA:
     cmd:
     - rm -rf dataset/pits/EBLA

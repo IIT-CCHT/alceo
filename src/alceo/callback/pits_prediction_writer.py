@@ -10,11 +10,13 @@ class TiffPredictionWriter(BasePredictionWriter):
     def __init__(
         self,
         write_interval: Literal["batch", "epoch", "batch_and_epoch"] = "batch",
-        output_dir: Optional[Path] = None,
+        output_dir: Optional[str] = None,
     ) -> None:
         super().__init__(write_interval)
         if output_dir is None:
             output_dir = Path(os.getcwd())
+        else:
+            output_dir = Path(output_dir)
         self.output_dir = output_dir
         self.activation_dir = output_dir / "activation"
         os.makedirs(self.activation_dir, exist_ok=True)
