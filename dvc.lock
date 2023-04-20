@@ -227,3 +227,25 @@ stages:
     - path: data/sites/DURA_EUROPOS/tiles.json
       md5: 20659f8b36f263be91b4047238dcf30b
       size: 122592
+  fit_siam_diff:
+    cmd: python -m alceo fit --config cli_config/daudt_siam_diff.yaml
+    deps:
+    - path: cli_config/daudt_siam_diff.yaml
+      md5: c6d6cef2007a85820c571e02a8876836
+      size: 1218
+    - path: dataset/pits/ASWAN
+      md5: e2dd01d2bb9d6361f2450d40859c5634.dir
+      size: 1212280442
+      nfiles: 3686
+    - path: dataset/pits/DURA_EUROPOS
+      md5: a8113a052f6618e6fc834aa610d4f275.dir
+      size: 2258678350
+      nfiles: 6862
+    - path: dataset/pits/EBLA
+      md5: 87c5a17ca8af5d93029c608bb24efc5b.dir
+      size: 909141003
+      nfiles: 2306
+    - path: src
+      md5: 71e22d80b02a920109c208b7062cc7d7.dir
+      size: 114000
+      nfiles: 43

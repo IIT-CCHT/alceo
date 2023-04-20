@@ -1,0 +1,9 @@
+stages:
+  fit_siam_diff:
+    cmd: python -m alceo fit --config cli_config/daudt_siam_diff.yaml
+    deps:
+      - src
+      - dataset/pits/ASWAN
+      - dataset/pits/DURA_EUROPOS
+      - dataset/pits/EBLA
+      - cli_config/daudt_siam_diff.yaml
