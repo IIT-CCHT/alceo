@@ -10,7 +10,7 @@ import numpy as np
 
 
 @dataclass
-class PitsSiteDataset(Dataset[Dict[str, Any]]):
+class AlceoChangeDetectionDataset(Dataset[Dict[str, Any]]):
     dataset_root: Path
     tiles_df: pd.DataFrame = field(init=False)
     im1_folder: Path = field(init=False)
@@ -91,7 +91,7 @@ class PitsSiteDataset(Dataset[Dict[str, Any]]):
 # %%
 if __name__ == "__main__":
     # %%
-    dset = PitsSiteDataset(Path("/HDD1/gsech/source/alceo/dataset/pits/DURA_EUROPOS"))
+    dset = AlceoChangeDetectionDataset(Path("/HDD1/gsech/source/alceo/dataset/pits/DURA_EUROPOS"))
     tiles_meta = dset[0]
     print(tiles_meta)
     # %%

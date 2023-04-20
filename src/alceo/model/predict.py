@@ -1,9 +1,8 @@
 # %%
 from pathlib import Path
-from alceo.dataset.pits import PitsSiteDataset
+from alceo.dataset.change_detection import AlceoChangeDetectionDataset
 import pytorch_lightning as pl
 from alceo.callback.pits_prediction_writer import TiffPredictionWriter
-from alceo.model.pits import PitsChangeDetectionNetwork
 from alceo.model.alceo_metric_module import AlceoMetricModule
 from torch.utils.data import DataLoader
 from alceo.model.siam_diff import SiamUnet_diff
@@ -25,7 +24,7 @@ if __name__ == '__main__':
     )
 
     pits_dataset_path = Path("/HDD1/gsech/source/alceo/dataset/pits/")
-    dataset = PitsSiteDataset(pits_dataset_path / "DURA_EUROPOS")
+    dataset = AlceoChangeDetectionDataset(pits_dataset_path / "DURA_EUROPOS")
     pred_loader = DataLoader(dataset, batch_size=6, num_workers=5)
     datasets_labels = ["DE", "AS", "EB"]
     network = SiamUnet_diff(input_nbr=4, label_nbr=2)
