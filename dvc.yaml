@@ -3,7 +3,22 @@ stages:
     cmd: python -m alceo fit --config cli_config/daudt_siam_diff.yaml
     deps:
       - src
-      - dataset/pits/ASWAN
-      - dataset/pits/DURA_EUROPOS
-      - dataset/pits/EBLA
+      - dataset/pits/train_ASWAN
+      - dataset/pits/train_DURA_EUROPOS
+      - dataset/pits/train_EBLA
+      - dataset/pits/test_ASWAN
+      - dataset/pits/test_DURA_EUROPOS
+      - dataset/pits/test_EBLA
       - cli_config/daudt_siam_diff.yaml
+    params:
+      - cli_config/daudt_siam_diff.yaml:
+        - model
+        - optimizer
+        - lr_scheduler
+        - data
+    metrics:
+      - change_detection_logs/metrics.json
+    plots:
+      - change_detection_logs/plots
+    outs:
+      - change_detection_logs/DvcLiveLogger/daudt_siam_diff/checkpoints/best_IoU.ckpt

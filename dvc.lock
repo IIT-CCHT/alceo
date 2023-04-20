@@ -231,21 +231,81 @@ stages:
     cmd: python -m alceo fit --config cli_config/daudt_siam_diff.yaml
     deps:
     - path: cli_config/daudt_siam_diff.yaml
-      md5: c6d6cef2007a85820c571e02a8876836
-      size: 1218
-    - path: dataset/pits/ASWAN
-      md5: e2dd01d2bb9d6361f2450d40859c5634.dir
-      size: 1212280442
-      nfiles: 3686
-    - path: dataset/pits/DURA_EUROPOS
-      md5: a8113a052f6618e6fc834aa610d4f275.dir
-      size: 2258678350
-      nfiles: 6862
-    - path: dataset/pits/EBLA
-      md5: 87c5a17ca8af5d93029c608bb24efc5b.dir
-      size: 909141003
-      nfiles: 2306
+      md5: 8ee4bc54b91dfbe407aab568563b2726
+      size: 1538
+    - path: dataset/pits/test_ASWAN
+      md5: f4003e4c55a601de1d7330a377f8ec7e.dir
+      size: 111866890
+      nfiles: 338
+    - path: dataset/pits/test_DURA_EUROPOS
+      md5: c6ae12b7103a38405604a387793d5b93.dir
+      size: 573287130
+      nfiles: 1738
+    - path: dataset/pits/test_EBLA
+      md5: da637b8a80f9f8c804527604539a8620.dir
+      size: 199289453
+      nfiles: 506
+    - path: dataset/pits/train_ASWAN
+      md5: 0ea79f32d0e8189a9e5e43b82d5a61d9.dir
+      size: 1100366704
+      nfiles: 3350
+    - path: dataset/pits/train_DURA_EUROPOS
+      md5: caa81d7bf1ee9d32290452003d1057d7.dir
+      size: 1718048022
+      nfiles: 5222
+    - path: dataset/pits/train_EBLA
+      md5: b9b7fa0044dc6bd9e176c256154809cf.dir
+      size: 709843200
+      nfiles: 1802
     - path: src
-      md5: 71e22d80b02a920109c208b7062cc7d7.dir
-      size: 114000
+      md5: 68863095ebf7c0ae9b4913250568888e.dir
+      size: 116266
       nfiles: 43
+    params:
+      cli_config/daudt_siam_diff.yaml:
+        data:
+          batch_size: 24
+          train_paths:
+          - dataset/pits/train_DURA_EUROPOS
+          - dataset/pits/train_ASWAN
+          - dataset/pits/train_EBLA
+          validation_paths:
+          - dataset/pits/test_DURA_EUROPOS
+          - dataset/pits/test_ASWAN
+          - dataset/pits/test_EBLA
+          validation_labels:
+          - DURA_EUROPOS
+          - ASWAN
+          - EBLA
+        lr_scheduler:
+          class_path: pytorch_lightning.cli.ReduceLROnPlateau
+          init_args:
+            mode: max
+            monitor: validation/appeared/IoU
+            factor: 0.95
+        model:
+          network:
+            class_path: alceo.model.SiamUnet_diff
+            init_args:
+              input_nbr: 4
+              label_nbr: 2
+          loss_fn:
+            class_path: segmentation_models_pytorch.losses.JaccardLoss
+            init_args:
+              mode: multilabel
+        optimizer:
+          class_path: torch.optim.Adam
+          init_args:
+            lr: 0.0001
+            weight_decay: 0.0001
+    outs:
+    - path: change_detection_logs/DvcLiveLogger/daudt_siam_diff/checkpoints/best_IoU.ckpt
+      md5: 5145b53903cf51b1c6932072d42015d6
+      size: 16340765
+    - path: change_detection_logs/metrics.json
+      md5: 13045bdfd7e1700c05d00bd81bd89c1b
+      size: 3839
+    - path: change_detection_logs/plots
+      md5: aee1b33129cf21975151f4020a004e08.dir
+      size: 25814
+      nfiles: 70

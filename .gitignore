@@ -199,4 +199,3 @@ linked_data
 *.pid
 *.png
 inference
-/log
