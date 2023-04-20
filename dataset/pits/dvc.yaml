@@ -1,43 +1,99 @@
 stages:
-  build_DURA_EUROPOS:
+  build_train_DURA_EUROPOS:
     wdir: ../../.
     cmd:
-      - rm -rf dataset/pits/DURA_EUROPOS
-      - mkdir -p dataset/pits/DURA_EUROPOS
+      - rm -rf dataset/pits/train_DURA_EUROPOS
+      - mkdir -p dataset/pits/train_DURA_EUROPOS
       - python src/alceo/processing/pits_site_dataset.py
         -s data/sites/DURA_EUROPOS
-        -o dataset/pits/DURA_EUROPOS
+        -o dataset/pits/train_DURA_EUROPOS
+        -a data/sites/DURA_EUROPOS/train_area.geojson
     deps:
       - src/alceo/processing/pits_site_dataset.py
       - data/sites/DURA_EUROPOS/tiles
       - data/sites/DURA_EUROPOS/change
+      - data/sites/DURA_EUROPOS/train_area.geojson
     outs:
-      - dataset/pits/DURA_EUROPOS
-  build_ASWAN:
+      - dataset/pits/train_DURA_EUROPOS
+  build_test_DURA_EUROPOS:
     wdir: ../../.
     cmd:
-      - rm -rf dataset/pits/ASWAN
-      - mkdir -p dataset/pits/ASWAN
+      - rm -rf dataset/pits/test_DURA_EUROPOS
+      - mkdir -p dataset/pits/test_DURA_EUROPOS
+      - python src/alceo/processing/pits_site_dataset.py
+        -s data/sites/DURA_EUROPOS
+        -o dataset/pits/test_DURA_EUROPOS
+        -a data/sites/DURA_EUROPOS/test_area.geojson
+    deps:
+      - src/alceo/processing/pits_site_dataset.py
+      - data/sites/DURA_EUROPOS/tiles
+      - data/sites/DURA_EUROPOS/change
+      - data/sites/DURA_EUROPOS/test_area.geojson
+    outs:
+      - dataset/pits/test_DURA_EUROPOS
+  
+  build_train_ASWAN:
+    wdir: ../../.
+    cmd:
+      - rm -rf dataset/pits/train_ASWAN
+      - mkdir -p dataset/pits/train_ASWAN
       - python src/alceo/processing/pits_site_dataset.py
         -s data/sites/ASWAN
-        -o dataset/pits/ASWAN
+        -o dataset/pits/train_ASWAN
+        -a data/sites/ASWAN/train_area.geojson
     deps:
       - src/alceo/processing/pits_site_dataset.py
       - data/sites/ASWAN/tiles
       - data/sites/ASWAN/change
+      - data/sites/ASWAN/train_area.geojson
     outs:
-      - dataset/pits/ASWAN
-  build_EBLA:
+      - dataset/pits/train_ASWAN
+  build_test_ASWAN:
     wdir: ../../.
     cmd:
-      - rm -rf dataset/pits/EBLA
-      - mkdir -p dataset/pits/EBLA
+      - rm -rf dataset/pits/test_ASWAN
+      - mkdir -p dataset/pits/test_ASWAN
+      - python src/alceo/processing/pits_site_dataset.py
+        -s data/sites/ASWAN
+        -o dataset/pits/test_ASWAN
+        -a data/sites/ASWAN/test_area.geojson
+    deps:
+      - src/alceo/processing/pits_site_dataset.py
+      - data/sites/ASWAN/tiles
+      - data/sites/ASWAN/change
+      - data/sites/ASWAN/test_area.geojson
+    outs:
+      - dataset/pits/test_ASWAN
+  
+  build_train_EBLA:
+    wdir: ../../.
+    cmd:
+      - rm -rf dataset/pits/train_EBLA
+      - mkdir -p dataset/pits/train_EBLA
       - python src/alceo/processing/pits_site_dataset.py
         -s data/sites/EBLA
-        -o dataset/pits/EBLA
+        -o dataset/pits/train_EBLA
+        -a data/sites/EBLA/train_area.geojson
     deps:
       - src/alceo/processing/pits_site_dataset.py
       - data/sites/EBLA/tiles
       - data/sites/EBLA/change
+      - data/sites/EBLA/train_area.geojson
     outs:
-      - dataset/pits/EBLA
+      - dataset/pits/train_EBLA
+  build_test_EBLA:
+    wdir: ../../.
+    cmd:
+      - rm -rf dataset/pits/test_EBLA
+      - mkdir -p dataset/pits/test_EBLA
+      - python src/alceo/processing/pits_site_dataset.py
+        -s data/sites/EBLA
+        -o dataset/pits/test_EBLA
+        -a data/sites/EBLA/test_area.geojson
+    deps:
+      - src/alceo/processing/pits_site_dataset.py
+      - data/sites/EBLA/tiles
+      - data/sites/EBLA/change
+      - data/sites/EBLA/test_area.geojson
+    outs:
+      - dataset/pits/test_EBLA
