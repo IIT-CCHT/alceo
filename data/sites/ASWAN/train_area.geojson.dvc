@@ -1,0 +1,4 @@
+outs:
+- md5: d8a357c90ff53a9dc0db10bf7b465739
+  size: 1265
+  path: train_area.geojson
