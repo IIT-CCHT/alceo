@@ -309,3 +309,35 @@ stages:
       md5: d86196edea2e4fa3e7d1827f93b05954.dir
       size: 3158186
       nfiles: 70
+  predict_siam_diff_DURA:
+    cmd:
+    - python -m alceo predict --config cli_config/daudt_siam_diff.yaml --ckpt_path
+      change_detection_logs/DvcLiveLogger/daudt_siam_diff/checkpoints/best_IoU.ckpt
+      --trainer.callbacks+=alceo.callback.TiffPredictionWriter --trainer.callbacks.init_args.output_dir=change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+      --data.predict_paths+=dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014 --data.predict_labels+=DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+    - rio merge change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/activation/*.tif
+      -o change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/activation.tif
+      --overwrite
+    - rio merge change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask/*.tif
+      -o change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask.tif
+      --overwrite
+    - rio shapes --projected --as-mask --bidx 1 change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask.tif
+      -o change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/appeared.geojson
+    - rio shapes --projected --as-mask --bidx 2 change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask.tif
+      -o change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/disappeared.geojson
+    deps:
+    - path: change_detection_logs/DvcLiveLogger/daudt_siam_diff/checkpoints/best_IoU.ckpt
+      md5: dcd1b48e31a17574442e038bb458ebbc
+      size: 16340829
+    - path: cli_config/daudt_siam_diff.yaml
+      md5: 348856a2db989fd4ed471e685a186a34
+      size: 1408
+    - path: dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+      md5: 56640bfd7e461970034788ae84372c92.dir
+      size: 2258632533
+      nfiles: 6862
+    outs:
+    - path: change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+      md5: f76b708924e17a7927a93827b10060c0.dir
+      size: 2317970016
+      nfiles: 3434

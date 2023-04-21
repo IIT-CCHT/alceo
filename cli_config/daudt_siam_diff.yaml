@@ -21,9 +21,6 @@ trainer:
     - class_path: pytorch_lightning.callbacks.LearningRateMonitor
       init_args:
         logging_interval: epoch
-    - class_path: alceo.callback.pits_prediction_writer.TiffPredictionWriter
-      init_args:
-        output_dir: inference/debug
 model:
   network:
     class_path: alceo.model.SiamUnet_diff

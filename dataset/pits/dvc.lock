@@ -127,9 +127,9 @@ stages:
       -a data/sites/EBLA/train_area.geojson
     deps:
     - path: data/sites/EBLA/change
-      md5: d8ce39a2994a0c400ec489636d58622f.dir
-      size: 1109675269
-      nfiles: 1174
+      md5: c8c771e4967d4337a9329e0fef4eb419.dir
+      size: 1626705332
+      nfiles: 1755
     - path: data/sites/EBLA/tiles
       md5: da5a73148059506b531c5125908c6be4.dir
       size: 907100984
@@ -142,9 +142,9 @@ stages:
       size: 7805
     outs:
     - path: dataset/pits/train_EBLA
-      md5: b9b7fa0044dc6bd9e176c256154809cf.dir
-      size: 709843200
-      nfiles: 1802
+      md5: 635d50cf69f5869d87e39f5dc8de7860.dir
+      size: 1241452518
+      nfiles: 2702
   build_test_DURA_EUROPOS:
     cmd:
     - rm -rf dataset/pits/test_DURA_EUROPOS
@@ -205,9 +205,9 @@ stages:
       -a data/sites/EBLA/test_area.geojson
     deps:
     - path: data/sites/EBLA/change
-      md5: d8ce39a2994a0c400ec489636d58622f.dir
-      size: 1109675269
-      nfiles: 1174
+      md5: c8c771e4967d4337a9329e0fef4eb419.dir
+      size: 1626705332
+      nfiles: 1755
     - path: data/sites/EBLA/test_area.geojson
       md5: d2383c5df81edba35846c161cc4ce5d0
       size: 517
@@ -220,6 +220,85 @@ stages:
       size: 7805
     outs:
     - path: dataset/pits/test_EBLA
-      md5: da637b8a80f9f8c804527604539a8620.dir
-      size: 199289453
-      nfiles: 506
+      md5: 8503b7cda0bcda837370a37618aae54d.dir
+      size: 348140057
+      nfiles: 758
+  build_DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014:
+    cmd:
+    - rm -rf dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+    - mkdir -p dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+    - python src/alceo/processing/pits_site_dataset.py -s data/sites/DURA_EUROPOS
+      -o dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014 -a data/sites/DURA_EUROPOS/area_of_interest.geojson
+      -c DE_26_5_2013/DE_19_09_2014
+    deps:
+    - path: data/sites/DURA_EUROPOS/area_of_interest.geojson
+      md5: b77b49a032990918d420de8f7ef241fc
+      size: 1214
+    - path: data/sites/DURA_EUROPOS/change
+      md5: d434b8dab86bf347bf714068e5a01399.dir
+      size: 1052295536
+      nfiles: 3436
+    - path: data/sites/DURA_EUROPOS/tiles
+      md5: 5e72eba98ce2ae45773c6b2f97b3368a.dir
+      size: 3316832752
+      nfiles: 4875
+    - path: src/alceo/processing/pits_site_dataset.py
+      md5: ed00980542234802b5bbe39cf85d71eb
+      size: 7805
+    outs:
+    - path: dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+      md5: 56640bfd7e461970034788ae84372c92.dir
+      size: 2258632533
+      nfiles: 6862
+  build_ASWAN_AS_04_08_2005-AS_05_10_2015:
+    cmd:
+    - rm -rf dataset/pits/ASWAN_AS_04_08_2005-AS_05_10_2015
+    - mkdir -p dataset/pits/ASWAN_AS_04_08_2005-AS_05_10_2015
+    - python src/alceo/processing/pits_site_dataset.py -s data/sites/ASWAN -o dataset/pits/ASWAN_AS_04_08_2005-AS_05_10_2015
+      -a data/sites/ASWAN/area_of_interest.geojson -c AS_04_08_2005/AS_05_10_2015
+    deps:
+    - path: data/sites/ASWAN/area_of_interest.geojson
+      md5: fdc4f6e33b4d8952553647616863f402
+      size: 1381
+    - path: data/sites/ASWAN/change
+      md5: a0111cd41d2803688a3efd37bdc59738.dir
+      size: 1428856053
+      nfiles: 1869
+    - path: data/sites/ASWAN/tiles
+      md5: fa21ad6ca33b409df7a46c1553bb374e.dir
+      size: 483585831
+      nfiles: 922
+    - path: src/alceo/processing/pits_site_dataset.py
+      md5: ed00980542234802b5bbe39cf85d71eb
+      size: 7805
+    outs:
+    - path: dataset/pits/ASWAN_AS_04_08_2005-AS_05_10_2015
+      md5: 7b4ac1777f9097059177ba504b7af645.dir
+      size: 403958041
+      nfiles: 1230
+  build_EBLA_E_13_04_2018-E_07_06_2022:
+    cmd:
+    - rm -rf dataset/pits/EBLA_E_13_04_2018-E_07_06_2022
+    - mkdir -p dataset/pits/EBLA_E_13_04_2018-E_07_06_2022
+    - python src/alceo/processing/pits_site_dataset.py -s data/sites/EBLA -o dataset/pits/EBLA_E_13_04_2018-E_07_06_2022
+      -a data/sites/EBLA/area_of_interest.geojson -c E_13_04_2018/E_07_06_2022
+    deps:
+    - path: data/sites/EBLA/area_of_interest.geojson
+      md5: c12a3a2c7521b45f0b52fbe503a16d29
+      size: 1133
+    - path: data/sites/EBLA/change
+      md5: c8c771e4967d4337a9329e0fef4eb419.dir
+      size: 1626705332
+      nfiles: 1755
+    - path: data/sites/EBLA/tiles
+      md5: da5a73148059506b531c5125908c6be4.dir
+      size: 907100984
+      nfiles: 1153
+    - path: src/alceo/processing/pits_site_dataset.py
+      md5: ed00980542234802b5bbe39cf85d71eb
+      size: 7805
+    outs:
+    - path: dataset/pits/EBLA_E_13_04_2018-E_07_06_2022
+      md5: 0dab6755dfaa41be94cd1784031ff226.dir
+      size: 680936515
+      nfiles: 1154

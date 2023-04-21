@@ -97,3 +97,54 @@ stages:
       - data/sites/EBLA/test_area.geojson
     outs:
       - dataset/pits/test_EBLA
+  build_DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014:
+    wdir: ../../.
+    cmd:
+      - rm -rf dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+      - mkdir -p dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+      - python src/alceo/processing/pits_site_dataset.py
+        -s data/sites/DURA_EUROPOS
+        -o dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+        -a data/sites/DURA_EUROPOS/area_of_interest.geojson
+        -c DE_26_5_2013/DE_19_09_2014
+    deps:
+      - src/alceo/processing/pits_site_dataset.py
+      - data/sites/DURA_EUROPOS/tiles
+      - data/sites/DURA_EUROPOS/change
+      - data/sites/DURA_EUROPOS/area_of_interest.geojson
+    outs:
+      - dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+  build_ASWAN_AS_04_08_2005-AS_05_10_2015:
+    wdir: ../../.
+    cmd:
+      - rm -rf dataset/pits/ASWAN_AS_04_08_2005-AS_05_10_2015
+      - mkdir -p dataset/pits/ASWAN_AS_04_08_2005-AS_05_10_2015
+      - python src/alceo/processing/pits_site_dataset.py
+        -s data/sites/ASWAN
+        -o dataset/pits/ASWAN_AS_04_08_2005-AS_05_10_2015
+        -a data/sites/ASWAN/area_of_interest.geojson
+        -c AS_04_08_2005/AS_05_10_2015
+    deps:
+      - src/alceo/processing/pits_site_dataset.py
+      - data/sites/ASWAN/tiles
+      - data/sites/ASWAN/change
+      - data/sites/ASWAN/area_of_interest.geojson
+    outs:
+      - dataset/pits/ASWAN_AS_04_08_2005-AS_05_10_2015
+  build_EBLA_E_13_04_2018-E_07_06_2022:
+    wdir: ../../.
+    cmd:
+      - rm -rf dataset/pits/EBLA_E_13_04_2018-E_07_06_2022
+      - mkdir -p dataset/pits/EBLA_E_13_04_2018-E_07_06_2022
+      - python src/alceo/processing/pits_site_dataset.py
+        -s data/sites/EBLA
+        -o dataset/pits/EBLA_E_13_04_2018-E_07_06_2022
+        -a data/sites/EBLA/area_of_interest.geojson
+        -c E_13_04_2018/E_07_06_2022
+    deps:
+      - src/alceo/processing/pits_site_dataset.py
+      - data/sites/EBLA/tiles
+      - data/sites/EBLA/change
+      - data/sites/EBLA/area_of_interest.geojson
+    outs:
+      - dataset/pits/EBLA_E_13_04_2018-E_07_06_2022
