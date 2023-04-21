@@ -231,7 +231,7 @@ stages:
     cmd: python -m alceo fit --config cli_config/daudt_siam_diff.yaml
     deps:
     - path: cli_config/daudt_siam_diff.yaml
-      md5: 8ee4bc54b91dfbe407aab568563b2726
+      md5: 3ff38252ffc84dddff43b2798b1d9396
       size: 1538
     - path: dataset/pits/test_ASWAN
       md5: f4003e4c55a601de1d7330a377f8ec7e.dir
@@ -300,12 +300,12 @@ stages:
             weight_decay: 0.0001
     outs:
     - path: change_detection_logs/DvcLiveLogger/daudt_siam_diff/checkpoints/best_IoU.ckpt
-      md5: 5145b53903cf51b1c6932072d42015d6
-      size: 16340765
+      md5: dcd1b48e31a17574442e038bb458ebbc
+      size: 16340829
     - path: change_detection_logs/metrics.json
-      md5: 13045bdfd7e1700c05d00bd81bd89c1b
-      size: 3839
+      md5: 34ce7ad1b4cfc4d4ed96b9b552a19c7d
+      size: 3574
     - path: change_detection_logs/plots
-      md5: aee1b33129cf21975151f4020a004e08.dir
-      size: 25814
+      md5: d86196edea2e4fa3e7d1827f93b05954.dir
+      size: 3158186
       nfiles: 70
