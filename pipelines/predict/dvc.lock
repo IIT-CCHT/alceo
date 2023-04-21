@@ -1,6 +1,6 @@
 schema: '2.0'
 stages:
-  predict_siam_diff_DURA:
+  predict_DURA:
     cmd:
     - python -m alceo predict --config experiment_config.yaml --ckpt_path change_detection_logs/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
       --trainer.callbacks+=alceo.callback.TiffPredictionWriter --trainer.callbacks.init_args.output_dir=change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
