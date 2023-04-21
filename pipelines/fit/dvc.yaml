@@ -1,0 +1,25 @@
+stages:
+  fit_siam_diff:
+    wdir: ../../.
+    cmd: python -m alceo fit --config experiment_config.yaml
+    deps:
+      - src
+      - dataset/pits/train_ASWAN
+      - dataset/pits/train_DURA_EUROPOS
+      - dataset/pits/train_EBLA
+      - dataset/pits/test_ASWAN
+      - dataset/pits/test_DURA_EUROPOS
+      - dataset/pits/test_EBLA
+      - experiment_config.yaml
+    params:
+      - experiment_config.yaml:
+        - model
+        - optimizer
+        - lr_scheduler
+        - data
+    metrics:
+      - change_detection_logs/metrics.json
+    plots:
+      - change_detection_logs/plots
+    outs:
+      - change_detection_logs/DvcLiveLogger/daudt_siam_diff/checkpoints/best_IoU.ckpt

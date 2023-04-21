@@ -6,7 +6,7 @@ trainer:
   logger: 
     class_path: alceo.logger.DVCLiveLogger
     init_args:
-      run_name: daudt_siam_diff
+      run_name: run
       dir: change_detection_logs
   log_every_n_steps: 5
   callbacks:
