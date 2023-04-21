@@ -22,4 +22,4 @@ stages:
     plots:
       - change_detection_logs/plots
     outs:
-      - change_detection_logs/DvcLiveLogger/daudt_siam_diff/checkpoints/best_IoU.ckpt
+      - change_detection_logs/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
