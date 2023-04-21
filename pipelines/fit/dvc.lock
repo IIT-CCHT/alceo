@@ -1,0 +1,84 @@
+schema: '2.0'
+stages:
+  fit_siam_diff:
+    cmd: python -m alceo fit --config experiment_config.yaml
+    deps:
+    - path: dataset/pits/test_ASWAN
+      md5: f4003e4c55a601de1d7330a377f8ec7e.dir
+      size: 111866890
+      nfiles: 338
+    - path: dataset/pits/test_DURA_EUROPOS
+      md5: c6ae12b7103a38405604a387793d5b93.dir
+      size: 573287130
+      nfiles: 1738
+    - path: dataset/pits/test_EBLA
+      md5: 8503b7cda0bcda837370a37618aae54d.dir
+      size: 348140057
+      nfiles: 758
+    - path: dataset/pits/train_ASWAN
+      md5: 0ea79f32d0e8189a9e5e43b82d5a61d9.dir
+      size: 1100366704
+      nfiles: 3350
+    - path: dataset/pits/train_DURA_EUROPOS
+      md5: caa81d7bf1ee9d32290452003d1057d7.dir
+      size: 1718048022
+      nfiles: 5222
+    - path: dataset/pits/train_EBLA
+      md5: 635d50cf69f5869d87e39f5dc8de7860.dir
+      size: 1241452518
+      nfiles: 2702
+    - path: experiment_config.yaml
+      md5: 68485f7c1a010e09957ecf00b87b5f9b
+      size: 1396
+    - path: src
+      md5: ecbc6fc0d8688599bce15c6fd263136c.dir
+      size: 116528
+      nfiles: 45
+    params:
+      experiment_config.yaml:
+        data:
+          batch_size: 24
+          train_paths:
+          - dataset/pits/train_DURA_EUROPOS
+          - dataset/pits/train_ASWAN
+          - dataset/pits/train_EBLA
+          validation_paths:
+          - dataset/pits/test_DURA_EUROPOS
+          - dataset/pits/test_ASWAN
+          - dataset/pits/test_EBLA
+          validation_labels:
+          - DURA_EUROPOS
+          - ASWAN
+          - EBLA
+        lr_scheduler:
+          class_path: pytorch_lightning.cli.ReduceLROnPlateau
+          init_args:
+            mode: max
+            monitor: validation/appeared/IoU
+            factor: 0.95
+        model:
+          network:
+            class_path: alceo.model.SiamUnet_diff
+            init_args:
+              input_nbr: 4
+              label_nbr: 2
+          loss_fn:
+            class_path: segmentation_models_pytorch.losses.JaccardLoss
+            init_args:
+              mode: multilabel
+        optimizer:
+          class_path: torch.optim.Adam
+          init_args:
+            lr: 0.0001
+            weight_decay: 0.0001
+    outs:
+    - path: change_detection_logs/DvcLiveLogger/daudt_siam_diff/checkpoints/best_IoU.ckpt
+      md5: dcd1b48e31a17574442e038bb458ebbc
+      size: 16340829
+    - path: change_detection_logs/metrics.json
+      md5: 34ce7ad1b4cfc4d4ed96b9b552a19c7d
+      size: 3574
+    - path: change_detection_logs/plots
+      md5: d86196edea2e4fa3e7d1827f93b05954.dir
+      size: 3158186
+      nfiles: 70
