@@ -17,17 +17,17 @@ stages:
       -o change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/disappeared.geojson
     deps:
     - path: change_detection_logs/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
-      md5: cd490f801893b234b09ea2f60772b239
+      md5: e3afad839b042bdee9091a4ad4a5656b
       size: 16340765
     - path: dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
       md5: 56640bfd7e461970034788ae84372c92.dir
       size: 2258632533
       nfiles: 6862
     - path: experiment_config.yaml
-      md5: 714e9953cbe537ad9d8fcf4f32f37d80
+      md5: f1bc6b6a37a60902623ac349311a81ed
       size: 1396
     outs:
     - path: change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
-      md5: 29449cc8ce0b481c2bbb996b24bad0b2.dir
-      size: 2352118171
+      md5: 1f7a6082490be217f1dd62d99012bb2a.dir
+      size: 2319436816
       nfiles: 3434

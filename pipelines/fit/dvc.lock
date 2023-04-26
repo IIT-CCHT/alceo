@@ -28,7 +28,7 @@ stages:
       size: 1241452518
       nfiles: 2702
     - path: experiment_config.yaml
-      md5: 714e9953cbe537ad9d8fcf4f32f37d80
+      md5: f1bc6b6a37a60902623ac349311a81ed
       size: 1396
     - path: src
       md5: ecbc6fc0d8688599bce15c6fd263136c.dir
@@ -73,12 +73,12 @@ stages:
             weight_decay: 0.0001
     outs:
     - path: change_detection_logs/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
-      md5: cd490f801893b234b09ea2f60772b239
+      md5: e3afad839b042bdee9091a4ad4a5656b
       size: 16340765
     - path: change_detection_logs/metrics.json
-      md5: c1a6671fcbdf6fd6c394afcd2fbe17bd
-      size: 3724
+      md5: 82d32633b86a5222885c16911d14f591
+      size: 3644
     - path: change_detection_logs/plots
-      md5: 749a74b886a4832e1bf842e6f671f73e.dir
-      size: 38464
+      md5: 44b88d3e73e4addf2726a0fd8d7976ca.dir
+      size: 6179453
       nfiles: 70
