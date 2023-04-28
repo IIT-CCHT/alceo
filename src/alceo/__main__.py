@@ -1,31 +1,34 @@
 from typing import Any
 from pytorch_lightning.cli import LightningCLI, LightningArgumentParser
 from alceo.callback.pits_prediction_writer import TiffPredictionWriter
-from alceo.data_module import AlceoChangeDetectionDataModule
+from alceo.data_module import AlceoChangeDetectionDataModule, PhaseDataModule
 from alceo.logger import DVCLiveLogger
-from alceo.model import AlceoMetricModule
+from alceo.model import AlceoChangeDetectionModule, PhaseMetricModule, AlceoSegmentationModule
 from pytorch_lightning import Trainer
+
 
 class AlceoCLI(LightningCLI):
     def add_arguments_to_parser(self, parser: LightningArgumentParser) -> None:
         parser.link_arguments(
-            "data.train_labels",
-            "model.train_labels",
+            "data.init_args.train_labels",
+            "model.init_args.train_labels",
         )
         parser.link_arguments(
-            "data.validation_labels",
-            "model.validation_labels",
+            "data.init_args.validation_labels",
+            "model.init_args.validation_labels",
         )
         parser.link_arguments(
-            "data.test_labels",
-            "model.test_labels",
+            "data.init_args.test_labels",
+            "model.init_args.test_labels",
         )
 
 
 def main():
     cli = AlceoCLI(
-        model_class=AlceoMetricModule,
-        datamodule_class=AlceoChangeDetectionDataModule,
+        PhaseMetricModule,
+        PhaseDataModule,
+        subclass_mode_model= True,
+        subclass_mode_data= True,
         save_config_kwargs={"overwrite": True},
     )
 

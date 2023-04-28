@@ -1,5 +1,5 @@
 
-from alceo.model.alceo_metric_module import AlceoMetricModule
+from alceo.model.alceo_metric_module import AlceoChangeDetectionModule
 from alceo.model.siam_diff import SiamUnet_diff
 from alceo.data_module import AlceoChangeDetectionDataModule
 import pytorch_lightning as pl
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     datamodule = AlceoChangeDetectionDataModule()
     datasets_labels = ["DE", "AS", "EB"]
     network = SiamUnet_diff(input_nbr=4, label_nbr=2)
-    model = AlceoMetricModule(
+    model = AlceoChangeDetectionModule(
         network=network,
         loss_fn=loss_fn,
         training_labels=[],

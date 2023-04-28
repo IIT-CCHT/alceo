@@ -13,14 +13,13 @@ from torchmetrics.classification import (
     BinaryPrecision,
     BinaryRecall,
 )
-from .phase_metric_module import PhaseMetricModule
 
 _TRAIN_IDX = 0
 _VALIDATION_IDX = 1
 _TEST_IDX = 2
 
 
-class AlceoChangeDetectionModule(PhaseMetricModule):
+class AlceoSegmentationModule(pl.LightningModule):
     def __init__(
         self,
         network: nn.Module,
@@ -28,25 +27,17 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
         train_labels: List[str],
         validation_labels: List[str],
         test_labels: List[str],
-        *args: Any,
-        **kwargs: Any,
     ) -> None:
-        """A LightningModule for training, validating and testing change detection models on the ALCEO dataset.
+        """A LightningModule for training, validating and testing pits segmentation models on the ALCEO dataset.
 
         Args:
-            network (nn.Module): A PyTorch Module that takes as input two images and returns multilabel activations for pits that appeared (channel 0) and pits that disappeared (channel 1)
+            network (nn.Module): A PyTorch Module that takes as input two images and returns binary activations for pits.
             loss_fn (nn.Module): The loss function used to optimise the network.
             train_labels (List[str]): The tags to use for the training datasets
             validation_labels (List[str]): The tags to use for the validation datasets
             test_labels (List[str]): The tags to use for the test datasets
         """
-        super().__init__(
-            train_labels,
-            validation_labels,
-            test_labels,
-            *args,
-            **kwargs,
-        )
+        super().__init__()
         self.save_hyperparameters(ignore=["network", "loss_fn"])
         self.network = network
         self.loss_fn = loss_fn
@@ -59,15 +50,13 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
             self.test_labels,
         ]
         self._phases = ["training", "validation", "testing"]
-        self.change_kinds = ["appeared", "disappeared"]
         self._setup_metrics()
 
     def forward(self, batch) -> torch.Tensor:
-        im1 = batch["im1"]
-        im2 = batch["im2"]
-        return self.network(im1, im2)
+        raster = batch["raster"]
+        return self.network(raster)
 
-    def shared_step(
+    def shared_supervised_step(
         self,
         batch,
         phase_tag,
@@ -76,7 +65,7 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
         """The network logic used for processing a single batch in training/validation/testing.
 
         Args:
-            batch (dict): A dictionary containing the two timesteps images (im1 and im2) as well as the ground truth (pits.appeared, pits.disappeared).
+            batch (dict): A dictionary containing the image (raster) as well as the ground truth (mask).
             stage_tag (str): one of "training", "validation", "testing"
             dataloader_tag (str, optional): The tag associated with the current dataloader. Defaults to None.
 
@@ -84,13 +73,12 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
             torch.FloatTensor: the loss computed using loss_fn
         """
 
-        change_activation = self.forward(batch)
+        activation = self.forward(batch)
 
         # computing loss
-        change_target = torch.cat(
-            [batch["pits.appeared"], batch["pits.disappeared"]], dim=1
-        )
-        loss = self.loss_fn(change_activation, change_target)
+        target = batch["mask"]
+        
+        loss = self.loss_fn(activation, target)
         self.log(
             f"{phase_tag}/loss",
             loss,
@@ -106,29 +94,16 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
             )
 
         # computing rest of metrics
-        appeared_target = change_target[:, 0]
-        disappeared_target = change_target[:, 1]
-        appeared_pred = change_activation[:, 0] > 0.5
-        disappeared_pred = change_activation[:, 1] > 0.5
+        prediction = activation.argmax(dim=1, keepdim=True)
 
         self.update_for_tag(
-            f"{phase_tag}/{self.change_kinds[0]}", appeared_pred, appeared_target
+            phase_tag, prediction, target
         )
         if dataloader_tag is not None:
             self.update_for_tag(
-                f"{dataloader_tag}/{self.change_kinds[0]}",
-                appeared_pred,
-                appeared_target,
-            )
-
-        self.update_for_tag(
-            f"{phase_tag}/{self.change_kinds[1]}", disappeared_pred, disappeared_target
-        )
-        if dataloader_tag is not None:
-            self.update_for_tag(
-                f"{dataloader_tag}/{self.change_kinds[1]}",
-                disappeared_pred,
-                disappeared_target,
+                dataloader_tag,
+                prediction,
+                target,
             )
 
         return loss
@@ -160,56 +135,54 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
         self.torchmetrics[f"{tag}/precision"](predicted, correct)
         self.torchmetrics[f"{tag}/recall"](predicted, correct)
 
-    def log_for_tag(self, tag: str):
+    def log_for_tag(self, log_tag: str):
         """Logs all the metrics of a given tag
 
         Args:
             tag (str): base tag of the metrics to update (e.g. "validation/appeared", "validation/EB/appeared")
         """
-        for change_kind in self.change_kinds:
-            log_tag = f"{tag}/{change_kind}"
-            self.log(
-                f"{log_tag}/mIoU",
-                self.torchmetrics[f"{log_tag}/mIoU"],
-                on_epoch=True,
-                on_step=False,
-                add_dataloader_idx=False,
-            )
-            self.log(
-                f"{log_tag}/ne_mIoU",
-                self.torchmetrics[f"{log_tag}/ne_mIoU"],
-                on_epoch=True,
-                on_step=False,
-                add_dataloader_idx=False,
-            )
-            self.log(
-                f"{log_tag}/IoU",
-                self.torchmetrics[f"{log_tag}/IoU"],
-                on_epoch=True,
-                on_step=False,
-                add_dataloader_idx=False,
-            )
-            self.log(
-                f"{log_tag}/F1",
-                self.torchmetrics[f"{log_tag}/F1"],
-                on_epoch=True,
-                on_step=False,
-                add_dataloader_idx=False,
-            )
-            self.log(
-                f"{log_tag}/precision",
-                self.torchmetrics[f"{log_tag}/precision"],
-                on_epoch=True,
-                on_step=False,
-                add_dataloader_idx=False,
-            )
-            self.log(
-                f"{log_tag}/recall",
-                self.torchmetrics[f"{log_tag}/recall"],
-                on_epoch=True,
-                on_step=False,
-                add_dataloader_idx=False,
-            )
+        self.log(
+            f"{log_tag}/mIoU",
+            self.torchmetrics[f"{log_tag}/mIoU"],
+            on_epoch=True,
+            on_step=False,
+            add_dataloader_idx=False,
+        )
+        self.log(
+            f"{log_tag}/ne_mIoU",
+            self.torchmetrics[f"{log_tag}/ne_mIoU"],
+            on_epoch=True,
+            on_step=False,
+            add_dataloader_idx=False,
+        )
+        self.log(
+            f"{log_tag}/IoU",
+            self.torchmetrics[f"{log_tag}/IoU"],
+            on_epoch=True,
+            on_step=False,
+            add_dataloader_idx=False,
+        )
+        self.log(
+            f"{log_tag}/F1",
+            self.torchmetrics[f"{log_tag}/F1"],
+            on_epoch=True,
+            on_step=False,
+            add_dataloader_idx=False,
+        )
+        self.log(
+            f"{log_tag}/precision",
+            self.torchmetrics[f"{log_tag}/precision"],
+            on_epoch=True,
+            on_step=False,
+            add_dataloader_idx=False,
+        )
+        self.log(
+            f"{log_tag}/recall",
+            self.torchmetrics[f"{log_tag}/recall"],
+            on_epoch=True,
+            on_step=False,
+            add_dataloader_idx=False,
+        )
 
     def _setup_metrics(self):
         """Initializes all the metrics in the MetricCollection called torchmetrics."""
@@ -229,20 +202,13 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
         for i in range(len(self._phases)):
             _phase = self._phases[i]
             _labels = self._phase_labels[i]
-            for change_kind in self.change_kinds:
-                # create phase-level metrics.
-                _metrics.update(metrics_for_tag(f"{_phase}/{change_kind}"))
-                for label in _labels:
-                    # create dataloader-level metrics.
-                    _metrics.update(metrics_for_tag(f"{_phase}/{label}/{change_kind}"))
+            # create phase-level metrics.
+            _metrics.update(metrics_for_tag(f"{_phase}"))
+            for label in _labels:
+                # create dataloader-level metrics.
+                _metrics.update(metrics_for_tag(f"{_phase}/{label}"))
 
         self.torchmetrics = MetricCollection(_metrics)
-
-    # def configure_optimizers(self) -> Any:
-    #     return torch.optim.Adam(
-    #         params=self.parameters(),
-    #         lr=1e-5,
-    #     )
 
     def _step(
         self,
@@ -269,13 +235,13 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
         dataloader_tag = None
         if dataloader_idx > -1:
             dataloader_tag = f"{_phase}/{_dataloader_labels[dataloader_idx]}"
-        return self.shared_step(batch, _phase, dataloader_tag=dataloader_tag)
+        return self.shared_supervised_step(batch, _phase, dataloader_tag=dataloader_tag)
 
     def _on_epoch_end(self, phase_idx) -> None:
         """Logs all metrics for phase and related dataloaders.
 
         Args:
-            phase_idx (int): ID of the current phase
+            phase_idx (int): ID of the current phase 
         """
         _phase = self._phases[phase_idx]
         self.log_for_tag(_phase)

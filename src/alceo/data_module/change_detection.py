@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Optional, List
 from alceo.dataset.change_detection import AlceoChangeDetectionDataset
-
+from .phase_data_module import PhaseDataModule
 from torch.utils.data import random_split, Dataset, ConcatDataset, DataLoader
 from pytorch_lightning.utilities.types import (
     TRAIN_DATALOADERS,
@@ -11,14 +11,14 @@ from pytorch_lightning.utilities.types import (
 import pytorch_lightning as pl
 
 
-class AlceoChangeDetectionDataModule(pl.LightningDataModule):
+class AlceoChangeDetectionDataModule(PhaseDataModule):
     def __init__(
         self,
         train_paths: List[str] = [],
-        train_labels: List[str] = [],
         validation_paths: List[str] = [],
-        validation_labels: List[str] = [],
         test_paths: List[str] = [],
+        train_labels: List[str] = [],
+        validation_labels: List[str] = [],
         test_labels: List[str] = [],
         predict_paths: List[str] = [],
         predict_labels: List[str] = [],
@@ -37,7 +37,11 @@ class AlceoChangeDetectionDataModule(pl.LightningDataModule):
             batch_size (int, optional): Batch size given to each dataloader. Defaults to 16.
             num_workers (int, optional): Number of workers for each dataloader. Defaults to 5.
         """
-        super().__init__()
+        super().__init__(
+            train_labels,
+            validation_labels,
+            test_labels,
+        )
         self.save_hyperparameters()
 
     def setup(self, stage: Optional[str] = None) -> None:
@@ -59,11 +63,10 @@ class AlceoChangeDetectionDataModule(pl.LightningDataModule):
         for path in self.hparams.test_paths:
             dataset = AlceoChangeDetectionDataset(Path(path))
             self.test_datasets.append(dataset)
-            
+
         for path in self.hparams.predict_paths:
             dataset = AlceoChangeDetectionDataset(Path(path))
             self.predict_datasets.append(dataset)
-                
 
         return super().setup(stage)
 
@@ -73,11 +76,10 @@ class AlceoChangeDetectionDataModule(pl.LightningDataModule):
             batch_size=self.hparams.batch_size,
             num_workers=self.hparams.num_workers,
         )
-        
+
     def predict_dataloader(self) -> EVAL_DATALOADERS:
         _dataloaders = [
-            self._dataloader_for_dataset(dataset)
-            for dataset in self.predict_datasets
+            self._dataloader_for_dataset(dataset) for dataset in self.predict_datasets
         ]
         return _dataloaders
 
