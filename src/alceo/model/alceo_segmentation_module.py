@@ -13,13 +13,14 @@ from torchmetrics.classification import (
     BinaryPrecision,
     BinaryRecall,
 )
+from .phase_metric_module import PhaseMetricModule
 
 _TRAIN_IDX = 0
 _VALIDATION_IDX = 1
 _TEST_IDX = 2
 
 
-class AlceoSegmentationModule(pl.LightningModule):
+class AlceoSegmentationModule(PhaseMetricModule):
     def __init__(
         self,
         network: nn.Module,
@@ -37,7 +38,11 @@ class AlceoSegmentationModule(pl.LightningModule):
             validation_labels (List[str]): The tags to use for the validation datasets
             test_labels (List[str]): The tags to use for the test datasets
         """
-        super().__init__()
+        super().__init__(
+            train_labels=train_labels,
+            validation_labels=validation_labels,
+            test_labels=test_labels,
+        )
         self.save_hyperparameters(ignore=["network", "loss_fn"])
         self.network = network
         self.loss_fn = loss_fn
@@ -77,7 +82,7 @@ class AlceoSegmentationModule(pl.LightningModule):
 
         # computing loss
         target = batch["mask"]
-        
+
         loss = self.loss_fn(activation, target)
         self.log(
             f"{phase_tag}/loss",
@@ -96,9 +101,7 @@ class AlceoSegmentationModule(pl.LightningModule):
         # computing rest of metrics
         prediction = activation.argmax(dim=1, keepdim=True)
 
-        self.update_for_tag(
-            phase_tag, prediction, target
-        )
+        self.update_for_tag(phase_tag, prediction, target)
         if dataloader_tag is not None:
             self.update_for_tag(
                 dataloader_tag,
@@ -241,7 +244,7 @@ class AlceoSegmentationModule(pl.LightningModule):
         """Logs all metrics for phase and related dataloaders.
 
         Args:
-            phase_idx (int): ID of the current phase 
+            phase_idx (int): ID of the current phase
         """
         _phase = self._phases[phase_idx]
         self.log_for_tag(_phase)

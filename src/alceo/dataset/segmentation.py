@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 import geopandas as gpd
 import rasterio as rio
 from rasterio.windows import from_bounds
-from rasterio.enums import Resampling
+from rasterio.enums import Resampling, ColorInterp
 from rasterio.features import rasterize
 import torch
 import numpy as np
@@ -86,14 +86,17 @@ class AlceoPitsImageSegmentationDataset(Dataset[Dict[str, Any]]):
     def _load_mask(self, tile, src: rio.DatasetReader):
         if self._annotation_df is not None:
             pits = self._annotation_df[self._annotation_df.covered_by(tile.geometry)]
-            _raster = rasterize(pits.geometry, out_shape=(tile.height, tile.width), transform=src.transform, fill=1, dtype=np.int32)
+            _raster = np.zeros(shape=(tile.height, tile.width), dtype=np.int32)
+            if len(pits) > 0:
+                _raster = rasterize(pits.geometry, out_shape=(tile.height, tile.width), transform=src.transform, fill=1, dtype=np.int32)
             return torch.from_numpy(_raster)
         return None
 
     def __getitem__(self, index) -> Dict[str, Any]:
-        tile = self._tiles_df.loc[index]
+        tile = self._tiles_df.iloc[index]
         item = tile.to_dict()
-        with rio.open(self.image_path) as src:
+        item.pop("geometry", None)
+        with rio.open(self.image_path, mode="r") as src:
             item["raster"] = self._load_tile(tile, src)
             item["mask"] = self._load_mask(tile, src)
         return item
