@@ -1,5 +1,5 @@
 
-from alceo.model.alceo_metric_module import AlceoChangeDetectionModule
+from alceo.model.alceo_change_detection_module import AlceoChangeDetectionModule
 from alceo.model.siam_diff import SiamUnet_diff
 from alceo.data_module import AlceoChangeDetectionDataModule, AlceoSegmentationDataModule
 import pytorch_lightning as pl

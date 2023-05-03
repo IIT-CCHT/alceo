@@ -34,7 +34,7 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
         """A LightningModule for training, validating and testing change detection models on the ALCEO dataset.
 
         Args:
-            network (nn.Module): A PyTorch Module that takes as input two images and returns multilabel activations for pits that appeared (channel 0) and pits that disappeared (channel 1)
+            network (nn.Module): A PyTorch Module that takes as input two images (first time-step, second time-step) and returns multilabel activations for pits that appeared (channel 0) and pits that disappeared (channel 1)
             loss_fn (nn.Module): The loss function used to optimise the network.
             train_labels (List[str]): The tags to use for the training datasets
             validation_labels (List[str]): The tags to use for the validation datasets

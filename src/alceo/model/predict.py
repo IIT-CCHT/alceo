@@ -3,7 +3,7 @@ from pathlib import Path
 from alceo.dataset.change_detection import AlceoChangeDetectionDataset
 import pytorch_lightning as pl
 from alceo.callback.pits_prediction_writer import TiffPredictionWriter
-from alceo.model.alceo_metric_module import AlceoChangeDetectionModule
+from alceo.model.alceo_change_detection_module import AlceoChangeDetectionModule
 from torch.utils.data import DataLoader
 from alceo.model.siam_diff import SiamUnet_diff
 from segmentation_models_pytorch.losses import JaccardLoss

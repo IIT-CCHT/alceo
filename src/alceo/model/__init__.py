@@ -1,7 +1,7 @@
 """This module contains the implementation of models in both vanilla PyTorch as well as Lightning.
 """
 
-from .alceo_metric_module import AlceoChangeDetectionModule
+from .alceo_change_detection_module import AlceoChangeDetectionModule
 from .siam_diff import SiamUnet_diff
 from .alceo_segmentation_module import AlceoSegmentationModule
 from .phase_metric_module import PhaseMetricModule
