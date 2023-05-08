@@ -9,7 +9,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "^3.8"
-dvc = "^2.43.4"
+dvc = "^2.56"
 dvclive = {extras = ["lightning"], version = "^2.6.2"}
 dvc-ssh = "^2.22.1"
 Fiona = "^1.8.21"
