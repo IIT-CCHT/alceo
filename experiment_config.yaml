@@ -22,29 +22,33 @@ trainer:
       init_args:
         logging_interval: epoch
 model:
-  network:
-    class_path: alceo.model.SiamUnet_diff
-    init_args:
-      input_nbr: 4
-      label_nbr: 2
-  loss_fn:
-    class_path: segmentation_models_pytorch.losses.JaccardLoss
-    init_args:
-      mode: multilabel
+  class_path: alceo.model.AlceoChangeDetectionModule
+  init_args:
+    network:
+      class_path: alceo.model.SiamUnet_diff
+      init_args:
+        input_nbr: 4
+        label_nbr: 2
+    loss_fn:
+      class_path: segmentation_models_pytorch.losses.JaccardLoss
+      init_args:
+        mode: multilabel
 data:
-  batch_size: 24
-  train_paths:
-    - dataset/pits/train_DURA_EUROPOS
-    - dataset/pits/train_ASWAN
-    - dataset/pits/train_EBLA
-  validation_paths:
-    - dataset/pits/test_DURA_EUROPOS
-    - dataset/pits/test_ASWAN
-    - dataset/pits/test_EBLA
-  validation_labels:
-    - DURA_EUROPOS
-    - ASWAN
-    - EBLA
+  class_path: alceo.data_module.AlceoChangeDetectionDataModule
+  init_args: 
+    batch_size: 24
+    train_paths:
+      - dataset/pits/train_DURA_EUROPOS
+      - dataset/pits/train_ASWAN
+      - dataset/pits/train_EBLA
+    validation_paths:
+      - dataset/pits/test_DURA_EUROPOS
+      - dataset/pits/test_ASWAN
+      - dataset/pits/test_EBLA
+    validation_labels:
+      - DURA_EUROPOS
+      - ASWAN
+      - EBLA
 optimizer:
   class_path: torch.optim.Adam
   init_args: 
