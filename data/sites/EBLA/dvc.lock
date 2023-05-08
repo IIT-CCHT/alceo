@@ -46,12 +46,12 @@ stages:
       md5: 4638ecc3d032a06eba1760eefc59036c
       size: 129718
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: ea9cf7341953f40c4fc10acc7deca653
-      size: 5338
+      md5: bad9cc48ed10ed72acfc6bd3737472f9
+      size: 5623
     outs:
     - path: data/sites/EBLA/tiles/E_03_04_2014/
-      md5: 4d733a3fd03d5afdf484aab21b882744.dir
-      size: 151219008
+      md5: 7073cc72fc1e926011d044eedbefce40.dir
+      size: 151121088
       nfiles: 288
   produce_vectorial_change@0:
     cmd: python src/alceo/processing/change_from_annotations.py -i data/sites/EBLA/annotations/pits.geojson
@@ -100,12 +100,12 @@ stages:
       md5: 4638ecc3d032a06eba1760eefc59036c
       size: 129718
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: ea9cf7341953f40c4fc10acc7deca653
-      size: 5338
+      md5: bad9cc48ed10ed72acfc6bd3737472f9
+      size: 5623
     outs:
     - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.appeared/tiles
-      md5: c5f441ca7179d67af411fd903544962b.dir
-      size: 37880064
+      md5: ec2352e90c7abd2719b61baec824e871.dir
+      size: 37862784
       nfiles: 288
   tilize_image@0:
     cmd: python src/alceo/processing/rasterize_tiles.py -t data/sites/EBLA/tiles.geojson
@@ -119,12 +119,12 @@ stages:
       md5: 4638ecc3d032a06eba1760eefc59036c
       size: 129718
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: ea9cf7341953f40c4fc10acc7deca653
-      size: 5338
+      md5: bad9cc48ed10ed72acfc6bd3737472f9
+      size: 5623
     outs:
     - path: data/sites/EBLA/tiles/E_01_09_2004/
-      md5: 795f928687f3496acf1ce416fa12c868.dir
-      size: 151219008
+      md5: f9b6bd2af4712ceea24779e3cad2ef5e.dir
+      size: 151121088
       nfiles: 288
   tilize_image@3:
     cmd: python src/alceo/processing/rasterize_tiles.py -t data/sites/EBLA/tiles.geojson
@@ -138,12 +138,12 @@ stages:
       md5: 4638ecc3d032a06eba1760eefc59036c
       size: 129718
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: ea9cf7341953f40c4fc10acc7deca653
-      size: 5338
+      md5: bad9cc48ed10ed72acfc6bd3737472f9
+      size: 5623
     outs:
     - path: data/sites/EBLA/tiles/E_07_06_2022/
-      md5: 19bd77f00784955e6fd4736bcc248c45.dir
-      size: 302331456
+      md5: 52c13159035af6f8f118d41650242560.dir
+      size: 305649216
       nfiles: 288
   rasterize_change@1:
     cmd:
@@ -190,12 +190,12 @@ stages:
       md5: 4638ecc3d032a06eba1760eefc59036c
       size: 129718
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: ea9cf7341953f40c4fc10acc7deca653
-      size: 5338
+      md5: bad9cc48ed10ed72acfc6bd3737472f9
+      size: 5623
     outs:
     - path: data/sites/EBLA/tiles/E_13_04_2018/
-      md5: 995b05437439037a5d441b21486b83d0.dir
-      size: 302331456
+      md5: 282e597463d1764ec59a30ea789d725e.dir
+      size: 302122944
       nfiles: 288
   rasterize_change@2:
     cmd:
@@ -228,12 +228,12 @@ stages:
       md5: 4638ecc3d032a06eba1760eefc59036c
       size: 129718
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: ea9cf7341953f40c4fc10acc7deca653
-      size: 5338
+      md5: bad9cc48ed10ed72acfc6bd3737472f9
+      size: 5623
     outs:
     - path: data/sites/EBLA/change/E_01_09_2004/E_03_04_2014/raster/pits.disappeared/tiles
-      md5: bfe5ac7dcd98a2ef79852d1f081047e3.dir
-      size: 37880064
+      md5: 56a590e680aff00aa17e554aaae92d92.dir
+      size: 37862784
       nfiles: 288
   rasterize_change@3:
     cmd:
@@ -266,12 +266,12 @@ stages:
       md5: 4638ecc3d032a06eba1760eefc59036c
       size: 129718
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: ea9cf7341953f40c4fc10acc7deca653
-      size: 5338
+      md5: bad9cc48ed10ed72acfc6bd3737472f9
+      size: 5623
     outs:
     - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.disappeared/tiles
-      md5: a1d15a8542684aecc45bc84bf4da40b9.dir
-      size: 37880064
+      md5: 2e3d64c2c3d67d314d243d4158d56420.dir
+      size: 37862784
       nfiles: 288
   tilize_change@2:
     cmd:
@@ -287,12 +287,12 @@ stages:
       md5: 4638ecc3d032a06eba1760eefc59036c
       size: 129718
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: ea9cf7341953f40c4fc10acc7deca653
-      size: 5338
+      md5: bad9cc48ed10ed72acfc6bd3737472f9
+      size: 5623
     outs:
     - path: data/sites/EBLA/change/E_03_04_2014/E_13_04_2018/raster/pits.appeared/tiles
-      md5: 41ce6365f4292b1e7d202ac7baf2bbf0.dir
-      size: 37880064
+      md5: 795a45363e1d77816dc1525d45dea530.dir
+      size: 37862784
       nfiles: 288
   rasterize_change@4:
     cmd:
@@ -342,12 +342,12 @@ stages:
       md5: 4638ecc3d032a06eba1760eefc59036c
       size: 129718
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: ea9cf7341953f40c4fc10acc7deca653
-      size: 5338
+      md5: bad9cc48ed10ed72acfc6bd3737472f9
+      size: 5623
     outs:
     - path: data/sites/EBLA/change/E_13_04_2018/E_07_06_2022/raster/pits.appeared/tiles
-      md5: b94b4bf84addbaa0183500d9234c46f6.dir
-      size: 37880064
+      md5: 1d7f003219a6e7566c3d13fe71c29980.dir
+      size: 37862784
       nfiles: 288
   tilize_change@5:
     cmd:
@@ -363,10 +363,10 @@ stages:
       md5: 4638ecc3d032a06eba1760eefc59036c
       size: 129718
     - path: src/alceo/processing/rasterize_tiles.py
-      md5: ea9cf7341953f40c4fc10acc7deca653
-      size: 5338
+      md5: bad9cc48ed10ed72acfc6bd3737472f9
+      size: 5623
     outs:
     - path: data/sites/EBLA/change/E_13_04_2018/E_07_06_2022/raster/pits.disappeared/tiles
-      md5: 7f4eeeceb34a742bf99b478d80c0eb20.dir
-      size: 37880064
+      md5: 1e5621ebef3dd58777315bade315605c.dir
+      size: 37862784
       nfiles: 288

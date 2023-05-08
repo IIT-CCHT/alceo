@@ -2,8 +2,9 @@
 import rasterio
 from rasterio import windows
 import rasterio.mask
+from rasterio.warp import reproject
 from shapely import union_all
-from shapely.geometry import box
+from shapely.geometry import box, mapping
 from pathlib import Path
 import geopandas as gpd
 from alceo.utils import in_notebook
@@ -11,6 +12,8 @@ from argparse import ArgumentParser
 from rasterio.enums import Resampling
 from tqdm import tqdm
 import os
+import numpy as np
+
 # %%
 def rasterize_tiles(
     tiles_geojson_path: Path,
@@ -27,48 +30,60 @@ def rasterize_tiles(
         areas_of_interest_geojson (Path, optional): Features of the various areas of interest to keep. Defaults to None.
         keep_partial (bool, optional): Save tiles that are partially filled. Defaults to False.
     """
-    output_filename = "{}.tif"
     # %% Create output directory if it doesn't exists
+    output_filename = "{}.tif"
 
     if not output_directory_path.exists():
         os.makedirs(output_directory_path, exist_ok=True)
 
     tiles_gdf = gpd.read_file(tiles_geojson_path)
-    
+
     if areas_of_interest_geojson is not None and areas_of_interest_geojson.exists():
-        aoi_gdf = gpd.read_file(areas_of_interest_geojson, driver="GeoJSON").to_crs(tiles_gdf.crs)
+        aoi_gdf = gpd.read_file(areas_of_interest_geojson, driver="GeoJSON").to_crs(
+            tiles_gdf.crs
+        )
         aoi_shape = union_all(aoi_gdf.geometry)
         tiles_gdf = tiles_gdf[tiles_gdf.geometry.covered_by(aoi_shape)]
     # %%
     with rasterio.open(input_geotiff_path) as src:
-        image_box = box(*src.bounds)
+        # %%
         # src = rasterio.open(input_geotiff_path)
+        image_box = box(*src.bounds)
+        # %%
         for id, row in tqdm(tiles_gdf.iterrows()):
-            # %%
             if not image_box.covers(row.geometry):
                 continue
-            tile_window = windows.from_bounds(
-                *row.geometry.bounds,
-                transform=src.transform,
+            # %%
+            tile_clipped, tile_transform = rasterio.mask.mask(
+                src,
+                [row.geometry],
+                crop=True,
             )
-            res = src.read(
-                window=tile_window,
-                out_shape=(src.count, row.height, row.width),
+            # %%
+            reproj_tile, reproj_transform = reproject(
+                source=tile_clipped,
+                destination=np.zeros((src.count, row.height, row.width)),
+                src_transform=tile_transform,
+                src_crs=src.crs,
+                dst_crs=src.crs,
+                dst_nodata=src.nodata,
                 resampling=Resampling.bilinear,
             )
             # %%
 
-            tile_path = output_directory_path / output_filename.format(row.tile_id
+            tile_path = output_directory_path / output_filename.format(row.tile_id)
+            profile = src.profile
+            profile.update(
+                transform=reproj_transform,
+                driver="GTiff",
+                width=row.width,
+                height=row.height,
             )
-
-            meta = src.meta.copy()
-            meta["width"] = row.width
-            meta["height"] = row.height
-            meta["transform"] = windows.transform(tile_window, src.transform)
-            with rasterio.open(tile_path, "w", **meta) as out:
-                out.write(res)
+            with rasterio.open(tile_path, "w", **profile) as out:
+                out.write(reproj_tile)
 
 
+# %%
 if __name__ == "__main__":
     import logging
 
@@ -78,7 +93,7 @@ if __name__ == "__main__":
     logger = logging.getLogger("rasterio")
     logger.addHandler(console_handler)
     logger.setLevel(logging.ERROR)
-    
+
     if not in_notebook():
         parser = ArgumentParser(
             "rasterize_tiles.py",
@@ -118,25 +133,24 @@ if __name__ == "__main__":
         input_geotiff_path = args.input_geotiff_path
         output_directory_path = args.output_directory_path
         areas_of_interest_geojson = args.areas_of_interest_geojson
+    # %%
     else:
         # %%
-        tiles_geojson_path = Path(
-            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/tiles.geojson"
-        )
+        tiles_geojson_path = Path("/home/gsech/alceo/data/sites/EBLA/tiles.geojson")
         input_geotiff_path = Path(
-            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif"
+            "/home/gsech/alceo/data/sites/EBLA/images/E_03_04_2014/E_03_04_2014_PL_NN_Diffuse_geo.tif"
         )
         output_directory_path = Path(
-            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/tiles/DE_21_07_2018"
+            "/home/gsech/alceo/data/sites/EBLA/tiles/E_03_04_2014"
         )
         areas_of_interest_geojson = Path(
-            "/HDD1/gsech/source/alceo/data/sites/DURA_EUROPOS/area_of_interest.geojson"
+            "/home/gsech/alceo/data/sites/EBLA/area_of_interest.geojson"
         )
-        
+
     # %%
     rasterize_tiles(
         tiles_geojson_path,
         input_geotiff_path,
         output_directory_path,
-        areas_of_interest_geojson
+        areas_of_interest_geojson,
     )
