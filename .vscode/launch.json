@@ -5,22 +5,60 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: produce tiles",
+            "name": "Build mkdocs",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/src/alceo/processing/produce_tiles.py",
+            "module": "mkdocs",
+            "justMyCode": false,
+            "args": [
+                "build"
+            ]
+        },
+        {
+            "name": "Predict alceo",
+            "type": "python",
+            "request": "launch",
+            "module": "alceo",
+            "justMyCode": true,
+            "args": [
+                "predict",
+                "--config",
+                "experiment_config.yaml",
+                "--ckpt_path",
+                "semantic_segmentation_logs/DvcLiveLogger/run/checkpoints/best_IoU copy.ckpt",
+                "--trainer.callbacks+=alceo.callback.SegmentationWriter",
+                "--trainer.callbacks.init_args.output_dir=semantic_segmentation_inference/E_13_04_2018",
+                "--config",
+                "pipelines/predict/predict_config.yaml",
+            ]
+        },
+        {
+            "name": "Debug rasterize tiles",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/alceo/processing/rasterize_tiles.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "args": [
+                "-t",
+                "data/sites/DURA_EUROPOS/tiles.geojson",
                 "-i",
-                "data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif",
-                "-p",
-                "DURA_EUROPOS_",
-                "-a",
-                "data/sites/DURA_EUROPOS/area_of_interest.geojson",
+                "data/sites/DURA_EUROPOS/images/DE_21_07_2018/DE_21_07_2018_50_cm_WV2_NN_diffuse_geo.tif",
                 "-o",
-                "data/sites/DURA_EUROPOS/tiles.geojson"
+                "data/sites/DURA_EUROPOS/tiles/DE_21_07_2018",
             ]
-        }
+        },
+        {
+            "name": "Fit alceo",
+            "type": "python",
+            "request": "launch",
+            "module": "alceo",
+            "justMyCode": false,
+            "args": [
+                "fit",
+                "--config",
+                "experiment_config.yaml"
+            ]
+        },
     ]
 }
