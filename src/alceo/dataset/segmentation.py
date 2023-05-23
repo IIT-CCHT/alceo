@@ -101,14 +101,14 @@ class AlceoPitsImageSegmentationDataset(Dataset[Dict[str, Any]]):
             item["mask"] = self._load_mask(tile, src)
         return item
         
-        
-# %%
-dataset = AlceoPitsImageSegmentationDataset(
-    image_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif",
-    annotations_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/annotations/pits.geojson",
-    date_string="19/09/2014",
-    tiles_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/tiles.geojson",
-    area_of_interest_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/train_area.geojson",
-    bands=[1, 2, 3, 4],
-)
-# %%
+if __name__ == '__main__':
+    # %%
+    dataset = AlceoPitsImageSegmentationDataset(
+        image_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif",
+        annotations_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/annotations/pits.geojson",
+        date_string="19/09/2014",
+        tiles_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/tiles.geojson",
+        area_of_interest_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/train_area.geojson",
+        bands=[1, 2, 3, 4],
+    )
+    # %%
