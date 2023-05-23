@@ -1,4 +1,4 @@
-# ALCEO
+# Automatic Looting Classification from Earth Observation (ALCEO)
 
 Code repository for the ALCEO project.
 

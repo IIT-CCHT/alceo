@@ -1,8 +1,8 @@
 site_name: ALCEO Docs
 nav:
   - Home: index.md
-  - Data: data_processing.md
-  - DVC Journey: DVC.md
+  - Data sub-system: data.md
+  - Modeling sub-system: modelling.md
   - Code Reference: reference/
 plugins:
 - gen-files:
@@ -22,6 +22,6 @@ plugins:
         docstring_options:
           ignore_init_summary: yes
         merge_init_into_class: yes
-        show_submodules: no
+        show_submodules: yes
 theme:
   name: readthedocs
