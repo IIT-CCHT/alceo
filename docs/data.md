@@ -1,33 +1,87 @@
 # Data Management Sub-system
 This sub-system is in charge of producing the datasets used to train and evaluate the project's models starting from satellite imagery data and human annotation of the looting activity. 
 Most machine learning models for computer vision tasks, such as the ones developed for this project, work directly on raster data.
-This creates a need to automatically pre-process the data in a scalable and configurable manner so that we can promptly update our datasets when additional annotations are or some potential issues are addressed.
-This pre-processing is done with a series of tools as well as some custom-made scripts that have to be executed in a precise sequence, such sequence is called a pipeline.  
+This pre-processing procedure consists of tools executed in a precise sequence. Such a sequence is called a pipeline.  
+Automatically pre-processing the data in a scalable and configurable manner is needed to promptly update the datasets when new data is included.
 
-# Site configuration
+# Site data directory
 
 For each site, a pre-processing pipeline has been configured. All the site data and the pipeline configuration are stored inside the `data/site/<SITE NAME>` folder.
-The data pipeline's main objective is the production of all intermediate artifacts for the final dataset, these artifacts depend on the site's images and annotations.
+The data pipeline's main objective is the production of all intermediate artifacts for the final dataset, which depends on the site's images and annotations.
 
-The setup of a typical site's data directory starts with the following components:
-1. Area of Interest GeoJSON (e.g. `area_of_interest.geojson`) describing the boundaries of the site that the sub-system should process.
-2. Annotations GeoJSON containing the polygons delimiting the looting pits. Each pit should be marked with a
-3. Training and Testing GeoJSON (e.g. `test_area.geojson` and `test_area.geojson` ) describing 
+The setup of a site's data directory starts with the following components:
+1. Area of Interest GeoJSON (e.g., `area_of_interest.geojson`) describes the site's boundaries that the sub-system should process.  
+2. Annotations GeoJSON containing the polygons delimiting the looting pits. Each pit should have a "Day_Month_Year" string to identify the date the looting pit was visible. The `alceo.preprocessing.change_from_annotation`  tool will also use this date. (e.g., `annotations/pits.geojson`)
+<!-- 3. Training and Testing GeoJSON (e.g., `training_area.geojson` and `test_area.geojson`) delimiting the areas for creating training and test datasets with a geographical split. -->
+3. Geo-referenced satellite image. The image's supported format is GeoTIFF. Using a folder for each GeoTIFF can be helpful to keep a tidy folder structure when other tools (e.g., QGIS) create meta-data files. 
+4. `dvc.yaml` file describing the site's data pipeline stages. The following section describes setting it up using the [`dvc stage`](https://dvc.org/doc/command-reference/stage) command.
+
+The resulting example site data directory follows:
+```
+data/
+    sites/
+        <SITE NAME>/
+            annotations/ # contains annotation files (i.e. pits.geojson).
+                pits.geojson
+            images/ # contains images products.
+                <IMAGE NAME>/
+                    image_name.tiff # image file with an example name.
+            dvc.yaml # configuration of the site level pipeline.
+```
+
+# Site data pipeline
+The site data pipeline is in charge of splitting the areas of interest into geo-referenced tiles, computing from the site annotations the change in looting pits (appearance and disappearance) between two dates and cutting all rasters (images and change binary masks) in tiles of the exact resolution.
+DVC is the tool we've chosen to produce this pipeline.
+
+## Produce vectorial tiles.
+The script `alceo.processing.produce_tiles` produces a GeoJSON containing polygons georeferencing all the vectorial tiles of a site's areas of interest.
+The produced GeoJSON includes metadata about the resulting raster resolution and a generated identifier of the tile.
+
+Creating the stage using the `dvc stage add` command:
 
 ```
-data
-    /sites
-        /<SITE NAME>
-            /annotations # contains annotation files (i.e. pits.geojson).
-            /images # contains images products.
-            /dvc.yaml # configuration of the site level pipeline.
+cd data/sites/${site_name} # Get into the site data directory to generate the dvc.yaml file. 
+
+# The -w flag is needed to give the stage the project root as work directory.
+dvc stage add -n produce_vectorial_tiles \
+-w ../../../. \
+-d src/alceo/processing/produce_tiles.py \
+-d data/sites/${site_name}/images/${image_path} \
+-d data/sites/${site_name}/area_of_interest.geojson \
+-o data/sites/${site_name}/tiles.geojson \
+python src/alceo/processing/produce_tiles.py \
+      -i data/sites/${site_name}/images/${images_path} \
+      -p ${tile_prefix} \
+      -a data/sites/${site_name}/area_of_interest.geojson \
+      -tw 256 \
+      -th 256 \
+      -o data/sites/${site_name}/tiles.geojson
 ```
 
-## Geo-referenced tilization of satellite images
+Executing this command will result in the generation of the following `dvc.yaml` file:
 
-So, for a given set of site images `script/processing/produce_tiles.py` produces a GeoJSON containing vectorial features and pixel sizes of the tiles.  
-The output GeoJSON can be given with a single satellite image to `script/processing/rasterize_tiles.py` for producing GeoTIFFs of the tiles if needed.
+```
+stages:
+  produce_vectorial_tiles:
+    wdir: ../../../.
+    cmd: python src/alceo/processing/produce_tiles.py
+      -i data/sites/${site_name}/images/${images_path}
+      -p ${tile_prefix}
+      -a data/sites/${site_name}/area_of_interest.geojson
+      -tw 256
+      -th 256
+      -o data/sites/${site_name}/tiles.geojson
+    deps:
+      - src/alceo/processing/produce_tiles.py
+      - data/sites/${site_name}/images/${images_path}
+      - data/sites/${site_name}/area_of_interest.geojson
+    outs:
+      - data/sites/${site_name}/tiles.geojson
+```
 
+The `outs` field of a stage definition represents the files generated by the stage, whereas `deps` are the files on which the command's output depends. In this way, DVC can compute how the stages depend on each other in the pipeline and avoid re-computing parts for which the dependencies did not change (and thus, the outputs should remain the same).
+
+DVC has templating functionalities that allow the parametric definition of stages. In the previous example `site_name`, `image_path` and `tile_prefix` are examples of DVC templating. More about this topic can be found in [DVC's documentation](https://dvc.org/doc/user-guide/project-structure/dvcyaml-files#templating).
 ## Computing change from site annotations
 
 The dataset pipeline converged on annotating all the likely looting pits in each satellite image and then compute positive (pit appearance) and negative (pit disappearance) change given a couple of image annotations.
