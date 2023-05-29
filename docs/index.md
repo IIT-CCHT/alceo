@@ -1,7 +1,4 @@
 
-
-
-
 ## Installing the ALCEO Python module
 This project uses [Poetry](https://python-poetry.org/docs/) as dependency manager. Once the repository is downloaded you can use `poetry install` to get all the dependencies downloaded and the `alceo` module installed. The full dependency definition can be found inside the `[tool.poetry.dependencies]` section of `pyproject.toml` [metadata file](https://peps.python.org/pep-0621/). By default Poetry creates a virtual environment for the project, refer to Poetry's [documentation to configure](https://python-poetry.org/docs/configuration/) this behaviour.
 

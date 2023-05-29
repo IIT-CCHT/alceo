@@ -1,0 +1,62 @@
+seed_everything: 1234
+trainer:
+  accelerator: gpu
+  precision: 16
+  max_time: 00:24:00:00
+  logger: 
+    class_path: alceo.logger.DVCLiveLogger
+    init_args:
+      run_name: run
+      dir: change_detection_logs
+  log_every_n_steps: 5
+  callbacks:
+    - class_path: pytorch_lightning.callbacks.ModelCheckpoint
+      init_args:
+        monitor: validation/appeared/IoU
+        save_last: True
+        save_top_k: 1
+        mode: max
+        filename: "best_IoU"
+        auto_insert_metric_name: False
+    - class_path: pytorch_lightning.callbacks.LearningRateMonitor
+      init_args:
+        logging_interval: epoch
+model:
+  class_path: alceo.model.AlceoChangeDetectionModule
+  init_args:
+    network:
+      class_path: alceo.model.SiamUnet_diff
+      init_args:
+        input_nbr: 4
+        label_nbr: 2
+    loss_fn:
+      class_path: segmentation_models_pytorch.losses.JaccardLoss
+      init_args:
+        mode: multilabel
+data:
+  class_path: alceo.data_module.AlceoChangeDetectionDataModule
+  init_args: 
+    batch_size: 24
+    train_paths:
+      - dataset/pits/train_DURA_EUROPOS
+      - dataset/pits/train_ASWAN
+      - dataset/pits/train_EBLA
+    validation_paths:
+      - dataset/pits/test_DURA_EUROPOS
+      - dataset/pits/test_ASWAN
+      - dataset/pits/test_EBLA
+    validation_labels:
+      - DURA_EUROPOS
+      - ASWAN
+      - EBLA
+optimizer:
+  class_path: torch.optim.Adam
+  init_args: 
+    lr: 1e-4
+    weight_decay: 1e-4
+lr_scheduler:
+  class_path: pytorch_lightning.cli.ReduceLROnPlateau
+  init_args:
+    mode: max
+    monitor: validation/appeared/IoU
+    factor: 0.95
