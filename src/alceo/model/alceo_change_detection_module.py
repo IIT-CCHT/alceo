@@ -238,12 +238,6 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
 
         self.torchmetrics = MetricCollection(_metrics)
 
-    # def configure_optimizers(self) -> Any:
-    #     return torch.optim.Adam(
-    #         params=self.parameters(),
-    #         lr=1e-5,
-    #     )
-
     def _step(
         self,
         phase_idx,

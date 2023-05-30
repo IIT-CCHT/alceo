@@ -7,7 +7,7 @@ trainer:
     class_path: alceo.logger.DVCLiveLogger
     init_args:
       run_name: run
-      dir: change_detection_logs
+      dir: logs/siam_diff
   log_every_n_steps: 5
   callbacks:
     - class_path: pytorch_lightning.callbacks.ModelCheckpoint
