@@ -1,5 +1,8 @@
 # Automatic Looting Classification from Earth Observation (ALCEO)
-This is the source code repository of the Python module developed for the ALCEO project. Reference of the Program-Contract: ALCEO Grant n. 4000136771, between European Space Agency (ESA) and Istituto Italiano di Tecnologia (IIT) for ALCEO: Automatic Looting Classification from Earth Observation.
+![Documentation](https://github.com/github/docs/actions/workflows/pages_ci.yaml/badge.svg)  
+
+
+This is the source code repository of the Python module developed for the ALCEO project. Reference of the Program-Contract: ALCEO Grant n. 4000136771, between European Space Agency (ESA) and Istituto Italiano di Tecnologia (IIT) for ALCEO: Automatic Looting Classification from Earth Observation.  
 
 ## Installing the ALCEO Python module
 The first step to install the `alceo` python module is to clone the repository.
