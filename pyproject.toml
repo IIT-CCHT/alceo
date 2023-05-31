@@ -24,6 +24,7 @@ mkdocstrings = {extras = ["python"], version = "^0.20.0"}
 mkdocs-gen-files = "^0.4.0"
 mkdocs-literate-nav = "^0.6.0"
 mkdocs-section-index = "^0.3.5"
+mkdocs-material = "^9.1.15"
 rasterio = "^1.3.2"
 rtree = "^1.0.1"
 segmentation-models-pytorch = "^0.3.2"
@@ -35,7 +36,6 @@ torchvision = "^0.14.0"
 torch-tb-profiler = "^0.4.1"
 torchmetrics = "^0.11.4"
 jsonargparse = {extras = ["signatures"], version = "^4.21.1"}
-mkdocs-material = "^9.1.15"
 
 [tool.poetry.group.dev.dependencies]
 gdown = "^4.6.0"
