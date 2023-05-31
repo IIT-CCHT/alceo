@@ -1,0 +1,1276 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../data/">
+      
+      
+        <link rel="next" href="../reference/alceo/">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.15">
+    
+    
+      
+        <title>Modeling sub-system - ALCEO Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.26e3688c.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#modeling-sub-system" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="ALCEO Docs" class="md-header__button md-logo" aria-label="ALCEO Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ALCEO Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Modeling sub-system
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="ALCEO Docs" class="md-nav__button md-logo" aria-label="ALCEO Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    ALCEO Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data/" class="md-nav__link">
+        Data sub-system
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Modeling sub-system
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        Modeling sub-system
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cli-entry-point" class="md-nav__link">
+    CLI entry point
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI entry point">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#training-a-model" class="md-nav__link">
+    Training a model
+  </a>
+  
+    <nav class="md-nav" aria-label="Training a model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model" class="md-nav__link">
+    Model
+  </a>
+  
+    <nav class="md-nav" aria-label="Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optimizer-and-learning-rate-scheduler" class="md-nav__link">
+    Optimizer and learning rate scheduler
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data" class="md-nav__link">
+    Data
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trainer" class="md-nav__link">
+    Trainer
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prediction-from-a-model-checkpoint" class="md-nav__link">
+    Prediction from a model checkpoint
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modeling-sub-system-pipelines" class="md-nav__link">
+    Modeling Sub-System Pipelines
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+      
+      
+        
+          
+        
+      
+      
+        <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+          Code Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Code Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../reference/alceo/">alceo</a>
+          
+            <label for="__nav_4_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1">
+          <span class="md-nav__icon md-icon"></span>
+          alceo
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_2" >
+      
+      
+        
+          
+            
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../reference/alceo/callback/">callback</a>
+          
+            <label for="__nav_4_1_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_2_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          callback
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/callback/tiff_prediction_writer/" class="md-nav__link">
+        tiff_prediction_writer
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_3" >
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../reference/alceo/data_module/">data_module</a>
+          
+            <label for="__nav_4_1_3">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_3_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_3">
+          <span class="md-nav__icon md-icon"></span>
+          data_module
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/data_module/change_detection/" class="md-nav__link">
+        change_detection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/data_module/phase_data_module/" class="md-nav__link">
+        phase_data_module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/data_module/segmentation/" class="md-nav__link">
+        segmentation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_4" >
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../reference/alceo/dataset/">dataset</a>
+          
+            <label for="__nav_4_1_4">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_4_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_4">
+          <span class="md-nav__icon md-icon"></span>
+          dataset
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/dataset/change_detection/" class="md-nav__link">
+        change_detection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/dataset/second/" class="md-nav__link">
+        second
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/dataset/segmentation/" class="md-nav__link">
+        segmentation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_5" >
+      
+      
+        
+          
+            
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../reference/alceo/logger/">logger</a>
+          
+            <label for="__nav_4_1_5">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_5_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_5">
+          <span class="md-nav__icon md-icon"></span>
+          logger
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/logger/dvc/" class="md-nav__link">
+        dvc
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_6" >
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../reference/alceo/model/">model</a>
+          
+            <label for="__nav_4_1_6">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_6_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_6">
+          <span class="md-nav__icon md-icon"></span>
+          model
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/model/alceo_change_detection_module/" class="md-nav__link">
+        alceo_change_detection_module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/model/alceo_segmentation_module/" class="md-nav__link">
+        alceo_segmentation_module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/model/phase_metric_module/" class="md-nav__link">
+        phase_metric_module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/model/siam_diff/" class="md-nav__link">
+        siam_diff
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1_7" >
+      
+      
+        
+          
+            
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+      
+      
+        
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="../reference/alceo/processing/">processing</a>
+          
+            <label for="__nav_4_1_7">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_1_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_4_1_7">
+          <span class="md-nav__icon md-icon"></span>
+          processing
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/processing/change_from_annotations/" class="md-nav__link">
+        change_from_annotations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/processing/pits_site_dataset/" class="md-nav__link">
+        pits_site_dataset
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/processing/produce_tiles/" class="md-nav__link">
+        produce_tiles
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/processing/rasterize_tiles/" class="md-nav__link">
+        rasterize_tiles
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/alceo/utils/" class="md-nav__link">
+        utils
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cli-entry-point" class="md-nav__link">
+    CLI entry point
+  </a>
+  
+    <nav class="md-nav" aria-label="CLI entry point">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#training-a-model" class="md-nav__link">
+    Training a model
+  </a>
+  
+    <nav class="md-nav" aria-label="Training a model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#model" class="md-nav__link">
+    Model
+  </a>
+  
+    <nav class="md-nav" aria-label="Model">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optimizer-and-learning-rate-scheduler" class="md-nav__link">
+    Optimizer and learning rate scheduler
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#data" class="md-nav__link">
+    Data
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trainer" class="md-nav__link">
+    Trainer
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prediction-from-a-model-checkpoint" class="md-nav__link">
+    Prediction from a model checkpoint
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#modeling-sub-system-pipelines" class="md-nav__link">
+    Modeling Sub-System Pipelines
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="modeling-sub-system">Modeling Sub-system</h1>
+<p>This sub-system trains, tests, and performs inference with Deep Learning-based change detection models.
+The main tools used are the <a href="https://lightning.ai/docs/pytorch/stable/">PyTorch Lightning</a> framework and <a href="https://dvc.org/doc">DVC</a>. </p>
+<p>PyTorch Lightning provides a convenient object-oriented abstraction between the model, data, and training-validation-test loop. This results in a reduction of boilerplate code and code standardization. This abstraction also allows for some transparency between the experiments' developer/maintainer and compute infrastructure.</p>
+<h2 id="cli-entry-point">CLI entry point</h2>
+<p>The <code>alceo</code> Python module is the entry point for the Modeling Sub-system operations. The entry point is a Command Line Interface implemented using the Lightning framework's CLI module: <a href="https://lightning.ai/docs/pytorch/stable/cli/lightning_cli.html">Lightning CLI</a>.</p>
+<p>If the project is installed correctly in the current Python environment, running:</p>
+<pre><code class="language-bash">python -m alceo --help
+</code></pre>
+<p>Should yield:</p>
+<pre><code class="language-text">usage: __main__.py [-h] [-c CONFIG] [--print_config[=flags]] {fit,validate,test,predict} ...
+
+pytorch-lightning trainer command line tool
+
+optional arguments:
+  -h, --help            Show this help message and exit.
+  -c CONFIG, --config CONFIG
+                        Path to a configuration file in json or yaml format.
+  --print_config[=flags]
+                        Print the configuration after applying all other arguments and exit. The optional flags customizes the output and are one or more keywords separated by comma. The supported flags are: comments, skip_default, skip_null.
+
+subcommands:
+  For more details of each subcommand, add it as an argument followed by --help.
+
+  {fit,validate,test,predict}
+    fit                 Runs the full optimization routine.
+    validate            Perform one evaluation epoch over the validation set.
+    test                Perform one evaluation epoch over the test set.
+    predict             Run inference on your data.
+</code></pre>
+<p>The help outputs the four verbs exposed by Lightning CLI: <code>fit</code>, <code>validate</code>, <code>test</code>, and <code>predict</code>. The <code>fit</code>, <code>test</code>, and <code>predict</code> verbs are the most important ones. <code>validate</code> is somewhat redundant for this experiment as running the <code>fit</code> procedure logs all the metrics for the validation datasets.</p>
+<p>The following section describes how to use the <code>fit</code> verb for training a model. </p>
+<h3 id="training-a-model">Training a model</h3>
+<p>To train a model, use the <code>fit</code> verb in the project root as follows:</p>
+<pre><code class="language-bash">python -m alceo fit -c config/siam-diff.yaml
+</code></pre>
+<p>Training a model using Lightning CLI requires an experiment configuration in JSON or YAML format. This kind of configuration requires the definition of some fundamental objects to run an experiment. These objects are:</p>
+<ol>
+<li>The model's <a href="https://lightning.ai/docs/pytorch/stable/common/lightning_module.html"><code>LightningModule</code></a>. It contains the fundamental parts of your experiment, for example: how to compute the model output, how to obtain the loss value for optimization, how to set up an optimizer, and how to log metrics.</li>
+<li>The data's <a href="https://lightning.ai/docs/pytorch/stable/data/datamodule.html"><code>LightningDataModule</code></a>. It encapsulates the data processing portion of your experiment, such as: loading data in PyTorch <a href="https://pytorch.org/docs/stable/data.html#torch.utils.data.Dataset">Dataset</a>, applying transforms, and producing training/validation/testing/prediction <a href="https://pytorch.org/docs/stable/data.html#torch.utils.data.DataLoader">DataLoaders</a>.</li>
+<li>The Lightning's <a href="https://lightning.ai/docs/pytorch/stable/common/trainer.html"><code>Trainer</code></a> object. <code>Trainer</code> handles the training/validation/test/prediction loops and provides a callback interface for injecting custom logic without polluting the model's or data's code.</li>
+</ol>
+<p>The <code>config/siam-diff.yaml</code> file is a configuration for an experiment with the architecture proposed by <a href="https://ieeexplore.ieee.org/abstract/document/8451652">Daudt et al.</a>. The following subsections describe the various sections of that experiment configuration.</p>
+<h4 id="model">Model</h4>
+<p>The <code>model</code> section describes how to instantiate the model's <code>LightningModule</code>. In <code>alceo</code>'s CLI, this LightningModule needs to be a specialization (so to extend) the <code>alceo.model.PhaseMetricModule</code> class. This is needed to allow for correctly receiving the labels needed for metric breakdowns of the multiple datasets that can compose a single phase (training, validation, test).</p>
+<p><code>alceo.model.AlceoChangeDetectionModule</code> is a helper class implementing change detection model experiments and extends <code>alceo.model.PhaseMetricModule</code>. It takes as parameters two PyTorch modules: the change detection <code>network</code> that should output activations and the loss function (<code>loss_fn</code>). This helper computes the loss on the network's outputs, the metrics used to monitor an experiment, and the metrics breakdown for all the datasets. The monitored metrics are the Jaccard Index, F1 Score, Precision, Recall, mIoU, and a custom mIoU that ignores tiles with only background information.</p>
+<p>To instantiate an object <code>class_path</code> (the class name in its correct namespace) and the <code>init_args</code> (the parameters' values needed for initialization) must be provided. This syntax comes from <a href="https://jsonargparse.readthedocs.io/en/stable/"><code>jsonargparse</code></a>, a Python package on which Lightning CLI depends on.</p>
+<pre><code class="language-yaml">model:
+  class_path: alceo.model.AlceoChangeDetectionModule
+  init_args:
+    network:
+      class_path: alceo.model.SiamUnet_diff
+      init_args:
+        input_nbr: 4
+        label_nbr: 2
+    loss_fn:
+      class_path: segmentation_models_pytorch.losses.JaccardLoss
+      init_args:
+        mode: multilabel
+</code></pre>
+<h5 id="optimizer-and-learning-rate-scheduler">Optimizer and learning rate scheduler</h5>
+<p>The <code>optimizer</code> section is optional if the provided model's class implements the <a href="https://lightning.ai/docs/pytorch/stable/common/lightning_module.html#configure-optimizers"><code>configure_optimizers</code></a> method. <code>AlceoChangeDetectionModule</code> does not implement the said method by design to decouple the optimizer and the experiment.  </p>
+<p>The <code>lr_scheduler</code> section defines the experiment learning rate scheduler precisely like the <code>optimizer</code> section. Otherwise, the model's class should implement the <a href="https://lightning.ai/docs/pytorch/stable/common/lightning_module.html#lr-schedulers"><code>lr_schedulers</code></a> method.   </p>
+<pre><code class="language-yaml">optimizer:
+  class_path: torch.optim.Adam
+  init_args: 
+    lr: 1e-4
+    weight_decay: 1e-4
+lr_scheduler:
+  class_path: pytorch_lightning.cli.ReduceLROnPlateau
+  init_args:
+    mode: max
+    monitor: validation/appeared/IoU
+    factor: 0.95
+</code></pre>
+<h4 id="data">Data</h4>
+<p>The <code>data</code> section describes how to instantiate the <code>LightningDataModule</code>. Much like the model's <code>LightningModule</code> this <code>LightningDataModule</code> should be a specialization of a provided class: <code>alceo.data_module.PhaseDataModule</code>.<code>alceo.data_module.AlceoChangeDetectionDataModule</code> is a utility <code>LightningDataModule</code> compatible with datasets produced by the Data Management Sub-System pipelines. The user should give the datasets paths and metric labels and can also parametrize the experiment batch size and the number of DataLoaders workers.</p>
+<p>Because of the following issues (<a href="https://github.com/Lightning-AI/lightning/issues/9352">9352</a> and <a href="https://github.com/Lightning-AI/lightning/issues/15688">15688</a>) with training using multiple Datasets in 16-bit precision, the <code>AlceoChangeDetectionDataModule</code> concatenates all the training datasets. This behavior does not happen for the validation and test datasets.</p>
+<p>Here is an example of an <code>AlceoChangeDetectionDataModule</code> initialized with three datasets for training, three datasets for validation, and a batch composed of 24 items:</p>
+<pre><code class="language-yaml">data:
+  class_path: alceo.data_module.AlceoChangeDetectionDataModule
+  init_args: 
+    batch_size: 24
+    train_paths:
+      - dataset/pits/train_DURA_EUROPOS
+      - dataset/pits/train_ASWAN
+      - dataset/pits/train_EBLA
+    validation_paths:
+      - dataset/pits/test_DURA_EUROPOS
+      - dataset/pits/test_ASWAN
+      - dataset/pits/test_EBLA
+    validation_labels:
+      - DURA_EUROPOS
+      - ASWAN
+      - EBLA
+</code></pre>
+<h4 id="trainer">Trainer</h4>
+<p>The <code>trainer</code> section contains the parameters used to instantiate the Lightning <a href="https://lightning.ai/docs/pytorch/stable/common/trainer.html#">Trainer</a> object. Such parameters are called "Trainer flags" in the <a href="https://lightning.ai/docs/pytorch/stable/common/trainer.html#trainer-flags">PyTorch Lighting documentation</a>.<br />
+A parameter of general interest is <a href="https://lightning.ai/docs/pytorch/stable/common/trainer.html#logger"><code>logger</code></a>. It defines the Logger object that will persist the metric values logged during the experiment. For example, DVCLiveLogger allows for metric logging in DVC.<br />
+Another critical parameter is <a href="https://lightning.ai/docs/pytorch/stable/common/trainer.html#callbacks"><code>callbacks</code></a>. It's a list of utilities that should not be part of a single experiment, but their logic is bound to the train/validation/test loops. For example, ModelCheckpoint configures a model checkpointing strategy and is agnostic to the underlying experiment. 
+The <a href="https://lightning.ai/docs/pytorch/stable/common/trainer.html#accelerator"><code>accelerator</code></a> flag specifies the kind of accelerator used in your infrastructure. When training in a distributed environment, <a href="https://lightning.ai/docs/pytorch/stable/common/trainer.html#strategy">'strategy'</a> allows for choosing one of the implemented training strategies.  </p>
+<p>To seed all the random number generators, Lightning exposes a section called <code>seed_everything</code> to specify a seed number.</p>
+<pre><code class="language-yaml">seed_everything: 1234
+trainer:
+  accelerator: gpu
+  precision: 16
+  max_time: &quot;00:24:00:00&quot;
+  logger: 
+    class_path: alceo.logger.DVCLiveLogger
+    init_args:
+      run_name: run
+      dir: logs/siam_diff
+  log_every_n_steps: 5
+  callbacks:
+    - class_path: pytorch_lightning.callbacks.ModelCheckpoint
+      init_args:
+        monitor: validation/appeared/IoU
+        save_last: True
+        save_top_k: 1
+        mode: max
+        filename: &quot;best_IoU&quot;
+        auto_insert_metric_name: False
+    - class_path: pytorch_lightning.callbacks.LearningRateMonitor # This logs at the end of all epoch a metric containing the current learning rate (useful when learning rate schedulers are used)
+      init_args:
+        logging_interval: epoch
+</code></pre>
+<h3 id="prediction-from-a-model-checkpoint">Prediction from a model checkpoint</h3>
+<p>The <code>predict</code> verb runs a previously trained model on a dataset with the intent of producing the model activations. A <a href="https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.callbacks.BasePredictionWriter.html#basepredictionwriter"><code>BasePredictionWriter</code></a> callback persists activations on storage. <code>alceo.callback.TiffPredictionWriter</code> is a <code>BasePredictionWriter</code> that saves the network activation in a GeoTIFF with the same geo-reference of the input tile.  </p>
+<p>The user should provide a configuration to run prediction on a new dataset. Lightning CLI allows the user to update and append to a configuration file. Here is an example on a dataset called "SITE_TIME0_TIME1":</p>
+<pre><code class="language-bash">python -m alceo predict --config config/siam-diff.yaml \
+    --ckpt_path logs/siam_diff/DvcLiveLogger/run/checkpoints/best_IoU.ckpt \
+    --trainer.callbacks+=alceo.callback.TiffPredictionWriter \
+    --trainer.callbacks.init_args.output_dir=inference/siam_diff/SITE_TIME0_TIME1 \
+    --data.predict_paths+=dataset/pits/SITE_TIME0_TIME1 \
+    --data.predict_labels+=SITE_TIME0_TIME1
+</code></pre>
+<p>The <code>ckpt_path</code> flag tells the CLI to initialize the model starting from a checkpoint. The <code>+=</code> syntax appends to the configuration values.<br />
+In this example, <code>TiffPredictionWriter</code>'s <code>output_dir</code> parameter is defined as well as the <code>predict_path</code> and <code>predict_label</code> of the dataset, previously produced using the Data Management Sub-System pipelines.</p>
+<h2 id="modeling-sub-system-pipelines">Modeling Sub-System Pipelines</h2>
+<p>The <code>pipelines</code> folder stores the Modeling Sub-System pipelines. The <code>fit</code> sub-folder contains a pipeline for fitting the Siam-Diff architecture. The <code>predict</code> sub-folder includes the configuration for doing model inference on a prediction dataset.
+DVC will ensure to trigger model re-training and save new inferences when datasets or code changes.</p>
+<p>The <code>predict</code> pipeline is composed of a single stage but runs several commands:</p>
+<pre><code class="language-yaml">stages:
+  predict_SITE_TIME0_TIME1:
+    wdir: ../../.
+    cmd:
+      - python -m alceo predict --config experiment_config.yaml --ckpt_path logs/siam_diff/DvcLiveLogger/run/checkpoints/best_IoU.ckpt --trainer.callbacks+=alceo.callback.TiffPredictionWriter --trainer.callbacks.init_args.output_dir=inference/siam_diff/SITE_TIME0_TIME1 --data.predict_paths+=dataset/pits/SITE_TIME0_TIME1 --data.predict_labels+=SITE_TIME0_TIME1
+      - rio merge inference/siam_diff/SITE_TIME0_TIME1/activation/*.tif -o inference/siam_diff/SITE_TIME0_TIME1/activation.tif --overwrite
+      - rio merge inference/siam_diff/SITE_TIME0_TIME1/mask/*.tif -o inference/siam_diff/SITE_TIME0_TIME1/mask.tif --overwrite
+      - rio shapes --as-mask --bidx 1 inference/siam_diff/SITE_TIME0_TIME1/mask.tif -o inference/siam_diff/SITE_TIME0_TIME1/appeared.geojson
+      - rio shapes --as-mask --bidx 2 inference/siam_diff/SITE_TIME0_TIME1/mask.tif -o inference/siam_diff/SITE_TIME0_TIME1/disappeared.geojson
+    deps:
+      - experiment_config.yaml 
+      - logs/siam_diff/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
+      - dataset/pits/SITE_TIME0_TIME1
+    outs:
+      - inference/siam_diff/SITE_TIME0_TIME1 
+</code></pre>
+<p>This stage uses the <code>predict</code> verb with the <code>TiffPredictionWriter</code> and dataset introduced before. Then Rasterio's utility <code>merge</code> does a mosaic of the obtained GeoTIFFs into two rasters: <code>activation.tif</code> and <code>mask.tif</code>. Lastly, the utility <code>shapes</code> compute the vectorial representation from the <code>mask.tif</code> file for faster loading in GIS. </p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.indexes"], "search": "../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.b4d07000.min.js"></script>
+      
+    
+  </body>
+</html>
