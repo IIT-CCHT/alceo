@@ -16,6 +16,15 @@ class SiamUnet_diff(nn.Module):
         input_nbr: int,
         label_nbr: int,
     ):
+        """Implementation of the Siam-Diff U-Net architecture, most of the code 
+        comes from [Rodrigo Caye Daudt's GitHub](https://github.com/rcdaudt/fully_convolutional_change_detection)
+        with some slight modifications to make it compatible with the 
+        AlceoChangeDetectionModule.
+
+        Args:
+            input_nbr (int): Number of input bands
+            label_nbr (int): Number of output channels (corresponds to number of classes).
+        """
         super(SiamUnet_diff, self).__init__()
 
         self.input_nbr = input_nbr

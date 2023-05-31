@@ -1,4 +1,5 @@
 # %%
+from typing import List
 import rasterio
 from rasterio import windows
 from itertools import product
@@ -11,13 +12,23 @@ from argparse import ArgumentParser
 
 
 def produce_tiles(
-    input_paths,
-    output_geojson_path,
-    tile_prefix,
+    input_paths: List[Path],
+    output_geojson_path: Path,
+    tile_prefix: str,
     areas_of_interest_geojson: Path,
-    tile_width = 512,
-    tile_height = 512,
+    tile_width: int = 512,
+    tile_height: int = 512,
 ):
+    """Produces the vectorial representation of tiles for an area of interest of a site and saves such representation to a GeoJSON file.
+
+    Args:
+        input_paths (List[Path]): List of GeoTIFF images of the site, at least one should be provided.
+        output_geojson_path (Path): Path to the output GeoJSON containing the vectorial representation of tiles.
+        tile_prefix (str): Prefix used for generating the tile_id metadata feature.
+        areas_of_interest_geojson (Path): Path to a GeoJSON with polygons describing the area of interest in which tiles should be computed.
+        tile_width (int, optional): Width of the resulting tile in number of pixels, GSD is computed using the site images. Defaults to 512.
+        tile_height (int, optional): Height of the resulting tile in number of pixels, GSD is computed using the site images. Defaults to 512.
+    """
     #%% Loading all images bounds and find intersection
     all_bounds = []
     _transform = None
@@ -81,81 +92,60 @@ def produce_tiles(
 
 
 if __name__ == "__main__":
-    if not in_notebook():
-        parser = ArgumentParser(
-            "change_from_annotations.py",
-            description="""
-    Given a GeoJSON containing geometrical features describing pits location for various dates (in a field called Day_Month_Year with dd/mm/YYYY format).
-    Compute the pits that appeared, disappeared and persisted between two dates.
-    """,
-        )
-        parser.add_argument(
-            "-i",
-            "--input_paths",
-            nargs="+",
-            type=Path,
-            help="Input GeoJSON containing the geometries of the annotations done on the various images.",
-            required=True,
-        )
-        parser.add_argument(
-            "-o",
-            "--output_geojson_path",
-            type=Path,
-            help="The output directory where the `.appeared`, `.disappeared` and `.persisted` features will be saved. Defaults to current directory.",
-            default="./tiles.json",
-        )
-        parser.add_argument(
-            "-p",
-            "--tile_prefix",
-            type=Path,
-            help="Prefix used for generating tile id. Defaults to 'tile_'.",
-            default="tile_",
-        )
-        parser.add_argument(
-            "-a",
-            "--areas_of_interest_geojson",
-            type=Path,
-            help="GeoJSON containing areas of interest that have to completely cover tiles to be rasterized.",
-            required=True,
-        )
-        parser.add_argument(
-            "-tw",
-            "--tile_width",
-            type=int,
-            default=512,
-            help="Width of the tile in pixels.",
-        )
-        parser.add_argument(
-            "-th",
-            "--tile_height",
-            type=int,
-            default=512,
-            help="Height of the tile in pixels.",
-        )
-
-        args = parser.parse_args()
-        input_paths = args.input_paths
-        output_geojson_path = args.output_geojson_path
-        tile_prefix = args.tile_prefix
-        areas_of_interest_geojson = args.areas_of_interest_geojson
-        tile_width = args.tile_width
-        tile_height = args.tile_height
-        
-    else:
-        input_paths = [
-            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif",
-            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif",
-        ]
-        output_geojson_path = (
-            "/home/gsech/Source/alceo/data/images/DURA_EUROPOS/tiles.json"
-        )
-        tile_prefix = "tile_"
-        tile_width, tile_height = 512, 512
-    produce_tiles(
-        input_paths,
-        output_geojson_path,
-        tile_prefix,
-        areas_of_interest_geojson,
-        tile_width=tile_width,
-        tile_height=tile_height,
+    parser = ArgumentParser(
+        "produce_tiles.py",
+        description="""
+Produces the vectorial representation of tiles for an area of interest of a site and saves such representation to a GeoJSON file.
+""",
     )
+    parser.add_argument(
+        "-i",
+        "--input_paths",
+        nargs="+",
+        type=Path,
+        help="Input GeoJSON containing the geometries of the annotations done on the various images.",
+        required=True,
+    )
+    parser.add_argument(
+        "-o",
+        "--output_geojson_path",
+        type=Path,
+        help="The output directory where the `.appeared`, `.disappeared` and `.persisted` features will be saved. Defaults to current directory.",
+        default="./tiles.json",
+    )
+    parser.add_argument(
+        "-p",
+        "--tile_prefix",
+        type=Path,
+        help="Prefix used for generating tile id. Defaults to 'tile_'.",
+        default="tile_",
+    )
+    parser.add_argument(
+        "-a",
+        "--areas_of_interest_geojson",
+        type=Path,
+        help="GeoJSON containing areas of interest that have to completely cover tiles to be rasterized.",
+        required=True,
+    )
+    parser.add_argument(
+        "-tw",
+        "--tile_width",
+        type=int,
+        default=512,
+        help="Width of the tile in pixels.",
+    )
+    parser.add_argument(
+        "-th",
+        "--tile_height",
+        type=int,
+        default=512,
+        help="Height of the tile in pixels.",
+    )
+
+    args = parser.parse_args()
+    input_paths = args.input_paths
+    output_geojson_path = args.output_geojson_path
+    tile_prefix = args.tile_prefix
+    areas_of_interest_geojson = args.areas_of_interest_geojson
+    tile_width = args.tile_width
+    tile_height = args.tile_height

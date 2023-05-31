@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "alceo"
 version = "0.1.0"
-description = ""
+description = "Python module developed for the ALCEO project."
 authors = ["Gregory Sech <gregory.sech@iit.it>"]
 packages = [
     { include = "alceo", from = "src" },
@@ -35,6 +35,7 @@ torchvision = "^0.14.0"
 torch-tb-profiler = "^0.4.1"
 torchmetrics = "^0.11.4"
 jsonargparse = {extras = ["signatures"], version = "^4.21.1"}
+mkdocs-material = "^9.1.15"
 
 [tool.poetry.group.dev.dependencies]
 gdown = "^4.6.0"

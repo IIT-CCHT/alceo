@@ -85,7 +85,7 @@ DVC has templating functionalities that allow the parametric definition of stage
 ### Computing change from site annotations
 
 A crucial step in the pipeline is the computation of the appearance and the disappearance of looting pits from the annotations of images taken on two dates. 
-The script `alceo.preprocessing.change_from_annotations.py` takes as argument the annotations GeoJSON for a site and the two dates of interest. Then the script computes features corresponding to looting pits' `appearance`, `disappearance`, and `permanence` and saves them into a target folder as three files in GeoJSON format.
+The script `alceo.preprocessing.change_from_annotations.py` takes the annotations GeoJSON for a site and the two dates of interest. Then the script computes features corresponding to looting pits' `appearance`, `disappearance`, and `permanence` and saves them into a target folder as three files in GeoJSON format.
 
 In the site's `dvc.yaml` file this stage is defined as:
 

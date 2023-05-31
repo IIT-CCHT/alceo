@@ -43,15 +43,15 @@ stages:
       --crs EPSG:32637
     deps:
     - path: data/sites/DURA_EUROPOS/annotations/pits.geojson
-      md5: 75a3bf5db4c52d1d0ccbb8027c519eff
-      size: 6178153
+      md5: a476b15ccc096043b2a216d19ae2dfa0
+      size: 19531501
     - path: src/alceo/processing/change_from_annotations.py
       md5: 709b58d7f45e1e8f131c3ed0c14c2d2e
       size: 6581
     outs:
     - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/vectorial
-      md5: 688d6dc4b839566b45c74532bf6b7a97.dir
-      size: 7219281
+      md5: a76302928e7ae9bd1ea2d97084c695fd.dir
+      size: 7219265
       nfiles: 3
   rasterize_change@1:
     cmd:
@@ -61,8 +61,8 @@ stages:
       --output data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.disappeared.tif
     deps:
     - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/vectorial/pits.disappeared.geojson
-      md5: 7037732e5b533abc683ce262d4f2a185
-      size: 782012
+      md5: f36b1888f0cfb855e695bf7032b67d72
+      size: 781998
     - path: data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
       md5: 658d47fbf2225d11f782f7f569ead44d
       size: 1187955310
@@ -118,8 +118,8 @@ stages:
       --output data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/raster/pits.appeared.tif
     deps:
     - path: data/sites/DURA_EUROPOS/change/DE_26_5_2013/DE_19_09_2014/vectorial/pits.appeared.geojson
-      md5: 1c99717cea6c2346419a3f96bcbcf69e
-      size: 5288708
+      md5: 1d84726bdd040e0246c86659517f2b3f
+      size: 5288732
     - path: data/sites/DURA_EUROPOS/images/DE_26_5_2013/DE_26_5_2013_NN_diffuse.tif
       md5: 658d47fbf2225d11f782f7f569ead44d
       size: 1187955310

@@ -18,6 +18,14 @@ def pits_site_dataset(
     area_selection_path: Path,
     changes_selection: List[str],
 ):
+    """Given the data folder of a site combines the tiles into the change detection dataset!
+
+    Args:
+        site_data_path (Path): Site data folder.
+        output_path (Path): Output folder path.
+        area_selection_path (Path): Path to geojson containing an area that contains all the selected tiles.
+        changes_selection (List[str]): Change folders to select inside of the SITE/change/--- when building the dataset. Providing none means take all.
+    """
     # %%
     tiles_geojson_path = site_data_path / "tiles.geojson"
     tiles_folder_path = site_data_path / "tiles"

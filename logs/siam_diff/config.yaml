@@ -1,0 +1,146 @@
+# pytorch_lightning==2.0.1.post0
+seed_everything: 1234
+trainer:
+  accelerator: gpu
+  strategy: auto
+  devices: auto
+  num_nodes: 1
+  precision: 16
+  logger:
+    class_path: alceo.logger.DVCLiveLogger
+    init_args:
+      run_name: run
+      prefix: ''
+      experiment: null
+      dir: logs/siam_diff
+      resume: false
+      report: auto
+      save_dvc_exp: false
+      dvcyaml: true
+  callbacks:
+  - class_path: pytorch_lightning.callbacks.ModelCheckpoint
+    init_args:
+      dirpath: null
+      filename: best_IoU
+      monitor: validation/appeared/IoU
+      verbose: false
+      save_last: true
+      save_top_k: 1
+      save_weights_only: false
+      mode: max
+      auto_insert_metric_name: false
+      every_n_train_steps: null
+      train_time_interval: null
+      every_n_epochs: null
+      save_on_train_epoch_end: null
+  - class_path: pytorch_lightning.callbacks.LearningRateMonitor
+    init_args:
+      logging_interval: epoch
+      log_momentum: false
+  - class_path: alceo.callback.TiffPredictionWriter
+    init_args:
+      write_interval: batch
+      output_dir: inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+  fast_dev_run: false
+  max_epochs: null
+  min_epochs: null
+  max_steps: -1
+  min_steps: null
+  max_time: 00:00:10:00
+  limit_train_batches: null
+  limit_val_batches: null
+  limit_test_batches: null
+  limit_predict_batches: null
+  overfit_batches: 0.0
+  val_check_interval: null
+  check_val_every_n_epoch: 1
+  num_sanity_val_steps: null
+  log_every_n_steps: 5
+  enable_checkpointing: null
+  enable_progress_bar: null
+  enable_model_summary: null
+  accumulate_grad_batches: 1
+  gradient_clip_val: null
+  gradient_clip_algorithm: null
+  deterministic: null
+  benchmark: null
+  inference_mode: true
+  use_distributed_sampler: true
+  profiler: null
+  detect_anomaly: false
+  barebones: false
+  plugins: null
+  sync_batchnorm: false
+  reload_dataloaders_every_n_epochs: 0
+  default_root_dir: null
+return_predictions: null
+ckpt_path: logs/siam_diff/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
+model:
+  class_path: alceo.model.AlceoChangeDetectionModule
+  init_args:
+    network:
+      class_path: alceo.model.SiamUnet_diff
+      init_args:
+        input_nbr: 4
+        label_nbr: 2
+    loss_fn:
+      class_path: segmentation_models_pytorch.losses.JaccardLoss
+      init_args:
+        mode: multilabel
+        classes: null
+        log_loss: false
+        from_logits: true
+        smooth: 0.0
+        eps: 1.0e-07
+data:
+  class_path: alceo.data_module.AlceoChangeDetectionDataModule
+  init_args:
+    train_paths:
+    - dataset/pits/train_DURA_EUROPOS
+    - dataset/pits/train_ASWAN
+    - dataset/pits/train_EBLA
+    validation_paths:
+    - dataset/pits/test_DURA_EUROPOS
+    - dataset/pits/test_ASWAN
+    - dataset/pits/test_EBLA
+    test_paths: []
+    train_labels: []
+    validation_labels:
+    - DURA_EUROPOS
+    - ASWAN
+    - EBLA
+    test_labels: []
+    predict_paths:
+    - dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+    predict_labels:
+    - DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+    batch_size: 24
+    num_workers: 5
+optimizer:
+  class_path: torch.optim.Adam
+  init_args:
+    lr: 0.0001
+    betas:
+    - 0.9
+    - 0.999
+    eps: 1.0e-08
+    weight_decay: 0.0001
+    amsgrad: false
+    foreach: null
+    maximize: false
+    capturable: false
+    differentiable: false
+    fused: false
+lr_scheduler:
+  class_path: pytorch_lightning.cli.ReduceLROnPlateau
+  init_args:
+    monitor: validation/appeared/IoU
+    mode: max
+    factor: 0.95
+    patience: 10
+    threshold: 0.0001
+    threshold_mode: rel
+    cooldown: 0
+    min_lr: 0.0
+    eps: 1.0e-08
+    verbose: false

@@ -71,7 +71,7 @@ class AlceoSegmentationModule(PhaseMetricModule):
 
         Args:
             batch (dict): A dictionary containing the image (raster) as well as the ground truth (mask).
-            stage_tag (str): one of "training", "validation", "testing"
+            phase_tag (str): one of "training", "validation", "testing"
             dataloader_tag (str, optional): The tag associated with the current dataloader. Defaults to None.
 
         Returns:
@@ -142,7 +142,7 @@ class AlceoSegmentationModule(PhaseMetricModule):
         """Logs all the metrics of a given tag
 
         Args:
-            tag (str): base tag of the metrics to update (e.g. "validation/appeared", "validation/EB/appeared")
+            log_tag (str): base tag of the metrics to update (e.g. "validation/appeared", "validation/EB/appeared")
         """
         self.log(
             f"{log_tag}/mIoU",

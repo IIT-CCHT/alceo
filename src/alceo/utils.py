@@ -1,3 +1,6 @@
+"""A set of utility functions used throughout the project.
+"""
+
 def in_notebook() -> bool:
     """Utility to check if the code is running in a IPKernel (like Jupyter or IPython cells).
     

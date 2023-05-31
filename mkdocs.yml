@@ -5,23 +5,30 @@ nav:
   - Modeling sub-system: modeling.md
   - Code Reference: reference/
 plugins:
-- gen-files:
-    scripts:
-      - docs/gen_ref_pages.py
-- literate-nav:
-    nav_file: SUMMARY.txt # TODO: fix code references in mkdocs. 
-- section-index
-- mkdocstrings:
-    handlers:
-      python:
-        import:
-        - https://docs.python.org/3/objects.inv
-        - https://mkdocstrings.github.io/autorefs/objects.inv
-      options:
-        docstring_style: google
-        docstring_options:
-          ignore_init_summary: yes
-        merge_init_into_class: yes
-        show_submodules: yes
+  - gen-files:
+      scripts:
+        - docs/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  # - section-index
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          load_external_modules: true
+          import:
+          - https://docs.python.org/3/objects.inv
+          - https://mkdocstrings.github.io/autorefs/objects.inv
+        options:
+          docstring_style: google
+          docstring_options:
+            ignore_init_summary: yes
+          merge_init_into_class: yes
+          show_source: true
+
 theme:
-  name: readthedocs
+  name: material
+  features:
+    - navigation.indexes
+watch:
+  - src

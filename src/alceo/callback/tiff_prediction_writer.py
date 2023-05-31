@@ -12,6 +12,12 @@ class TiffPredictionWriter(BasePredictionWriter):
         write_interval: Literal["batch", "epoch", "batch_and_epoch"] = "batch",
         output_dir: Optional[str] = None,
     ) -> None:
+        """A BasePredictionWriter for AlceoChangeDetectionDataset(s). It will call the GeoTIFF rasters with the same filename as the "im1" raster filename into "activation" and "mask" folders created inside the provided "output_dir".
+
+        Args:
+            write_interval (Literal['batch', 'epoch', 'batch_and_epoch'], optional): Defines when to write, this is kept exposed from the BasePredictionWriter class. Defaults to "batch".
+            output_dir (Optional[str], optional): The path to the folder that will contain the resulting GeoTIFFs, if None the current working directory is used. Defaults to None.
+        """
         super().__init__(write_interval)
         if output_dir is None:
             output_dir = Path(os.getcwd())

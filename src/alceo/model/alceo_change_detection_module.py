@@ -77,7 +77,7 @@ class AlceoChangeDetectionModule(PhaseMetricModule):
 
         Args:
             batch (dict): A dictionary containing the two timesteps images (im1 and im2) as well as the ground truth (pits.appeared, pits.disappeared).
-            stage_tag (str): one of "training", "validation", "testing"
+            phase_tag (str): one of "training", "validation", "testing"
             dataloader_tag (str, optional): The tag associated with the current dataloader. Defaults to None.
 
         Returns:

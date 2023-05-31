@@ -16,11 +16,11 @@ def change_from_annotations(
     """Given a input GeoJSON containing pits annotations related to at least two dates (in a feature called Day_Month_Year) computes appearances and disappearances.
         The result is then saved into `output_directory_path` with the given CRS.
     Args:
-        first_image_date (str): _description_
-        second_image_date (str): _description_
-        input_geojson_path (Path): _description_
-        output_directory_path (Path): _description_
-        crs (str): _description_
+        first_image_date (str): Date (in dd/mm/YYYY format) of the first image.
+        second_image_date (str): Date (in dd/mm/YYYY format) of the second image.
+        input_geojson_path (Path): Path to the input GeoJSON containing the geometries of the annotations done on the various images.
+        output_directory_path (Path): The output directory where the `.appeared`, `.disappeared` and `.persisted` features will be saved. Defaults to current directory.
+        crs (str): The output GeoJSON crs. Defaults to "EPSG:32637".
     """
     # %%
     _gdf = geopandas.read_file(input_geojson_path).to_crs(crs)

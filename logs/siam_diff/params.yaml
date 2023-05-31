@@ -1,0 +1,10 @@
+train_labels: '[]'
+validation_labels: "['DURA_EUROPOS', 'ASWAN', 'EBLA']"
+test_labels: '[]'
+train_paths: "['dataset/pits/train_DURA_EUROPOS', 'dataset/pits/train_ASWAN', 'dataset/pits/train_EBLA']"
+validation_paths: "['dataset/pits/test_DURA_EUROPOS', 'dataset/pits/test_ASWAN', 'dataset/pits/test_EBLA']"
+test_paths: '[]'
+predict_paths: "['dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014']"
+predict_labels: "['DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014']"
+batch_size: 24
+num_workers: 5

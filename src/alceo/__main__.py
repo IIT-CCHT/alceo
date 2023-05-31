@@ -1,6 +1,6 @@
 from typing import Any
 from pytorch_lightning.cli import LightningCLI, LightningArgumentParser
-from alceo.callback.pits_prediction_writer import TiffPredictionWriter
+from alceo.callback.tiff_prediction_writer import TiffPredictionWriter
 from alceo.data_module import AlceoChangeDetectionDataModule, PhaseDataModule
 from alceo.logger import DVCLiveLogger
 from alceo.model import (

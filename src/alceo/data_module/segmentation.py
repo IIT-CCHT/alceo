@@ -28,11 +28,11 @@ class AlceoSegmentationDataModule(PhaseDataModule):
         """Data module for pits segmentation. Labels will be used for creating tags for metric logging, except for training because they will be concatenated in a single training dataset.
 
         Args:
-            train_paths (List[str]): Paths to a list of training datasets in ALCEO segmentation format. All these will be concatenated.
+            train_datasets (List[AlceoPitsImageSegmentationDataset]): The list of training AlceoPitsImageSegmentationDataset(s).
             train_labels (List[str]): Labels for the training datasets!
-            validation_paths (List[str]): Paths to a list of validation datasets in ALCEO segmentation format.
+            validation_datasets (List[AlceoPitsImageSegmentationDataset]): The list of validation AlceoPitsImageSegmentationDataset(s).
             validation_labels (List[str]): Labels for the validation datasets!
-            test_paths (List[str]): Paths to a list of test datasets in ALCEO segmentation format.
+            test_datasets (List[AlceoPitsImageSegmentationDataset]): The list of test AlceoPitsImageSegmentationDataset(s).
             test_labels (List[str]): Labels for the test datasets!
             batch_size (int, optional): Batch size given to each dataloader. Defaults to 16.
             num_workers (int, optional): Number of workers for each dataloader. Defaults to 5.

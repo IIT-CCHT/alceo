@@ -1,16 +1,13 @@
-# %%
-from typing import List
+from typing import Any, Dict, List
 from torch.utils.data import Dataset
 from dataclasses import dataclass, field
 from pathlib import Path
 from glob import glob
-from torchvision.transforms.functional import to_tensor
-from torchvision.io import read_image, ImageReadMode
+from torchvision.io import read_image
 
 
 import torch
 import torchvision.transforms.functional as tvf
-import torchvision.utils as tvu
 
 
 def encode_color(mask: torch.Tensor):
@@ -20,9 +17,16 @@ def encode_color(mask: torch.Tensor):
 
 @dataclass
 class SECONDataset(Dataset):
+    """A PyTorch Dataset for loading the [SEmantic Change detectiON Dataset](http://www.captain-whu.com/project/SCD/). 
+    
+    Args:
+        dataset_root (Path): The path to the root folder containing SECOND.
+        is_train (bool): If it should load the training or testing split. Defaults to True.
+    """
+    
     dataset_root: Path
-    image_ids: List[str] = field(init=False)
     is_train: bool = True
+    image_ids: List[str] = field(init=False)
 
     label_colors = torch.tensor(
         [
@@ -84,7 +88,15 @@ class SECONDataset(Dataset):
         )
         return _multiclass_mask
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> Dict[str, Any]:
+        """Loads a single change detection tile associated to the `index`
+
+        Args:
+            index (int): index of the tile to load.
+
+        Returns:
+            Dict[str, Any]: A dictionary with keys: "image_id" (tile filename without extension), "im1" and "im2" (Tensors of the images at time T1 and T2 respectively), "label1" and "label2" (semantic change detection ground truth as per SECOND format). 
+        """
         image_id = self.image_ids[index]
         im1_path = self.dataset_root / "im1" / f"{image_id}.png"
         im2_path = self.dataset_root / "im2" / f"{image_id}.png"
@@ -108,31 +120,3 @@ class SECONDataset(Dataset):
 
 
 __all__ = [SECONDataset.__name__]
-
-# %%
-if __name__ == "__main__":
-    # %%
-    from torch.nn.functional import one_hot
-
-    dataset = SECONDataset("/home/gsech/Source/alceo/data/second_dataset")
-
-    # %%
-    item = dataset[11]
-    im1 = item["im1"]
-    label1 = item["label1"]
-    im2 = item["im2"]
-    label2 = item["label2"]
-
-    # %%
-    one_hot1 = (one_hot(label1, len(SECONDataset.label_names)) == 1).permute(2, 0, 1)
-    one_hot1.shape
-    # %%
-    tvf.to_pil_image(
-        tvu.draw_segmentation_masks(
-            im1, one_hot1, colors=SECONDataset.label_colors, alpha=0.45
-        )
-    )
-
-    #%%
-    label1.shape
-# %%
