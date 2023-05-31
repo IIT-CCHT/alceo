@@ -2,32 +2,31 @@ schema: '2.0'
 stages:
   predict_DURA:
     cmd:
-    - python -m alceo predict --config experiment_config.yaml --ckpt_path change_detection_logs/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
-      --trainer.callbacks+=alceo.callback.TiffPredictionWriter --trainer.callbacks.init_args.output_dir=change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+    - python -m alceo predict --config config/siam-diff.yaml --ckpt_path logs/siam_diff/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
+      --trainer.callbacks+=alceo.callback.TiffPredictionWriter --trainer.callbacks.init_args.output_dir=inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
       --data.predict_paths+=dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014 --data.predict_labels+=DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
-    - rio merge change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/activation/*.tif
-      -o change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/activation.tif
+    - rio merge inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/activation/*.tif
+      -o inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/activation.tif
       --overwrite
-    - rio merge change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask/*.tif
-      -o change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask.tif
-      --overwrite
-    - rio shapes --as-mask --bidx 1 change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask.tif
-      -o change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/appeared.geojson
-    - rio shapes --as-mask --bidx 2 change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask.tif
-      -o change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/disappeared.geojson
+    - rio merge inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask/*.tif
+      -o inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask.tif --overwrite
+    - rio shapes --as-mask --bidx 1 inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask.tif
+      -o inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/appeared.geojson
+    - rio shapes --as-mask --bidx 2 inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/mask.tif
+      -o inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014/disappeared.geojson
     deps:
-    - path: change_detection_logs/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
-      md5: e3afad839b042bdee9091a4ad4a5656b
-      size: 16340765
+    - path: config/siam-diff.yaml
+      md5: f89bb5ef3f44dbee442c0c3296dfb0e6
+      size: 1576
     - path: dataset/pits/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
-      md5: 56640bfd7e461970034788ae84372c92.dir
-      size: 2258632533
+      md5: 3ef7e115d36956a47b383cfd1c57d151.dir
+      size: 2283328545
       nfiles: 6862
-    - path: experiment_config.yaml
-      md5: f1bc6b6a37a60902623ac349311a81ed
-      size: 1396
+    - path: logs/siam_diff/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
+      md5: fbeb65e004e386ed3ed94d7951b09991
+      size: 16340765
     outs:
-    - path: change_detection_inference/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
-      md5: 1f7a6082490be217f1dd62d99012bb2a.dir
-      size: 2319436816
+    - path: inference/siam_diff/DURA_EUROPOS_DE_26_5_2013-DE_19_09_2014
+      md5: 7a3742a0a10d96bf8fe22fb9b8d778cf.dir
+      size: 2346174881
       nfiles: 3434

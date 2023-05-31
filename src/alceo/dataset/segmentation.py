@@ -15,6 +15,17 @@ from shapely import union_all
 
 @dataclass
 class AlceoPitsImageSegmentationDataset(Dataset[Dict[str, Any]]):
+    """A PyTorch Dataset for loading ALCEO's annotations a GeoTIFF as a 
+    semantic segmentation dataset. 
+    
+    Args:
+        image_path (Path): The path to the satellite image GeoTIFF.
+        annotations_path (Optional[Path]): The path to the annotation GeoJSON. If omitted no ground truth is loaded.
+        date_string (str): String for filtering the annotation GeoJSON by the Day_Month_Year feature.
+        tiles_path (Path): The path to the tiles GeoJSON (vectorial representation).
+        area_of_interest_path (Path): Path to the area of interest GeoJSON, used to keep only the relevant tiles.
+        bands (List[int]): GDAL-style indexes for the bands to load.
+    """
     image_path: Path
     annotations_path: Optional[Path]
     date_string: str
@@ -93,6 +104,14 @@ class AlceoPitsImageSegmentationDataset(Dataset[Dict[str, Any]]):
         return None
 
     def __getitem__(self, index) -> Dict[str, Any]:
+        """Loads the tile in the `index` row of the tile's GeoDataFrame from the given image. 
+
+        Args:
+            index (int): index used to retrieve tile's metadata.
+
+        Returns:
+            Dict[str, Any]: the tile in dictionary format, the "raster" key contains a tensor with the selected bands. If annotations are provided the "mask" key will contain the binary mask obtained from the annotation.
+        """
         tile = self._tiles_df.iloc[index]
         item = tile.to_dict()
         item.pop("geometry", None)
@@ -100,15 +119,3 @@ class AlceoPitsImageSegmentationDataset(Dataset[Dict[str, Any]]):
             item["raster"] = self._load_tile(tile, src)
             item["mask"] = self._load_mask(tile, src)
         return item
-        
-if __name__ == '__main__':
-    # %%
-    dataset = AlceoPitsImageSegmentationDataset(
-        image_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/images/DE_19_09_2014/DE_19_09_2014_NN_diffuse.tif",
-        annotations_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/annotations/pits.geojson",
-        date_string="19/09/2014",
-        tiles_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/tiles.geojson",
-        area_of_interest_path="/home/gsech/alceo/data/sites/DURA_EUROPOS/train_area.geojson",
-        bands=[1, 2, 3, 4],
-    )
-    # %%

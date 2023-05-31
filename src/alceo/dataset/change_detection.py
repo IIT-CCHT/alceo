@@ -11,6 +11,22 @@ import numpy as np
 
 @dataclass
 class AlceoChangeDetectionDataset(Dataset[Dict[str, Any]]):
+    """A PyTorch Dataset for loading ALCEO's change detection dataset. The 
+    dataset is a folder (called root) contains a metadata file called tiles_meta.csv listing 
+    the names of all tiles 4-tuples. 
+    The dataset root also contains 4 sub-folders of tiles saved in GeoTIFF 
+    format and a metadata file called tiles_meta.csv.  
+    
+    The sub-folders are:
+    
+    - "im1": containing the tile raster at time T1.
+    - "im2": containing the tile raster at time T2.
+    - "pits.appeared": the tile's binary mask denoting pixels where pits appeared.
+    - "pits.disappeared": the tile's binary mask denoting pixels where pits disappeared.
+    
+    Args:
+        dataset_root (Path): The path to the dataset root directory.
+    """
     dataset_root: Path
     tiles_df: pd.DataFrame = field(init=False)
     im1_folder: Path = field(init=False)
@@ -55,6 +71,20 @@ class AlceoChangeDetectionDataset(Dataset[Dict[str, Any]]):
             return raster
 
     def __getitem__(self, index) -> Dict[str, Any]:
+        """Returns a single tile and it's metadata in a key-value dictionary.
+        This dictionary has the following keys added to the metadata:   
+        - "im1_path": the full path to the T1 GeoTIFF.  
+        - "im1": a torch.Tensor of the loaded GeoTIFF raster for time T1.  
+        - "im2": a torch.Tensor of the loaded GeoTIFF raster for time T2.  
+        - "pits.appeared": an int torch.Tensor of the binary mask for appeared pits.  
+        - "pits.disappeared": an int torch.Tensor of the binary mask for disappeared pits.  
+        
+        Args:
+            index (int): The index of the metadata for the tile that needs to be loaded.
+
+        Returns:
+            Dict[str, Any]: The loaded tile in key-value dictionary format.
+        """
         item = self.tiles_df.loc[index].to_dict()
         im1_path = self.im1_folder / item["tile_name"]
         item["im1_path"] = str(im1_path)
@@ -86,12 +116,3 @@ class AlceoChangeDetectionDataset(Dataset[Dict[str, Any]]):
         )
 
         return item
-
-
-# %%
-if __name__ == "__main__":
-    # %%
-    dset = AlceoChangeDetectionDataset(Path("/HDD1/gsech/source/alceo/dataset/pits/DURA_EUROPOS"))
-    tiles_meta = dset[0]
-    print(tiles_meta)
-    # %%

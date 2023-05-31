@@ -1,55 +1,57 @@
 schema: '2.0'
 stages:
   fit_siam_diff:
-    cmd: python -m alceo fit --config experiment_config.yaml
+    cmd: python -m alceo fit --config config/siam-diff.yaml
     deps:
+    - path: config/siam-diff.yaml
+      md5: f89bb5ef3f44dbee442c0c3296dfb0e6
+      size: 1576
     - path: dataset/pits/test_ASWAN
-      md5: f4003e4c55a601de1d7330a377f8ec7e.dir
-      size: 111866890
+      md5: c57f5aaee452cee008c138234ad35f88.dir
+      size: 112141290
       nfiles: 338
     - path: dataset/pits/test_DURA_EUROPOS
-      md5: c6ae12b7103a38405604a387793d5b93.dir
-      size: 573287130
+      md5: ea83752a959a2fbebdeb805c1fb07c81.dir
+      size: 579536734
       nfiles: 1738
     - path: dataset/pits/test_EBLA
-      md5: 8503b7cda0bcda837370a37618aae54d.dir
-      size: 348140057
+      md5: 079dc0ec0d43dad549ef558705d2821d.dir
+      size: 348687653
       nfiles: 758
     - path: dataset/pits/train_ASWAN
-      md5: 0ea79f32d0e8189a9e5e43b82d5a61d9.dir
-      size: 1100366704
+      md5: 2440272c894a31d6d639d4a7c303e60b.dir
+      size: 1103100904
       nfiles: 3350
     - path: dataset/pits/train_DURA_EUROPOS
-      md5: caa81d7bf1ee9d32290452003d1057d7.dir
-      size: 1718048022
+      md5: 3f992623c0c90dce0136e3ca2f66be57.dir
+      size: 1736840033
       nfiles: 5222
     - path: dataset/pits/train_EBLA
-      md5: 635d50cf69f5869d87e39f5dc8de7860.dir
-      size: 1241452518
+      md5: ef1f32df86e98ab574aaa15b9c856271.dir
+      size: 1243408218
       nfiles: 2702
-    - path: experiment_config.yaml
-      md5: f1bc6b6a37a60902623ac349311a81ed
-      size: 1396
     - path: src
-      md5: ecbc6fc0d8688599bce15c6fd263136c.dir
-      size: 116528
-      nfiles: 45
+      md5: a964e19bf40a1ca02247ffef24d50e6e.dir
+      size: 153020
+      nfiles: 50
     params:
-      experiment_config.yaml:
+      config/siam-diff.yaml:
         data:
-          batch_size: 24
-          train_paths:
-          - dataset/pits/train_DURA_EUROPOS
-          - dataset/pits/train_ASWAN
-          - dataset/pits/train_EBLA
-          validation_paths:
-          - dataset/pits/test_DURA_EUROPOS
-          - dataset/pits/test_ASWAN
-          - dataset/pits/test_EBLA
-          validation_labels:
-          - DURA_EUROPOS
-          - ASWAN
-          - EBLA
+          class_path: alceo.data_module.AlceoChangeDetectionDataModule
+          init_args:
+            batch_size: 24
+            train_paths:
+            - dataset/pits/train_DURA_EUROPOS
+            - dataset/pits/train_ASWAN
+            - dataset/pits/train_EBLA
+            validation_paths:
+            - dataset/pits/test_DURA_EUROPOS
+            - dataset/pits/test_ASWAN
+            - dataset/pits/test_EBLA
+            validation_labels:
+            - DURA_EUROPOS
+            - ASWAN
+            - EBLA
         lr_scheduler:
           class_path: pytorch_lightning.cli.ReduceLROnPlateau
           init_args:
@@ -57,28 +59,30 @@ stages:
             monitor: validation/appeared/IoU
             factor: 0.95
         model:
-          network:
-            class_path: alceo.model.SiamUnet_diff
-            init_args:
-              input_nbr: 4
-              label_nbr: 2
-          loss_fn:
-            class_path: segmentation_models_pytorch.losses.JaccardLoss
-            init_args:
-              mode: multilabel
+          class_path: alceo.model.AlceoChangeDetectionModule
+          init_args:
+            network:
+              class_path: alceo.model.SiamUnet_diff
+              init_args:
+                input_nbr: 4
+                label_nbr: 2
+            loss_fn:
+              class_path: segmentation_models_pytorch.losses.JaccardLoss
+              init_args:
+                mode: multilabel
         optimizer:
           class_path: torch.optim.Adam
           init_args:
             lr: 0.0001
             weight_decay: 0.0001
     outs:
-    - path: change_detection_logs/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
-      md5: e3afad839b042bdee9091a4ad4a5656b
+    - path: logs/siam_diff/DvcLiveLogger/run/checkpoints/best_IoU.ckpt
+      md5: fbeb65e004e386ed3ed94d7951b09991
       size: 16340765
-    - path: change_detection_logs/metrics.json
-      md5: 82d32633b86a5222885c16911d14f591
-      size: 3644
-    - path: change_detection_logs/plots
-      md5: 44b88d3e73e4addf2726a0fd8d7976ca.dir
-      size: 6179453
+    - path: logs/siam_diff/metrics.json
+      md5: b6d6a92ca78d243cb17c7ae1ef5dcb15
+      size: 3850
+    - path: logs/siam_diff/plots
+      md5: a8e0b8e1c3a7f2a8150391b3ab1ff5d0.dir
+      size: 27444
       nfiles: 70

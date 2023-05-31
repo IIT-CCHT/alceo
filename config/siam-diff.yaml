@@ -2,7 +2,7 @@ seed_everything: 1234
 trainer:
   accelerator: gpu
   precision: 16
-  max_time: 00:24:00:00
+  max_time: 00:00:10:00
   logger: 
     class_path: alceo.logger.DVCLiveLogger
     init_args:
