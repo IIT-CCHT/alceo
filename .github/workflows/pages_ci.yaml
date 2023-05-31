@@ -20,5 +20,5 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install mkdocs-material mkdocs-gen-files
+      - run: pip install mkdocs-material mkdocs-gen-files mkdocs-literate-nav mkdocs-section-index mkdocstrings
       - run: mkdocs gh-deploy --force
